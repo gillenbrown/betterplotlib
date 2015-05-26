@@ -1,7 +1,10 @@
 from palettable.tableau import Tableau_10
 import matplotlib as mpl
 
+from .tools import *
+
 almost_black = '#262626'
+steel_blue = '#3F5D7D'
 
 mpl.rcParams['axes.color_cycle'] = Tableau_10.hex_colors
 mpl.rcParams['legend.scatterpoints'] = 1
