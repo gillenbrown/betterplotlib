@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import colors
 
 
 def make_ax_dark(ax):
@@ -24,6 +24,45 @@ def make_ax_dark(ax):
     remove_spines(ax, ["left", "right", "top", "bottom"])
 
     return ax
+
+def scatter(ax, *args, **kwargs):
+    """
+    Makes a scatter plot that looks nicer than the matplotlib default.
+
+    The call works just like a call to plt.scatter, except that the first
+    parameter needs to be the axis that this stuff will be plotted on. All
+    other parameters will be passed on to the plt.scatter function.
+
+    NOTE: the `c` parameter tells just the facecolor of the points, while
+    `color` specifies the whole color of the point, including the edge line
+    color. This follows the default matplotlib scatter implementation.
+
+    :param ax: axis object the scatter points will be plotted on.
+    :param args: non-keyword arguments that will be passed on to the
+                 plt.scatter function. These will typically be the x and y
+                 lists.
+    :param kwargs: keyword arguments that will be passed on to plt.scatter.
+    :return: the output of the plt.scatter call is returned directly.
+    """
+
+    # get the color, if it hasn't already been set.
+    if 'color' not in kwargs and 'c' not in kwargs:
+        # get the default color cycle, and get the next color.
+        color_cycle = ax._get_lines.color_cycle
+        kwargs['c'] = next(color_cycle)
+
+    # set other parameters, if they haven't been set already
+    # I use setdefault to do that, which puts the values in if they don't
+    # already exist, but won't overwrite anything.
+    kwargs.setdefault('linewidth', 0.25)
+    kwargs.setdefault('alpha', 0.5)
+    # edgecolor is a weird case, since it shouldn't be set if the user
+    # specifies 'color', since that refers to the whole point, not just the
+    # color of the point. It includes the edge color.
+    if 'color' not in kwargs:
+        kwargs.setdefault('edgecolor', colors.almost_black)
+
+    return ax.scatter(*args, **kwargs)
 
 def remove_spines(ax, spines_to_remove):
     """Remove the desired spines from the axis, as well as the corresponding
