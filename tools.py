@@ -17,7 +17,8 @@ def make_ax_dark(ax):
     """
 
     ax.set_axis_bgcolor("#E5E5E5")
-    ax.grid(color="w", linestyle="-")
+    ax.grid(which="major", color="w", linestyle="-", linewidth=0.5)
+    ax.grid(which="minor", color="w", linestyle="-", linewidth=0.5)
     ax.set_axisbelow(True)  # moves gridlines below the points
 
     # remove all outer splines

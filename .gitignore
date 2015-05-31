@@ -1,2 +1,5 @@
 # Pycharm stuff
 .idea/
+
+# ipython checkpoints
+.ipynb_checkpoints
