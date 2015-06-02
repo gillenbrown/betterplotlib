@@ -4,8 +4,9 @@ import matplotlib as mpl
 from .tools import *
 from .colors import *
 
-
-mpl.rcParams['axes.color_cycle'] = Tableau_10.hex_colors
+mpl.rcParams['axes.color_cycle'] = [Tableau_10.hex_colors[1],
+                                    Tableau_10.hex_colors[0]] + \
+                                   Tableau_10.hex_colors[2:]
 mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['savefig.format'] = 'pdf'
 mpl.rcParams['font.family'] = 'sans-serif'

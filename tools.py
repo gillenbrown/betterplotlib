@@ -1,7 +1,7 @@
 import colors
 
 
-def make_ax_dark(ax):
+def make_ax_dark(ax, minor_ticks=False):
     """Turns an axis into one with a dark background with white gridlines.
 
     When you pass any axis, it will turn it into one with a slightly light
@@ -18,7 +18,10 @@ def make_ax_dark(ax):
 
     ax.set_axis_bgcolor("#E5E5E5")
     ax.grid(which="major", color="w", linestyle="-", linewidth=0.5)
-    ax.grid(which="minor", color="w", linestyle="-", linewidth=0.5)
+    if minor_ticks:
+        ax.minorticks_on()
+        ax.grid(which="minor", color="w", linestyle=":", linewidth=0.5)
+
     ax.set_axisbelow(True)  # moves gridlines below the points
 
     # remove all outer splines
