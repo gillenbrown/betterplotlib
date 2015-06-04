@@ -16,7 +16,7 @@ def make_ax_dark(ax, minor_ticks=False):
     :return: same axis object after being modified.
     """
 
-    ax.set_axis_bgcolor("#E5E5E5")
+    ax.set_axis_bgcolor(colors.light_gray)
     ax.grid(which="major", color="w", linestyle="-", linewidth=0.5)
     if minor_ticks:
         ax.minorticks_on()
@@ -134,3 +134,47 @@ def remove_ticks(ax, ticks_to_remove):
         ax.xaxis.set_ticks_position("top")
 
     return ax
+
+def legend(ax, facecolor, *args, **kwargs):
+    """Create a nice looking legend.
+
+    Works by calling the ax.legend() function with the given args and kwargs.
+    If some are not specified, they will be filled with values that make the
+    legend look nice.
+
+    :param ax: axis object the legend will be put on.
+    :param facecolor: color of the background of the legend. There are two
+                      default options: "light" and "dark". Light will be white,
+                      and dark will be the same color as the dark ax. If any
+                      other color is passed in, then that color will be the one
+                      used.
+    :param args: non-keyword arguments passed on to the ax.legend() fuction.
+    :param kwargs: keyword arguments that will be passed on to the ax.legend()
+                   function. This will be things like loc, and title, etc.
+    :return: legend object returned by the ax.legend() function.
+    """
+    kwargs.setdefault('loc', 0)
+    if facecolor == "light":
+        facecolor = "#FFFFFF"
+    elif facecolor == "dark":
+        facecolor = '#E5E5E5'
+    # otherwise, leave facecolor alone
+
+    # push the legend a little farther away from the edge.
+    kwargs.setdefault('borderaxespad', 0.75)
+
+    legend = ax.legend(*args, **kwargs)
+
+    # TODO: set the fontsize of the title properly. The best way to do it is
+    # probably to get the font from one of the other text objects, then
+    # increment that slightly, then set the title's fontsize to be that.
+    # the fontsize param doesn't change the title, so do that manually
+    # title = legend.get_title()
+    # title.set_fontsize(kwargs['fontsize'])
+
+    # turn the background into whatever color it needs to be
+    frame = legend.get_frame()
+    frame.set_facecolor(facecolor)
+    frame.set_linewidth(0)
+
+    return legend
