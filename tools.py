@@ -178,3 +178,18 @@ def legend(ax, facecolor, *args, **kwargs):
     frame.set_linewidth(0)
 
     return legend
+
+def equal_scale(ax):
+    """ Makes the x and y axes have the same scale
+
+    Useful for plotting things like ra and dec, something with the same
+    quantity on both axes, or anytime the x and y axis have the same scale.
+
+    It's really one one command, but it's one I have a hard time remembering.
+
+    :param ax: Axis to make equal scale.
+    :return: axis that was passed in. It is modified in place, though, so even
+             if its result is not assigned to anything it will still work.
+    """
+    ax.set_aspect("equal", adjustable="box")
+    return ax
