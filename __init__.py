@@ -29,6 +29,7 @@ mpl.rcParams['text.color'] = almost_black
 mpl.rcParams['axes.edgecolor'] = almost_black
 mpl.rcParams['axes.labelcolor'] = almost_black
 mpl.rcParams['axes.labelweight'] = 'bold'
+mpl.rcParams['axes.titleweight'] = 'bold'
 mpl.rcParams['xtick.color'] = almost_black
 mpl.rcParams['ytick.color'] = almost_black
 mpl.rcParams['grid.color'] = almost_black
