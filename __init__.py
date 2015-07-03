@@ -5,7 +5,6 @@ from .tools import *
 from .colors import *
 
 
-
 mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['savefig.format'] = 'pdf'
 mpl.rcParams['axes.formatter.useoffset'] = False
