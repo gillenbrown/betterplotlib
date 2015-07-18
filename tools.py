@@ -1,7 +1,32 @@
+import matplotlib.pyplot as plt
+
 import colors
 
+def _get_ax(**kwargs):
+    """
+    Get an axis object to plot stuff on.
 
-def make_ax_dark(ax, minor_ticks=False):
+    This will take the axis from kwargs if the user specified `ax`. If not, it
+    will get the current axis, as defined by matplotlib. That may be a
+    crapshoot if there are multiple axes, I don't know.
+
+    This function is to be used in the rest of my functions, where we need
+    to get an axis.
+
+    :param kwargs: keyword arguments from whatever function call this is used
+                   if.
+    :return: the axes object. If `ax` is in kwargs, they will be changed
+             (since `ax` will be removed), but it is modified in place, and
+             any changes will be reflected in the original one too.
+    """
+    if "ax" in kwargs:
+        ax =  kwargs.pop("ax")
+    else:
+        ax = plt.gca()
+    return ax, kwargs
+
+
+def make_ax_dark(ax=None, minor_ticks=False):
     """Turns an axis into one with a dark background with white gridlines.
 
     When you pass any axis, it will turn it into one with a slightly light
@@ -12,9 +37,15 @@ def make_ax_dark(ax, minor_ticks=False):
     function it isn't necessary. Just calling the function will turn it dark,
     you don't need to reassign the variable.
 
-    :param ax: axis object to be changed
+    :param ax: Axes object that will be made dark. This isn't necessary, as
+               matplotlib can find the currectly active axis.
+    :param minor_ticks: Whether or not to add minor ticks. They will be
+                        drawn as dotted lines, rather than solid lines in the
+                        axes space.
     :return: same axis object after being modified.
     """
+    if ax is None:
+        ax, kwargs = _get_ax()
 
     ax.set_axis_bgcolor(colors.light_gray)
     ax.grid(which="major", color="w", linestyle="-", linewidth=0.5)
@@ -25,11 +56,11 @@ def make_ax_dark(ax, minor_ticks=False):
     ax.set_axisbelow(True)  # moves gridlines below the points
 
     # remove all outer splines
-    remove_spines(ax, ["left", "right", "top", "bottom"])
+    remove_spines(["left", "right", "top", "bottom"], ax)
 
     return ax
 
-def scatter(ax, *args, **kwargs):
+def scatter(*args, **kwargs):
     """
     Makes a scatter plot that looks nicer than the matplotlib default.
 
@@ -41,13 +72,15 @@ def scatter(ax, *args, **kwargs):
     `color` specifies the whole color of the point, including the edge line
     color. This follows the default matplotlib scatter implementation.
 
-    :param ax: axis object the scatter points will be plotted on.
+
     :param args: non-keyword arguments that will be passed on to the
                  plt.scatter function. These will typically be the x and y
                  lists.
     :param kwargs: keyword arguments that will be passed on to plt.scatter.
     :return: the output of the plt.scatter call is returned directly.
     """
+
+    ax, kwargs = _get_ax(**kwargs)
 
     # get the color, if it hasn't already been set.
     if 'color' not in kwargs and 'c' not in kwargs:
@@ -68,19 +101,24 @@ def scatter(ax, *args, **kwargs):
 
     return ax.scatter(*args, **kwargs)
 
-def remove_spines(ax, spines_to_remove):
+def remove_spines(spines_to_remove, ax=None):
     """Remove the desired spines from the axis, as well as the corresponding
     ticks.
 
     The axis will be modified in place, so there isn't a need to return the
     axis object, but you can keep it if you want.
 
-    :param ax: axis object to remove the spines from.
     :param spines_to_remove: List of the desired spines to remove. Can choose
                              from "all", "top", "bottom", "left", or "right".
+    :param ax: Axes object to remove the spines from. This isn't necessary, and
+               can be left blank if you are willing to let matplotlib find
+               the axis for you.
     :return: the same axis object.
     """
     # If they want to remove all spines, turn that into workable infomation
+    if ax is None:
+        ax, kwargs = _get_ax()
+
     spines_to_remove = set(spines_to_remove) # to remove duplicates
     if "all" in spines_to_remove:
         spines_to_remove.remove("all")
@@ -92,23 +130,26 @@ def remove_spines(ax, spines_to_remove):
         ax.spines[spine].set_visible(False)
 
     # remove the ticks that correspond the the splines removed
-    remove_ticks(ax, spines_to_remove)
+    remove_ticks(spines_to_remove, ax)
 
     return ax
 
-def remove_ticks(ax, ticks_to_remove):
+def remove_ticks(ticks_to_remove, ax=None):
     """Removes ticks from the given locations.
 
     Like most of these function, the axis is modified in place when the ticks
     are removed, so the axis object doesn't really need to be returned.
 
-    :param ax: axes to remove ticks from.
+
     :param ticks_to_remove: locations where ticks need to be removed from.
                             Pass in a list, and choose from: "all, "top",
                             "bottom", "left", or "right".
+    :param ax: Axes object to remove ticks from. This can be ignored.
     :return: axis object with the ticks removed.
     """
     # TODO: doesn't work if they pass in a string, rather than a list
+    if ax is None:
+        ax, kwargs = _get_ax()
 
     # If they want to remove all spines, turn that into workable infomation
     ticks_to_remove = set(ticks_to_remove) # to remove duplicates
@@ -135,14 +176,13 @@ def remove_ticks(ax, ticks_to_remove):
 
     return ax
 
-def legend(ax, facecolor, *args, **kwargs):
+def legend(facecolor, *args, **kwargs):
     """Create a nice looking legend.
 
     Works by calling the ax.legend() function with the given args and kwargs.
     If some are not specified, they will be filled with values that make the
     legend look nice.
 
-    :param ax: axis object the legend will be put on.
     :param facecolor: color of the background of the legend. There are two
                       default options: "light" and "dark". Light will be white,
                       and dark will be the same color as the dark ax. If any
@@ -153,6 +193,9 @@ def legend(ax, facecolor, *args, **kwargs):
                    function. This will be things like loc, and title, etc.
     :return: legend object returned by the ax.legend() function.
     """
+
+    ax, kwargs = _get_ax(**kwargs)
+
     kwargs.setdefault('loc', 0)
     if facecolor == "light":
         facecolor = "#FFFFFF"
@@ -179,7 +222,7 @@ def legend(ax, facecolor, *args, **kwargs):
 
     return legend
 
-def equal_scale(ax):
+def equal_scale(ax=None):
     """ Makes the x and y axes have the same scale
 
     Useful for plotting things like ra and dec, something with the same
@@ -191,5 +234,7 @@ def equal_scale(ax):
     :return: axis that was passed in. It is modified in place, though, so even
              if its result is not assigned to anything it will still work.
     """
+    if ax is None:
+        ax, kwargs = _get_ax()
     ax.set_aspect("equal", adjustable="box")
     return ax

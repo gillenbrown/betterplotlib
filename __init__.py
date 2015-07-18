@@ -8,7 +8,6 @@ from .colors import *
 mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['savefig.format'] = 'pdf'
 mpl.rcParams['axes.formatter.useoffset'] = False
-mpl.rcParams['figure.autolayout'] = True
 mpl.rcParams['figure.dpi'] = 300
 
 # Font options
