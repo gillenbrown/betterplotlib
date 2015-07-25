@@ -102,6 +102,74 @@ def scatter(*args, **kwargs):
 
     return ax.scatter(*args, **kwargs)
 
+def hist(*args, **kwargs):
+    """
+    A better histogram function. Also supports relative frequency plots and
+    hatching better than the default matplotlib implementation.
+
+    Everything is the same as the default matplotlib implementation, with the
+    exception a few keyword parameters. `rel_freq` makes the histogram a
+    relative frequency plot, and `hatch` controls the hatching of the
+    bars.
+
+    :param args: non-keyword arguments that will be passed on to the
+                 plt.hist() function. These will typically be the list of
+                 values.
+    :keyword rel_freq: Whether or not to plot the histogram as a relative
+                       frequency histogram. Note that this plots the
+                       relative frequency of each bin compared to the whole
+                       sample. Even if your range excludes some of the data,
+                       it will still be included in the relative frequency
+                       calculation.
+    :type rel_freq: bool
+    :keyword hatch: Controls the hatch style of the bars. Must be one of the
+                    following: '-', '|', '+', '/', '\\', 'x', '.', 'o', 'O',
+                    '*'. You can also repeat a symbol as many times as you
+                    want to get a denser pattern. The backslashes need twice
+                    as many, since Python uses those as escapes. If you
+                    don't include this keyword, the bars will not have
+                    hatching.
+    :keyword kwargs: additional controls that will be passed on through to the
+                     plt.hist() function.
+    :return: same output as plt.hist()
+    """
+
+    ax, kwargs = _get_ax(**kwargs)
+
+    # I like white as an edgecolor if we use bars.
+    if kwargs["histtype"] == "bar":
+        kwargs.setdefault('edgecolor', 'white')
+
+    # do the relative frequency business if we need to
+    if kwargs.pop("rel_freq", False):
+        # check that they didn't set weights, since that's what I'll change
+        if "weights" in kwargs:
+            raise ValueError("The `weights` keyword can't be used with "
+                             "`rel_freq`, since `rel_freq` works by "
+                             "modifying the weights.")
+        # normed doesn't work either.
+        if "normed" in kwargs and kwargs["normed"] == True:
+            raise ValueError("Normed does not work properly with rel_freq.")
+
+        # the data will be the first arg.
+        data = args[0]
+        # we weight each item by 1/total items.
+        kwargs["weights"] = [1.0 / len(data)] * len(data)
+
+    # get the hatch before passing the kwargs on
+    hatch = kwargs.pop("hatch", None)
+
+    # plot the histogram, and keep the results
+    hist_results = ax.hist(*args, **kwargs)
+
+    # set the hatch on the patch objects, which are the last thing in the
+    # output of plt.hist()
+    if hatch is not None:
+        for patch in hist_results[2]:
+            patch.set_hatch(hatch)
+
+    return hist_results
+
 def remove_spines(spines_to_remove, ax=None):
     """Remove the desired spines from the axis, as well as the corresponding
     ticks.
