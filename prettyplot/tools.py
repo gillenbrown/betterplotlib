@@ -76,6 +76,7 @@ def scatter(*args, **kwargs):
     :param args: non-keyword arguments that will be passed on to the
                  plt.scatter function. These will typically be the x and y
                  lists.
+    :keyword ax: Axes object to plot on.
     :param kwargs: keyword arguments that will be passed on to plt.scatter.
     :return: the output of the plt.scatter call is returned directly.
     """
@@ -189,6 +190,7 @@ def legend(facecolor, *args, **kwargs):
                       other color is passed in, then that color will be the one
                       used.
     :param args: non-keyword arguments passed on to the ax.legend() fuction.
+    :keyword ax: Axes object to plot on.
     :param kwargs: keyword arguments that will be passed on to the ax.legend()
                    function. This will be things like loc, and title, etc.
     :return: legend object returned by the ax.legend() function.
@@ -238,3 +240,221 @@ def equal_scale(ax=None):
         ax, kwargs = _get_ax()
     ax.set_aspect("equal", adjustable="box")
     return ax
+
+def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
+    """
+    Adds labels to the x and y axis, plus a title.
+
+    Addition properties will be passed the all single label creations,
+    so any properties will be applied to all. If you want the title to be
+    different, for example, don't include it here.
+
+    The axis can be passed in as a kwarg if desired.
+
+    :param x_label: label for the x axis
+    :type x_label: str
+    :param y_label: label for the y axis
+    :type y_label: str
+    :param title: title for the given axis
+    :type title: str
+    :param args: additional properties that will be passed on to all the labels
+                 you asked for.
+    :keyword ax: Axes object to plot on.
+    :param kwargs: additional keyword arguments that will be passed on to
+                   all the labels you make.
+    :return: None
+    """
+    ax, kwargs = _get_ax(**kwargs)
+    if x_label is not None:
+        ax.set_xlabel(x_label, *args, **kwargs)
+    if y_label is not None:
+        ax.set_ylabel(y_label, *args, **kwargs)
+    if title is not None:
+        ax.set_title(title, *args, **kwargs)
+
+def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
+    """
+    Set axes limits for both x and y axis at once.
+
+    The ax can be passed in as a kwarg. Any additional kwargs will be passed
+    on to the matplotlib functions that set the limits, so refer to that
+    documentation to find the allowed parameters.
+
+    :param x_min: minimum x value to be plotted
+    :param x_max: maximum x value to be plotted
+    :param y_min: minimum y value to be plotted
+    :param y_max: maximum y value to be plotted
+    :keyword ax: Axes object to plot on.
+    :param kwargs: Kwargs for the set_limits() functions. Can also include
+                   the axis, with the ax keyword.
+    :return: none.
+    """
+
+    ax, kwargs = _get_ax(**kwargs)
+    # Any None values won't change the plot any.
+    ax.set_xlim([x_min, x_max], **kwargs)
+    ax.set_ylim([y_min, y_max], **kwargs)
+
+
+def add_text(x, y, text, coords="data", **kwargs):
+    """
+    Adds text to the specified location. Allows for easy specification of
+    the type of coordinates you are specifying.
+
+    Matplotlib allows the text to be in data or axes coordinates, but it's
+    hard to remember the command for that. This fixes that. The param
+    `coords` takes care of that.
+
+    The x and y locations can be specified in either data or axes coords.
+    If data coords are used, the text is placed at that data point. If axes
+    coords are used, the text is placed relative to the axes. (0,0) is the
+    bottom left, (1,1) is the top right. Remember to use the
+    horizontalalignment and verticalalignment parameters if it isn't quite in
+    the spot you expect.
+
+    Also consider using easy_add_text, which gives 9 possible location to
+    add text with minimal consternation.
+
+    :param x: x location of the text to be added.
+    :param y: y location of the text to be added.
+    :param text: text to be added
+    :param coords: type of coordinates. This parameter can be either 'data' or
+                   'axes'. 'data' puts the text at that data point. 'axes' puts
+                   the text in that location relative the axes. See above.
+    :keyword ax: Axes to put the text on.
+    :param kwargs: any additional keyword arguments to pass on the text
+                   function. Pass things you would pass to plt.text()
+    :return: Same as output of plt.text().
+    """
+
+    # this function takes care of the transform keyword already, so don't
+    # allow the user to specify it.
+    if "transform" in kwargs:
+        raise ValueError("add_text takes care of the transform for you when "
+                         "you specify coords. \n"
+                         "Don't specify transform in this function.")
+
+    ax, kwargs = _get_ax(**kwargs)
+
+    # set the proper coordinate transformation
+    if coords == "data":
+        transform = ax.transData
+    elif coords == "axes":
+        transform = ax.transAxes
+    else:
+        raise ValueError("`coords` must be either 'data' or 'axes'")
+    # putting it in kwargs makes it easier to pass on.
+    kwargs["transform"] = transform
+
+    # add the text
+    return ax.text(x, y, text, **kwargs)
+
+def easy_add_text(text, location, **kwargs):
+    """
+    Adds text in common spots easily.
+
+    This was inspired by the plt.legend() function and its loc parameter,
+    which allows for easy placement of legends. This does a similar thing,
+    but just for text.
+
+    VERY IMPORTANT NOTE: Although this works similar to plt.legend()'s loc
+    parameter, the numbering is NOT the same. My numbering is based on the
+    keypad. 1 is in the bottom left, 5 in the center, and 9 in the top right.
+    You can also specify words that tell the location.
+
+    :param text: Text to add to the axes.
+    :param location: Location to add the text. This can be specified two
+                     in two possible ways. You can pass an integer, which
+                     puts the text at the location corresponding to that
+                     number's location on a standard keyboard numpad.
+                     You can also pass a string that describe the location.
+                     'upper', 'center', and 'lower' describe the vertical
+                     location, and 'left', 'center', and 'right' describe the
+                     horizontal location. You need to specify vertical, then
+                     horizontal, like 'upper right'. Note that 'center' is
+                     the code for the center, not 'center center'.
+    :keyword ax: Axes object to put the text on.
+    :param kwargs: additional text parameters that will be passed on to the
+                   plt.text() function. Note that this function controls the
+                   x and y location, as well as the horizonatl and vertical
+                   alignment, so do not pass those parameters.
+    :return: Same as output of plt.text()
+
+    Example:
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[14, 5])
+    ppl.easy_add_text("1", 1, ax=ax1)
+    ppl.easy_add_text("2", 2, ax=ax1)
+    ppl.easy_add_text("3", 3, ax=ax1)
+    ppl.easy_add_text("4", 4, ax=ax1)
+    ppl.easy_add_text("5", 5, ax=ax1)
+    ppl.easy_add_text("6", 6, ax=ax1)
+    ppl.easy_add_text("7", 7, ax=ax1)
+    ppl.easy_add_text("8", 8, ax=ax1)
+    ppl.easy_add_text("9", 9, ax=ax1)
+    ppl.easy_add_text("upper left", "upper left", ax=ax2)
+    ppl.easy_add_text("upper center", "upper center", ax=ax2)
+    ppl.easy_add_text("upper right", "upper right", ax=ax2)
+    ppl.easy_add_text("center left", "center left", ax=ax2)
+    ppl.easy_add_text("center", "center", ax=ax2)
+    ppl.easy_add_text("center right", "center right", ax=ax2)
+    ppl.easy_add_text("lower left", "lower left", ax=ax2)
+    ppl.easy_add_text("lower center", "lower center", ax=ax2)
+    ppl.easy_add_text("lower right", "lower right", ax=ax2)
+    """
+    # check that the user didn't specify parameters I want to control.
+    if 'ha' in kwargs or 'va' in kwargs or 'horizontalalignment' in kwargs \
+            or 'verticalalignment' in kwargs:
+        raise ValueError("This function controls the alignment. Do not"
+                         "pass it in.")
+
+    # then check each different case, and set the parameters we want to use.
+    if location == 1 or location == "lower left":
+        x_value = 0.04
+        y_value = 0.04
+        kwargs['horizontalalignment'] = "left"
+        kwargs['verticalalignment'] = "bottom"
+    elif location == 2 or location == "lower center":
+        x_value = 0.5
+        y_value = 0.04
+        kwargs['horizontalalignment'] = "center"
+        kwargs['verticalalignment'] = "bottom"
+    elif location == 3 or location == "lower right":
+        x_value = 0.96
+        y_value = 0.04
+        kwargs['horizontalalignment'] = "right"
+        kwargs['verticalalignment'] = "bottom"
+    elif location == 4 or location == "center left":
+        x_value = 0.04
+        y_value = 0.5
+        kwargs['horizontalalignment'] = "left"
+        kwargs['verticalalignment'] = "center"
+    elif location == 5 or location == "center":
+        x_value = 0.5
+        y_value = 0.5
+        kwargs['horizontalalignment'] = "center"
+        kwargs['verticalalignment'] = "center"
+    elif location == 6 or location == "center right":
+        x_value = 0.96
+        y_value = 0.5
+        kwargs['horizontalalignment'] = "right"
+        kwargs['verticalalignment'] = "center"
+    elif location == 7 or location == "upper left":
+        x_value = 0.04
+        y_value = 0.96
+        kwargs['horizontalalignment'] = "left"
+        kwargs['verticalalignment'] = "top"
+    elif location == 8 or location == "upper center":
+        x_value = 0.5
+        y_value = 0.96
+        kwargs['horizontalalignment'] = "center"
+        kwargs['verticalalignment'] = "top"
+    elif location == 9 or location == "upper right":
+        x_value = 0.96
+        y_value = 0.96
+        kwargs['horizontalalignment'] = "right"
+        kwargs['verticalalignment'] = "top"
+    else:
+        raise ValueError("loc was not specified properly.")
+
+    # then add the text.
+    return add_text(x_value, y_value, text, coords="axes", **kwargs)
