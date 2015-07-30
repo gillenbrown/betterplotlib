@@ -137,7 +137,7 @@ def hist(*args, **kwargs):
     ax, kwargs = _get_ax(**kwargs)
 
     # I like white as an edgecolor if we use bars.
-    if kwargs["histtype"] == "bar":
+    if "histtype" in kwargs and kwargs["histtype"] == "bar":
         kwargs.setdefault('edgecolor', 'white')
 
     # do the relative frequency business if we need to
