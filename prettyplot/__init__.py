@@ -9,6 +9,7 @@ mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['savefig.format'] = 'pdf'
 mpl.rcParams['axes.formatter.useoffset'] = False
 mpl.rcParams['figure.dpi'] = 300
+mpl.rcParams['figure.figsize'] = [10, 7]
 
 # Font options
 mpl.rcParams['font.family'] = 'sans-serif'
