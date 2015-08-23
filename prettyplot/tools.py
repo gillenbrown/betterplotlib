@@ -6,36 +6,36 @@ import colors
 
 def set_style():
 
-    print mpl.rcParams.keys()
-    mpl.rcParams['legend.scatterpoints'] = 1
-    mpl.rcParams['savefig.format'] = 'pdf'
+    # mpl.rcParams['legend.scatterpoints'] = 1
+    # mpl.rcParams['savefig.format'] = 'pdf'
     # mpl.rcParams['axes.formatter.useoffset'] = False
-    mpl.rcParams['figure.dpi'] = 300
-    mpl.rcParams['figure.figsize'] = [10, 7]
-
-    # Font options
-    mpl.rcParams['font.family'] = 'sans-serif'
-    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
-    mpl.rcParams['font.weight'] = 'bold'
-    mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
-    mpl.rcParams['axes.titlesize'] = 16
-    mpl.rcParams['font.size'] = 14
-    mpl.rcParams['axes.labelsize'] = 14
-    mpl.rcParams['xtick.labelsize'] = 12
-    mpl.rcParams['ytick.labelsize'] = 12
-    mpl.rcParams['legend.fontsize'] = 13
-
-    # colors
-    mpl.rcParams['patch.edgecolor'] = colors.almost_black
-    mpl.rcParams['text.color'] = colors.almost_black
-    mpl.rcParams['axes.edgecolor'] = colors.almost_black
-    mpl.rcParams['axes.labelcolor'] = colors.almost_black
-    mpl.rcParams['xtick.color'] = colors.almost_black
-    mpl.rcParams['ytick.color'] = colors.almost_black
-    mpl.rcParams['grid.color'] = colors.almost_black
+    # mpl.rcParams['figure.dpi'] = 300
+    # mpl.rcParams['figure.figsize'] = [10, 7]
+    #
+    # # Font options
+    # mpl.rcParams['font.family'] = 'sans-serif'
+    # mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
+    # mpl.rcParams['font.weight'] = 'bold'
+    # mpl.rcParams['axes.labelweight'] = 'bold'
+    # mpl.rcParams['axes.titleweight'] = 'bold'
+    # mpl.rcParams['axes.titlesize'] = 16
+    # mpl.rcParams['font.size'] = 14
+    # mpl.rcParams['axes.labelsize'] = 14
+    # mpl.rcParams['xtick.labelsize'] = 12
+    # mpl.rcParams['ytick.labelsize'] = 12
+    # mpl.rcParams['legend.fontsize'] = 13
+    #
+    # # colors
+    # mpl.rcParams['patch.edgecolor'] = colors.almost_black
+    # mpl.rcParams['text.color'] = colors.almost_black
+    # mpl.rcParams['axes.edgecolor'] = colors.almost_black
+    # mpl.rcParams['axes.labelcolor'] = colors.almost_black
+    # mpl.rcParams['xtick.color'] = colors.almost_black
+    # mpl.rcParams['ytick.color'] = colors.almost_black
+    # mpl.rcParams['grid.color'] = colors.almost_black
     # I like my own color cycle based on one of the Tableu sets.
     mpl.rcParams['axes.color_cycle'] = colors.color_cycle
+
 
 
 def _get_ax(**kwargs):
