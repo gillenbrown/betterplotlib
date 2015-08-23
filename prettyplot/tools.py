@@ -43,6 +43,13 @@ def make_ax_dark(ax=None, minor_ticks=False):
                         drawn as dotted lines, rather than solid lines in the
                         axes space.
     :return: same axis object after being modified.
+
+    Example:
+
+    .. plot:: plots/make_ax_dark.py
+        :include-source:
+
+
     """
     if ax is None:
         ax, kwargs = _get_ax()
@@ -79,6 +86,11 @@ def scatter(*args, **kwargs):
     :keyword ax: Axes object to plot on.
     :param kwargs: keyword arguments that will be passed on to plt.scatter.
     :return: the output of the plt.scatter call is returned directly.
+
+    .. plot:: plots/scatter.py
+        :include-source:
+
+
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -132,6 +144,10 @@ def hist(*args, **kwargs):
     :keyword kwargs: additional controls that will be passed on through to the
                      plt.hist() function.
     :return: same output as plt.hist()
+
+    .. plot:: plots/hist.py
+        :include-source:
+
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -449,25 +465,11 @@ def easy_add_text(text, location, **kwargs):
     :return: Same as output of plt.text()
 
     Example:
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[14, 5])
-    ppl.easy_add_text("1", 1, ax=ax1)
-    ppl.easy_add_text("2", 2, ax=ax1)
-    ppl.easy_add_text("3", 3, ax=ax1)
-    ppl.easy_add_text("4", 4, ax=ax1)
-    ppl.easy_add_text("5", 5, ax=ax1)
-    ppl.easy_add_text("6", 6, ax=ax1)
-    ppl.easy_add_text("7", 7, ax=ax1)
-    ppl.easy_add_text("8", 8, ax=ax1)
-    ppl.easy_add_text("9", 9, ax=ax1)
-    ppl.easy_add_text("upper left", "upper left", ax=ax2)
-    ppl.easy_add_text("upper center", "upper center", ax=ax2)
-    ppl.easy_add_text("upper right", "upper right", ax=ax2)
-    ppl.easy_add_text("center left", "center left", ax=ax2)
-    ppl.easy_add_text("center", "center", ax=ax2)
-    ppl.easy_add_text("center right", "center right", ax=ax2)
-    ppl.easy_add_text("lower left", "lower left", ax=ax2)
-    ppl.easy_add_text("lower center", "lower center", ax=ax2)
-    ppl.easy_add_text("lower right", "lower right", ax=ax2)
+
+    .. plot:: plots/easy_add_text.py
+        :include-source:
+
+
     """
     # check that the user didn't specify parameters I want to control.
     if 'ha' in kwargs or 'va' in kwargs or 'horizontalalignment' in kwargs \

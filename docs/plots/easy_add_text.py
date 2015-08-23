@@ -1,0 +1,22 @@
+import prettyplot as ppl
+import matplotlib.pyplot as plt
+
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[14, 5])
+ppl.easy_add_text("1", 1, ax=ax1)
+ppl.easy_add_text("2", 2, ax=ax1)
+ppl.easy_add_text("3", 3, ax=ax1)
+ppl.easy_add_text("4", 4, ax=ax1)
+ppl.easy_add_text("5", 5, ax=ax1)
+ppl.easy_add_text("6", 6, ax=ax1)
+ppl.easy_add_text("7", 7, ax=ax1)
+ppl.easy_add_text("8", 8, ax=ax1)
+ppl.easy_add_text("9", 9, ax=ax1)
+ppl.easy_add_text("upper left", "upper left", ax=ax2)
+ppl.easy_add_text("upper center", "upper center", ax=ax2)
+ppl.easy_add_text("upper right", "upper right", ax=ax2)
+ppl.easy_add_text("center left", "center left", ax=ax2)
+ppl.easy_add_text("center", "center", ax=ax2)
+ppl.easy_add_text("center right", "center right", ax=ax2)
+ppl.easy_add_text("lower left", "lower left", ax=ax2)
+ppl.easy_add_text("lower center", "lower center", ax=ax2)
+ppl.easy_add_text("lower right", "lower right", ax=ax2)
