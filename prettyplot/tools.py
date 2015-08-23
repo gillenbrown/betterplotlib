@@ -1,6 +1,42 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import colors
+
+
+def set_style():
+
+    # mpl.rcParams['legend.scatterpoints'] = 1
+    # mpl.rcParams['savefig.format'] = 'pdf'
+    # mpl.rcParams['axes.formatter.useoffset'] = False
+    # mpl.rcParams['figure.dpi'] = 300
+    # mpl.rcParams['figure.figsize'] = [10, 7]
+    #
+    # # Font options
+    # mpl.rcParams['font.family'] = 'sans-serif'
+    # mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
+    # mpl.rcParams['font.weight'] = 'bold'
+    # mpl.rcParams['axes.labelweight'] = 'bold'
+    # mpl.rcParams['axes.titleweight'] = 'bold'
+    # mpl.rcParams['axes.titlesize'] = 16
+    # mpl.rcParams['font.size'] = 14
+    # mpl.rcParams['axes.labelsize'] = 14
+    # mpl.rcParams['xtick.labelsize'] = 12
+    # mpl.rcParams['ytick.labelsize'] = 12
+    # mpl.rcParams['legend.fontsize'] = 13
+    #
+    # # colors
+    # mpl.rcParams['patch.edgecolor'] = colors.almost_black
+    # mpl.rcParams['text.color'] = colors.almost_black
+    # mpl.rcParams['axes.edgecolor'] = colors.almost_black
+    # mpl.rcParams['axes.labelcolor'] = colors.almost_black
+    # mpl.rcParams['xtick.color'] = colors.almost_black
+    # mpl.rcParams['ytick.color'] = colors.almost_black
+    # mpl.rcParams['grid.color'] = colors.almost_black
+    # I like my own color cycle based on one of the Tableu sets.
+    mpl.rcParams['axes.color_cycle'] = colors.color_cycle
+
+
 
 def _get_ax(**kwargs):
     """
@@ -20,7 +56,7 @@ def _get_ax(**kwargs):
              any changes will be reflected in the original one too.
     """
     if "ax" in kwargs:
-        ax =  kwargs.pop("ax")
+        ax = kwargs.pop("ax")
     else:
         ax = plt.gca()
     return ax, kwargs
@@ -43,6 +79,23 @@ def make_ax_dark(ax=None, minor_ticks=False):
                         drawn as dotted lines, rather than solid lines in the
                         axes space.
     :return: same axis object after being modified.
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+
+        ppl.set_style()
+
+        fig, (ax1, ax2) = plt.subplots(figsize=[12, 5], ncols=2)
+        ppl.make_ax_dark(ax2)
+        ax1.set_title("Regular")
+        ax2.set_title("Dark")
+
+
     """
     if ax is None:
         ax, kwargs = _get_ax()
@@ -60,13 +113,14 @@ def make_ax_dark(ax=None, minor_ticks=False):
 
     return ax
 
+
 def scatter(*args, **kwargs):
     """
     Makes a scatter plot that looks nicer than the matplotlib default.
 
-    The call works just like a call to plt.scatter, except that the first
-    parameter needs to be the axis that this stuff will be plotted on. All
-    other parameters will be passed on to the plt.scatter function.
+    The call works just like a call to plt.scatter. It will set a few default
+    parameters, but anything you pass in will override the default parameters.
+    This function also uses the color cycle, unlike the default scatter.
 
     NOTE: the `c` parameter tells just the facecolor of the points, while
     `color` specifies the whole color of the point, including the edge line
@@ -79,6 +133,25 @@ def scatter(*args, **kwargs):
     :keyword ax: Axes object to plot on.
     :param kwargs: keyword arguments that will be passed on to plt.scatter.
     :return: the output of the plt.scatter call is returned directly.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import numpy as np
+
+        ppl.set_style()
+
+        x1 = np.random.normal(0, scale=0.5, size=500)
+        y1 = np.random.normal(0, scale=0.5, size=500)
+        x2 = np.random.normal(0.5, scale=0.5, size=500)
+        y2 = np.random.normal(0.5, scale=0.5, size=500)
+        x3 = np.random.normal(1, scale=0.5, size=500)
+        y3 = np.random.normal(1, scale=0.5, size=500)
+
+        ppl.scatter(x1, y1)
+        ppl.scatter(x2, y2)
+        ppl.scatter(x3, y3)
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -101,6 +174,7 @@ def scatter(*args, **kwargs):
         kwargs.setdefault('edgecolor', colors.almost_black)
 
     return ax.scatter(*args, **kwargs)
+
 
 def hist(*args, **kwargs):
     """
@@ -132,6 +206,83 @@ def hist(*args, **kwargs):
     :keyword kwargs: additional controls that will be passed on through to the
                      plt.hist() function.
     :return: same output as plt.hist()
+
+    Examples:
+
+    The basic histogram should look nicer than the default histogram.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        data = np.random.normal(0, 2, 10000)
+
+        ppl.hist(data)
+
+    There are also plenty of options that make other histograms look nice too.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        data1 = np.random.normal(-6, 1, size=10000)
+        data2 = np.random.normal(-2, 1, size=10000)
+        data3 = np.random.normal(2, 1, size=10000)
+        data4 = np.random.normal(6, 1, size=10000)
+        ppl.hist(data1, rel_freq=True)
+        ppl.hist(data2, rel_freq=True, histtype="step", linewidth=5)
+        ppl.hist(data3, rel_freq=True, histtype="stepfilled", hatch="o", alpha=0.8)
+        ppl.hist(data4, rel_freq=True, histtype="step", hatch="x", linewidth=4)
+
+        ppl.add_labels(y_label="Relative Frequency")
+
+    Here is a demo of all the hatch styles. Repeat each symbol more for a
+    denser pattern. I would only use hatching when using `histtype` as either
+    `step` or `stepfilled`, since the bar borders on the regular histogram
+    mess with the hatching.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        data = np.random.uniform(0, 0.9, 10000)
+
+        for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
+            ppl.hist(data, histtype="stepfilled", hatch=hatch)
+            data += 1
+
+    If you specify histtype="step", the hatching is the same color as the
+    rest of the bar.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        data = np.random.uniform(0, 0.9, 10000)
+
+        for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
+            ppl.hist(data, histtype="step", hatch=hatch)
+            data += 1
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -148,7 +299,7 @@ def hist(*args, **kwargs):
                              "`rel_freq`, since `rel_freq` works by "
                              "modifying the weights.")
         # normed doesn't work either.
-        if "normed" in kwargs and kwargs["normed"] == True:
+        if "normed" in kwargs and kwargs["normed"] is True:
             raise ValueError("Normed does not work properly with rel_freq.")
 
         # the data will be the first arg.
@@ -170,6 +321,7 @@ def hist(*args, **kwargs):
 
     return hist_results
 
+
 def remove_spines(spines_to_remove, ax=None):
     """Remove the desired spines from the axis, as well as the corresponding
     ticks.
@@ -188,7 +340,7 @@ def remove_spines(spines_to_remove, ax=None):
     if ax is None:
         ax, kwargs = _get_ax()
 
-    spines_to_remove = set(spines_to_remove) # to remove duplicates
+    spines_to_remove = set(spines_to_remove)  # to remove duplicates
     if "all" in spines_to_remove:
         spines_to_remove.remove("all")
         for spine in ["left", "right", "top", "bottom"]:
@@ -202,6 +354,7 @@ def remove_spines(spines_to_remove, ax=None):
     remove_ticks(spines_to_remove, ax)
 
     return ax
+
 
 def remove_ticks(ticks_to_remove, ax=None):
     """Removes ticks from the given locations.
@@ -221,7 +374,7 @@ def remove_ticks(ticks_to_remove, ax=None):
         ax, kwargs = _get_ax()
 
     # If they want to remove all spines, turn that into workable infomation
-    ticks_to_remove = set(ticks_to_remove) # to remove duplicates
+    ticks_to_remove = set(ticks_to_remove)  # to remove duplicates
     if "all" in ticks_to_remove:
         ticks_to_remove.remove("all")
         for tick in ["left", "right", "top", "bottom"]:
@@ -244,6 +397,7 @@ def remove_ticks(ticks_to_remove, ax=None):
         ax.xaxis.set_ticks_position("top")
 
     return ax
+
 
 def legend(facecolor, *args, **kwargs):
     """Create a nice looking legend.
@@ -276,7 +430,7 @@ def legend(facecolor, *args, **kwargs):
     # push the legend a little farther away from the edge.
     kwargs.setdefault('borderaxespad', 0.75)
 
-    legend = ax.legend(*args, **kwargs)
+    leg = ax.legend(*args, **kwargs)
 
     # TODO: set the fontsize of the title properly. The best way to do it is
     # probably to get the font from one of the other text objects, then
@@ -286,11 +440,12 @@ def legend(facecolor, *args, **kwargs):
     # title.set_fontsize(kwargs['fontsize'])
 
     # turn the background into whatever color it needs to be
-    frame = legend.get_frame()
+    frame = leg.get_frame()
     frame.set_facecolor(facecolor)
     frame.set_linewidth(0)
 
-    return legend
+    return leg
+
 
 def equal_scale(ax=None):
     """ Makes the x and y axes have the same scale
@@ -308,6 +463,7 @@ def equal_scale(ax=None):
         ax, kwargs = _get_ax()
     ax.set_aspect("equal", adjustable="box")
     return ax
+
 
 def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
     """
@@ -339,6 +495,7 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
         ax.set_ylabel(y_label, *args, **kwargs)
     if title is not None:
         ax.set_title(title, *args, **kwargs)
+
 
 def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
     """
@@ -417,6 +574,7 @@ def add_text(x, y, text, coords="data", **kwargs):
     # add the text
     return ax.text(x, y, text, **kwargs)
 
+
 def easy_add_text(text, location, **kwargs):
     """
     Adds text in common spots easily.
@@ -449,25 +607,46 @@ def easy_add_text(text, location, **kwargs):
     :return: Same as output of plt.text()
 
     Example:
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[14, 5])
-    ppl.easy_add_text("1", 1, ax=ax1)
-    ppl.easy_add_text("2", 2, ax=ax1)
-    ppl.easy_add_text("3", 3, ax=ax1)
-    ppl.easy_add_text("4", 4, ax=ax1)
-    ppl.easy_add_text("5", 5, ax=ax1)
-    ppl.easy_add_text("6", 6, ax=ax1)
-    ppl.easy_add_text("7", 7, ax=ax1)
-    ppl.easy_add_text("8", 8, ax=ax1)
-    ppl.easy_add_text("9", 9, ax=ax1)
-    ppl.easy_add_text("upper left", "upper left", ax=ax2)
-    ppl.easy_add_text("upper center", "upper center", ax=ax2)
-    ppl.easy_add_text("upper right", "upper right", ax=ax2)
-    ppl.easy_add_text("center left", "center left", ax=ax2)
-    ppl.easy_add_text("center", "center", ax=ax2)
-    ppl.easy_add_text("center right", "center right", ax=ax2)
-    ppl.easy_add_text("lower left", "lower left", ax=ax2)
-    ppl.easy_add_text("lower center", "lower center", ax=ax2)
-    ppl.easy_add_text("lower right", "lower right", ax=ax2)
+
+    There are two ways to specify the location, and we will demo both.
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import prettyplot as ppl
+
+        ppl.set_style()
+
+        ppl.easy_add_text("1", 1)
+        ppl.easy_add_text("2", 2)
+        ppl.easy_add_text("3", 3)
+        ppl.easy_add_text("4", 4)
+        ppl.easy_add_text("5", 5)
+        ppl.easy_add_text("6", 6)
+        ppl.easy_add_text("7", 7)
+        ppl.easy_add_text("8", 8)
+        ppl.easy_add_text("9", 9)
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import prettyplot as ppl
+
+        ppl.set_style()
+
+        ppl.easy_add_text("upper left", "upper left")
+        ppl.easy_add_text("upper center", "upper center")
+        ppl.easy_add_text("upper right", "upper right")
+        ppl.easy_add_text("center left", "center left")
+        ppl.easy_add_text("center", "center")
+        ppl.easy_add_text("center right", "center right")
+        ppl.easy_add_text("lower left", "lower left")
+        ppl.easy_add_text("lower center", "lower center")
+        ppl.easy_add_text("lower right", "lower right")
+
+
     """
     # check that the user didn't specify parameters I want to control.
     if 'ha' in kwargs or 'va' in kwargs or 'horizontalalignment' in kwargs \
