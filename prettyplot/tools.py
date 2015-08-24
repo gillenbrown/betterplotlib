@@ -178,10 +178,6 @@ def scatter(*args, **kwargs):
 
 def hist(*args, **kwargs):
     """
-
-    Hi Colton.
-
-    
     A better histogram function. Also supports relative frequency plots and
     hatching better than the default matplotlib implementation.
 
@@ -267,7 +263,7 @@ def hist(*args, **kwargs):
         data = np.random.uniform(0, 0.9, 10000)
 
         for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-            ppl.hist(data, histtype="stepfilled", hatch=hatch)
+            ppl.hist(data, histtype="stepfilled", hatch=hatch, bins=[min(data), max(data)])
             data += 1
 
     If you specify histtype="step", the hatching is the same color as the
