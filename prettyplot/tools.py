@@ -178,6 +178,10 @@ def scatter(*args, **kwargs):
 
 def hist(*args, **kwargs):
     """
+
+    Hi Colton.
+
+    
     A better histogram function. Also supports relative frequency plots and
     hatching better than the default matplotlib implementation.
 
