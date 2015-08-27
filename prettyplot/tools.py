@@ -8,7 +8,7 @@ def set_style():
 
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
-    mpl.rcParams['axes.formatter.useoffset'] = False
+    # mpl.rcParams['axes.formatter.useoffset'] = False
     mpl.rcParams['figure.dpi'] = 300
     mpl.rcParams['figure.figsize'] = [10, 7]
 
@@ -75,9 +75,11 @@ def make_ax_dark(ax=None, minor_ticks=False):
 
     :param ax: Axes object that will be made dark. This isn't necessary, as
                matplotlib can find the currectly active axis.
+    :type ax: matplotlib.axes
     :param minor_ticks: Whether or not to add minor ticks. They will be
                         drawn as dotted lines, rather than solid lines in the
                         axes space.
+    :type minor_ticks: bool
     :return: same axis object after being modified.
 
     Example:
@@ -131,6 +133,7 @@ def scatter(*args, **kwargs):
                  plt.scatter function. These will typically be the x and y
                  lists.
     :keyword ax: Axes object to plot on.
+    :type ax: matplotlib.axes
     :param kwargs: keyword arguments that will be passed on to plt.scatter.
     :return: the output of the plt.scatter call is returned directly.
 
@@ -203,6 +206,7 @@ def hist(*args, **kwargs):
                     as many, since Python uses those as escapes. If you
                     don't include this keyword, the bars will not have
                     hatching.
+    :type hatch: str
     :keyword kwargs: additional controls that will be passed on through to the
                      plt.hist() function.
     :return: same output as plt.hist()
@@ -325,18 +329,50 @@ def hist(*args, **kwargs):
 
 
 def remove_spines(spines_to_remove, ax=None):
-    """Remove the desired spines from the axis, as well as the corresponding
-    ticks.
+    """Remove spines from the axis.
+
+    Spines are the lines on the side of the axes. In many situations, these
+    are not needed, and are just junk. Calling this function will remove
+    the specified spines from an axes object.
 
     The axis will be modified in place, so there isn't a need to return the
     axis object, but you can keep it if you want.
 
+    Note that this function can mess up if you call this function multiple
+    times with the same axes object, due to the way matplotlib works under
+    the hood. I haven't really tested it extensively (since I have never once
+    wanted to call it more than once), but I think the last function call
+    is the one that counts. Calling this multiple times on the same axes
+    would be weird, though, since you can specify multiple axes in one call.
+    If you really need to call it multiple times and it is breaking, let me
+    know and I can try to fix it.
+
     :param spines_to_remove: List of the desired spines to remove. Can choose
                              from "all", "top", "bottom", "left", or "right".
+    :type spines_to_remove: list
     :param ax: Axes object to remove the spines from. This isn't necessary, and
                can be left blank if you are willing to let matplotlib find
                the axis for you.
+    :type ax: matplotlib.axes
     :return: the same axis object.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        fig, (ax1, ax2) = plt.subplots(ncols=2)
+
+        ax1.plot([0, 1, 2], [0, 1, 2])
+        ax2.plot([0, 1, 2], [0, 1, 2])
+
+        ppl.remove_spines(["top", "right"], ax=ax1)
+        ppl.remove_spines(["all"], ax=ax2)
+
     """
     # If they want to remove all spines, turn that into workable infomation
     if ax is None:
@@ -353,13 +389,17 @@ def remove_spines(spines_to_remove, ax=None):
         ax.spines[spine].set_visible(False)
 
     # remove the ticks that correspond the the splines removed
-    remove_ticks(spines_to_remove, ax)
+    remove_ticks(list(spines_to_remove), ax)
 
     return ax
 
 
 def remove_ticks(ticks_to_remove, ax=None):
     """Removes ticks from the given locations.
+
+    In some situations, ticks aren't needed or wanted. For example, removing
+    ticks can be nice in situations where you just want to show general
+    trends without any specific numbers attached.
 
     Like most of these function, the axis is modified in place when the ticks
     are removed, so the axis object doesn't really need to be returned.
@@ -368,8 +408,27 @@ def remove_ticks(ticks_to_remove, ax=None):
     :param ticks_to_remove: locations where ticks need to be removed from.
                             Pass in a list, and choose from: "all, "top",
                             "bottom", "left", or "right".
+    :type ticks_to_remove: list
     :param ax: Axes object to remove ticks from. This can be ignored.
+    :type ax: matplotlib.axes
     :return: axis object with the ticks removed.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        fig, (ax1, ax2) = plt.subplots(ncols=2)
+
+        ax1.plot([0, 1, 2], [0, 1, 2])
+        ax2.plot([0, 1, 2], [0, 1, 2])
+
+        ppl.remove_ticks(["top", "right"], ax=ax1)
+        ppl.remove_ticks(["all"], ax=ax2)
     """
     # TODO: doesn't work if they pass in a string, rather than a list
     if ax is None:
@@ -401,7 +460,7 @@ def remove_ticks(ticks_to_remove, ax=None):
     return ax
 
 
-def legend(facecolor, *args, **kwargs):
+def legend(facecolor="light", *args, **kwargs):
     """Create a nice looking legend.
 
     Works by calling the ax.legend() function with the given args and kwargs.
@@ -413,8 +472,10 @@ def legend(facecolor, *args, **kwargs):
                       and dark will be the same color as the dark ax. If any
                       other color is passed in, then that color will be the one
                       used.
+    :type facecolor: str
     :param args: non-keyword arguments passed on to the ax.legend() fuction.
     :keyword ax: Axes object to plot on.
+    :type ax: matplotlib.axes
     :param kwargs: keyword arguments that will be passed on to the ax.legend()
                    function. This will be things like loc, and title, etc.
     :return: legend object returned by the ax.legend() function.
@@ -458,6 +519,7 @@ def equal_scale(ax=None):
     It's really one one command, but it's one I have a hard time remembering.
 
     :param ax: Axis to make equal scale.
+    :type ax: matplotlib.axes
     :return: axis that was passed in. It is modified in place, though, so even
              if its result is not assigned to anything it will still work.
     """
@@ -486,6 +548,7 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
     :param args: additional properties that will be passed on to all the labels
                  you asked for.
     :keyword ax: Axes object to plot on.
+    :type ax: matplotlib.axes
     :param kwargs: additional keyword arguments that will be passed on to
                    all the labels you make.
     :return: None
@@ -508,10 +571,15 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
     documentation to find the allowed parameters.
 
     :param x_min: minimum x value to be plotted
+    :type x_min: int, float
     :param x_max: maximum x value to be plotted
+    :type x_max: int, float
     :param y_min: minimum y value to be plotted
+    :type y_min: int, float
     :param y_max: maximum y value to be plotted
+    :type y_max: int, float
     :keyword ax: Axes object to plot on.
+    :type ax: matplotlib.axes
     :param kwargs: Kwargs for the set_limits() functions. Can also include
                    the axis, with the ax keyword.
     :return: none.
@@ -543,12 +611,17 @@ def add_text(x, y, text, coords="data", **kwargs):
     add text with minimal consternation.
 
     :param x: x location of the text to be added.
+    :type x: int, float
     :param y: y location of the text to be added.
+    :type y: int, float
     :param text: text to be added
+    :type text: str
     :param coords: type of coordinates. This parameter can be either 'data' or
                    'axes'. 'data' puts the text at that data point. 'axes' puts
                    the text in that location relative the axes. See above.
+    :type coords: str
     :keyword ax: Axes to put the text on.
+    :type ax: matplotlib.axes
     :param kwargs: any additional keyword arguments to pass on the text
                    function. Pass things you would pass to plt.text()
     :return: Same as output of plt.text().
@@ -591,6 +664,7 @@ def easy_add_text(text, location, **kwargs):
     You can also specify words that tell the location.
 
     :param text: Text to add to the axes.
+    :type text: str
     :param location: Location to add the text. This can be specified two
                      in two possible ways. You can pass an integer, which
                      puts the text at the location corresponding to that
@@ -601,7 +675,9 @@ def easy_add_text(text, location, **kwargs):
                      horizontal location. You need to specify vertical, then
                      horizontal, like 'upper right'. Note that 'center' is
                      the code for the center, not 'center center'.
+    :type location: str, int
     :keyword ax: Axes object to put the text on.
+    :type ax: matplotlib.axes
     :param kwargs: additional text parameters that will be passed on to the
                    plt.text() function. Note that this function controls the
                    x and y location, as well as the horizonatl and vertical
