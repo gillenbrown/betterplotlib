@@ -92,10 +92,10 @@ def make_ax_dark(ax=None, minor_ticks=False):
 
         ppl.set_style()
 
-        fig, (ax1, ax2) = plt.subplots(figsize=[12, 5], ncols=2)
-        ppl.make_ax_dark(ax2)
-        ax1.set_title("Regular")
-        ax2.set_title("Dark")
+        fig, (ax0, ax1) = plt.subplots(figsize=[12, 5], ncols=2)
+        ppl.make_ax_dark(ax1)
+        ax0.set_title("Regular")
+        ax1.set_title("Dark")
 
 
     """
@@ -365,13 +365,16 @@ def remove_spines(spines_to_remove, ax=None):
 
         ppl.set_style()
 
-        fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=[10, 5])
+        fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=[10, 5])
 
+        ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
-        ax2.plot([0, 1, 2], [0, 1, 2])
 
-        ppl.remove_spines(["top", "right"], ax=ax1)
-        ppl.remove_spines(["all"], ax=ax2)
+        ppl.remove_spines(["top", "right"], ax=ax0)
+        ppl.remove_spines(["all"], ax=ax1)
+
+        ax0.set_title("removed top/right spines")
+        ax1.set_title("removed all spines")
 
     """
     # If they want to remove all spines, turn that into workable infomation
@@ -419,13 +422,16 @@ def remove_ticks(ticks_to_remove, ax=None):
 
         ppl.set_style()
 
-        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[10, 5])
+        fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=[10, 5])
 
+        ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
-        ax2.plot([0, 1, 2], [0, 1, 2])
 
-        ppl.remove_ticks(["top", "right"], ax=ax1)
-        ppl.remove_ticks(["all"], ax=ax2)
+        ppl.remove_ticks(["top", "right"], ax=ax0)
+        ppl.remove_ticks(["all"], ax=ax1)
+
+        ax0.set_title("removed top/right ticks")
+        ax1.set_title("removed all ticks")
     """
     # TODO: doesn't work if they pass in a string, rather than a list
     if ax is None:
@@ -514,7 +520,8 @@ def legend(facecolor="light", *args, **kwargs):
         ppl.make_ax_dark()
         ppl.legend("dark")
 
-    That said, the other combinations look good too.
+    That said, the other combinations look good too. I especially like the
+    light legend on the dark background.
 
     .. plot::
         :include-source:
@@ -527,7 +534,7 @@ def legend(facecolor="light", *args, **kwargs):
 
         x = np.arange(0, 5, 0.1)
 
-        fig, axs = plt.subplots(ncols=2)
+        fig, axs = plt.subplots(ncols=2, figsize=[10, 5])
 
         for ax in axs:
             ax.plot(x, x, label="x")
@@ -557,7 +564,7 @@ def legend(facecolor="light", *args, **kwargs):
         plt.plot(x, x, label="x")
         plt.plot(x, 2*x, label="2x")
         plt.plot(x, 3*x, label="3x")
-        ppl.legend(, fontsize=20, loc=5, fancybox=True, title="Title")
+        ppl.legend(fontsize=20, loc=6, title="Title")
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -590,7 +597,7 @@ def legend(facecolor="light", *args, **kwargs):
 
 
 def equal_scale(ax=None):
-    """ Makes the x and y axes have the same scale
+    """ Makes the x and y axes have the same scale.
 
     Useful for plotting things like ra and dec, something with the same
     quantity on both axes, or anytime the x and y axis have the same scale.

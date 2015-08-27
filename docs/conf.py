@@ -14,10 +14,6 @@
 
 import sys
 import os
-import matplotlib as mpl
-print mpl.rcParams.keys()
-
-
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
