@@ -14,7 +14,8 @@
 
 import sys
 import os
-import shlex
+import matplotlib as mpl
+print mpl.rcParams.keys()
 
 
 

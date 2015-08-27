@@ -267,8 +267,8 @@ def hist(*args, **kwargs):
         data = np.random.uniform(0, 0.9, 10000)
 
         for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-            ppl.hist(data, histtype="stepfilled", hatch=hatch,
-                     bins=[min(data), max(data)])
+            bins = [min(data), max(data)]
+            ppl.hist(data, histtype="stepfilled", hatch=hatch, bins=bins)
             data += 1
 
     If you specify histtype="step", the hatching is the same color as the
@@ -286,8 +286,8 @@ def hist(*args, **kwargs):
         data = np.random.uniform(0, 0.9, 10000)
 
         for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-            ppl.hist(data, histtype="step", hatch=hatch,
-                     bins=[min(data), max(data)])
+            bins = [min(data), max(data)]
+            ppl.hist(data, histtype="step", hatch=hatch, bins=bins)
             data += 1
     """
 
@@ -333,7 +333,8 @@ def remove_spines(spines_to_remove, ax=None):
 
     Spines are the lines on the side of the axes. In many situations, these
     are not needed, and are just junk. Calling this function will remove
-    the specified spines from an axes object.
+    the specified spines from an axes object. Note that it does not remove
+    the tick labels if they are visible for that axis.
 
     The axis will be modified in place, so there isn't a need to return the
     axis object, but you can keep it if you want.
@@ -361,11 +362,10 @@ def remove_spines(spines_to_remove, ax=None):
 
         import prettyplot as ppl
         import matplotlib.pyplot as plt
-        import numpy as np
 
         ppl.set_style()
 
-        fig, (ax1, ax2) = plt.subplots(ncols=2)
+        fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=[10, 5])
 
         ax1.plot([0, 1, 2], [0, 1, 2])
         ax2.plot([0, 1, 2], [0, 1, 2])
@@ -397,13 +397,11 @@ def remove_spines(spines_to_remove, ax=None):
 def remove_ticks(ticks_to_remove, ax=None):
     """Removes ticks from the given locations.
 
-    In some situations, ticks aren't needed or wanted. For example, removing
-    ticks can be nice in situations where you just want to show general
-    trends without any specific numbers attached.
+    In some situations, ticks aren't needed or wanted. Note that this doesn't
+    remove the spine itself, or the labels on that axis.
 
     Like most of these function, the axis is modified in place when the ticks
     are removed, so the axis object doesn't really need to be returned.
-
 
     :param ticks_to_remove: locations where ticks need to be removed from.
                             Pass in a list, and choose from: "all, "top",
@@ -418,11 +416,10 @@ def remove_ticks(ticks_to_remove, ax=None):
 
         import prettyplot as ppl
         import matplotlib.pyplot as plt
-        import numpy as np
 
         ppl.set_style()
 
-        fig, (ax1, ax2) = plt.subplots(ncols=2)
+        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[10, 5])
 
         ax1.plot([0, 1, 2], [0, 1, 2])
         ax2.plot([0, 1, 2], [0, 1, 2])
@@ -479,6 +476,88 @@ def legend(facecolor="light", *args, **kwargs):
     :param kwargs: keyword arguments that will be passed on to the ax.legend()
                    function. This will be things like loc, and title, etc.
     :return: legend object returned by the ax.legend() function.
+
+    The default legend is a light background with no border, like so.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        x = np.arange(0, 5, 0.1)
+
+        plt.plot(x, x, label="x")
+        plt.plot(x, 2*x, label="2x")
+        plt.plot(x, 3*x, label="3x")
+        ppl.legend()
+
+    The dark legend is designed for the dark axes in mind.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        x = np.arange(0, 5, 0.1)
+
+        plt.plot(x, x, label="x")
+        plt.plot(x, 2*x, label="2x")
+        plt.plot(x, 3*x, label="3x")
+        ppl.make_ax_dark()
+        ppl.legend("dark")
+
+    That said, the other combinations look good too.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        x = np.arange(0, 5, 0.1)
+
+        fig, axs = plt.subplots(ncols=2)
+
+        for ax in axs:
+            ax.plot(x, x, label="x")
+            ax.plot(x, 2*x, label="2x")
+            ax.plot(x, 3*x, label="3x")
+
+        ax0, ax1 = axs
+
+        ppl.legend("dark", ax=ax0)
+        ppl.make_ax_dark(ax1)
+        ppl.legend("light", ax=ax1)
+
+
+    You can still pass in any kwargs to the legend function you want.
+
+    .. plot::
+        :include-source:
+
+        import prettyplot as ppl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        ppl.set_style()
+
+        x = np.arange(0, 5, 0.1)
+
+        plt.plot(x, x, label="x")
+        plt.plot(x, 2*x, label="2x")
+        plt.plot(x, 3*x, label="3x")
+        ppl.legend(, fontsize=20, loc=5, fancybox=True, title="Title")
     """
 
     ax, kwargs = _get_ax(**kwargs)
