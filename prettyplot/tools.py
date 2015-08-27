@@ -17,7 +17,7 @@ def set_style():
     mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
+    # mpl.rcParams['axes.titleweight'] = 'bold'
     mpl.rcParams['axes.titlesize'] = 16
     mpl.rcParams['font.size'] = 14
     mpl.rcParams['axes.labelsize'] = 14
