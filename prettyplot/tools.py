@@ -1,5 +1,7 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from cycler import cycler
+import numpy as np
 
 import colors
 
@@ -8,8 +10,8 @@ def set_style():
 
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
-    # mpl.rcParams['axes.formatter.useoffset'] = False
-    mpl.rcParams['figure.dpi'] = 300
+    mpl.rcParams['axes.formatter.useoffset'] = False
+    # mpl.rcParams['figure.dpi'] = 200
     mpl.rcParams['figure.figsize'] = [10, 7]
 
     # Font options
@@ -17,7 +19,7 @@ def set_style():
     mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
-    # mpl.rcParams['axes.titleweight'] = 'bold'
+    mpl.rcParams['axes.titleweight'] = 'bold'
     mpl.rcParams['axes.titlesize'] = 16
     mpl.rcParams['font.size'] = 14
     mpl.rcParams['axes.labelsize'] = 14
@@ -34,7 +36,7 @@ def set_style():
     mpl.rcParams['ytick.color'] = colors.almost_black
     mpl.rcParams['grid.color'] = colors.almost_black
     # I like my own color cycle based on one of the Tableu sets.
-    mpl.rcParams['axes.color_cycle'] = colors.color_cycle
+    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
 
 
 
@@ -179,15 +181,44 @@ def scatter(*args, **kwargs):
     return ax.scatter(*args, **kwargs)
 
 
+def _binning(data, bin_size):
+    """
+    Creates smarter bins for the histogram function.
+
+    The default binning often makes bins of very strange size, that don't
+    align well with integer values of the x-axis, making interpretation hard.
+    This uses the minimum and maximum of the data, along with the specified
+    bin size, to create bin boundaries that are integer multiples of the
+    bin size away from zero. This makes histogram bins look prettier, and
+    it helps when looking at them, especially something that is symmetric
+    about zero.
+
+    :param data: List of data that will be placed in the histogram.
+    :param bin_size: Width of bins along the x-axis.
+    :return: numpy array, where each value in the array is a bin boundary.
+    """
+
+    lower_multiples = min(data) // bin_size
+    upper_multiples = max(data) // bin_size
+
+    upper_multiples += 1  # to round up, rather than down
+
+    lower_lim = lower_multiples * bin_size
+    upper_lim = upper_multiples * bin_size + (bin_size / 2.0)
+    # to account for open interval
+
+    return np.arange(lower_lim, upper_lim, bin_size)
+
+
 def hist(*args, **kwargs):
     """
-    A better histogram function. Also supports relative frequency plots and
-    hatching better than the default matplotlib implementation.
+    A better histogram function. Also supports relative frequency plots, bin
+    size, and hatching better than the default matplotlib implementation.
 
     Everything is the same as the default matplotlib implementation, with the
     exception a few keyword parameters. `rel_freq` makes the histogram a
-    relative frequency plot, and `hatch` controls the hatching of the
-    bars.
+    relative frequency plot, `hatch` controls the hatching of the
+    bars, and `bin_size` controls the width of each bin.
 
     :param args: non-keyword arguments that will be passed on to the
                  plt.hist() function. These will typically be the list of
@@ -207,6 +238,11 @@ def hist(*args, **kwargs):
                     don't include this keyword, the bars will not have
                     hatching.
     :type hatch: str
+    :keyword bin_size: The width of the bins in the histogram. The bin
+                       boundaries will start at zero, and will be integer
+                       multiples of bin_size from there. Specify either this,
+                       or bins, but not both.
+    :type bin_size: float
     :keyword kwargs: additional controls that will be passed on through to the
                      plt.hist() function.
     :return: same output as plt.hist()
@@ -243,10 +279,11 @@ def hist(*args, **kwargs):
         data2 = np.random.normal(-2, 1, size=10000)
         data3 = np.random.normal(2, 1, size=10000)
         data4 = np.random.normal(6, 1, size=10000)
-        ppl.hist(data1, rel_freq=True)
-        ppl.hist(data2, rel_freq=True, histtype="step", linewidth=5)
-        ppl.hist(data3, rel_freq=True, histtype="stepfilled", hatch="o", alpha=0.8)
-        ppl.hist(data4, rel_freq=True, histtype="step", hatch="x", linewidth=4)
+        bin_size = 0.5
+        ppl.hist(data1, rel_freq=True, bin_size=bin_size)
+        ppl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", linewidth=5)
+        ppl.hist(data3, rel_freq=True, bin_size=bin_size, histtype="stepfilled", hatch="o", alpha=0.8)
+        ppl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", hatch="x", linewidth=4)
 
         ppl.add_labels(y_label="Relative Frequency")
 
@@ -291,6 +328,7 @@ def hist(*args, **kwargs):
             data += 1
     """
 
+    # TODO: Add documentatino for examples of bin_size
     ax, kwargs = _get_ax(**kwargs)
 
     # I like white as an edgecolor if we use bars.
@@ -315,6 +353,15 @@ def hist(*args, **kwargs):
 
     # get the hatch before passing the kwargs on
     hatch = kwargs.pop("hatch", None)
+
+    # if they didn't specify the binning, use our binning
+    if "bin_size" in kwargs and "bins" in kwargs:
+        raise ValueError("The `bins` and `bin_size` keywords cannot be "
+                         "used together. Use `bins` if you want to "
+                         "pass your own bins, or use `bin_size` to "
+                         "have the code determine its own bins. ")
+    if "bin_size" in kwargs and "bins" not in kwargs:
+        kwargs.setdefault("bins", _binning(args[0], kwargs.pop("bin_size")))
 
     # plot the histogram, and keep the results
     hist_results = ax.hist(*args, **kwargs)
