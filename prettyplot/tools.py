@@ -164,8 +164,7 @@ def scatter(*args, **kwargs):
     # get the color, if it hasn't already been set.
     if 'color' not in kwargs and 'c' not in kwargs:
         # get the default color cycle, and get the next color.
-        color_cycle = ax._get_lines.color_cycle
-        kwargs['c'] = next(color_cycle)
+        kwargs['c'] = ax._get_lines.prop_cycler.next()['color']
 
     # set other parameters, if they haven't been set already
     # I use setdefault to do that, which puts the values in if they don't
