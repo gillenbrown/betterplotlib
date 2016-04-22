@@ -6,7 +6,12 @@ import numpy as np
 import colors
 
 
-def set_style():
+def default_style():
+    """
+    Sets matplotlib parameters to make default plots prettier without effort.
+
+    :return: None
+    """
 
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
@@ -38,6 +43,88 @@ def set_style():
     # I like my own color cycle based on one of the Tableu sets.
     mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
 
+def presentation_style():
+    """
+    Same as default_style, but with larger text.
+
+    Useful for powerpoint presentations where large font is nice.
+
+    :return: None
+    """
+
+    mpl.rcParams['legend.scatterpoints'] = 1
+    mpl.rcParams['savefig.format'] = 'pdf'
+    mpl.rcParams['axes.formatter.useoffset'] = False
+    # mpl.rcParams['figure.dpi'] = 200
+    mpl.rcParams['figure.figsize'] = [10, 7]
+
+    # Font options
+    mpl.rcParams['font.family'] = 'sans-serif'
+    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
+    mpl.rcParams['font.weight'] = 'bold'
+    mpl.rcParams['axes.labelweight'] = 'bold'
+    mpl.rcParams['axes.titleweight'] = 'bold'
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['font.size'] = 18
+    mpl.rcParams['axes.labelsize'] = 18
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16
+    mpl.rcParams['legend.fontsize'] = 17
+
+    # colors
+    mpl.rcParams['patch.edgecolor'] = colors.almost_black
+    mpl.rcParams['text.color'] = colors.almost_black
+    mpl.rcParams['axes.edgecolor'] = colors.almost_black
+    mpl.rcParams['axes.labelcolor'] = colors.almost_black
+    mpl.rcParams['xtick.color'] = colors.almost_black
+    mpl.rcParams['ytick.color'] = colors.almost_black
+    mpl.rcParams['grid.color'] = colors.almost_black
+    # I like my own color cycle based on one of the Tableu sets.
+    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+
+
+def white_style():
+    """
+    Sets a style good for presenting on dark backgrounds.
+
+    This was designed to use for creating plots that will be used in
+    PowerPoint slides with a dark background. The text is larger to make
+    more viewable plots, as well.
+
+    :return: None
+    """
+
+    mpl.rcParams['legend.scatterpoints'] = 1
+    mpl.rcParams['savefig.format'] = 'pdf'
+    mpl.rcParams['axes.formatter.useoffset'] = False
+    # mpl.rcParams['figure.dpi'] = 200
+    mpl.rcParams['figure.figsize'] = [10, 7]
+
+    # Font options
+    mpl.rcParams['font.family'] = 'sans-serif'
+    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
+    mpl.rcParams['font.weight'] = 'bold'
+    mpl.rcParams['axes.labelweight'] = 'bold'
+    mpl.rcParams['axes.titleweight'] = 'bold'
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['font.size'] = 18
+    mpl.rcParams['axes.labelsize'] = 18
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16
+    mpl.rcParams['legend.fontsize'] = 17
+
+    # colors
+    mpl.rcParams['patch.edgecolor'] = "w"
+    mpl.rcParams['text.color'] = "w"
+    mpl.rcParams['axes.edgecolor'] = "w"
+    mpl.rcParams['axes.labelcolor'] = "w"
+    mpl.rcParams['xtick.color'] = "w"
+    mpl.rcParams['ytick.color'] = "w"
+    mpl.rcParams['grid.color'] = "w"
+    # I like my own color cycle based on one of the Tableu sets, but with
+    # added colors in front that look better on dark backgrounds
+    mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
+                                             colors.color_cycle)
 
 
 def _get_ax(**kwargs):
@@ -52,7 +139,7 @@ def _get_ax(**kwargs):
     to get an axis.
 
     :param kwargs: keyword arguments from whatever function call this is used
-                   if.
+                   in.
     :return: the axes object. If `ax` is in kwargs, they will be changed
              (since `ax` will be removed), but it is modified in place, and
              any changes will be reflected in the original one too.
@@ -486,6 +573,7 @@ def remove_ticks(ticks_to_remove, ax=None):
     # If they want to remove all spines, turn that into workable infomation
     ticks_to_remove = set(ticks_to_remove)  # to remove duplicates
     if "all" in ticks_to_remove:
+        # have to do weirdness since its a set
         ticks_to_remove.remove("all")
         for tick in ["left", "right", "top", "bottom"]:
             ticks_to_remove.add(tick)
@@ -509,7 +597,54 @@ def remove_ticks(ticks_to_remove, ax=None):
     return ax
 
 
-def legend(facecolor="light", *args, **kwargs):
+def remove_labels(labels_to_remove, ax=None):
+    """
+    Removes the laels and tick marks from an axis border.
+
+    This is useful for making conceptual plots where the numbers on the axis
+    don't matter.
+
+    :param labels_to_remove: location of labels to remove. Pass in a list,
+                             and choose from: "all, "top", 'bottom",
+                             "left", or "right".
+    :type labels_to_remove: list
+    :param ax: Axes object to remove ticks from. This can be ignored.
+    :type ax: matplotlib.axes
+    :return: axis object with the labels removed.
+    """
+
+    # TODO: create example
+    if ax is None:
+        ax, kwargs = _get_ax()
+
+    # If they want to remove all labels, turn that into workable infomation
+    labels_to_remove = set(labels_to_remove)  # to remove duplicates
+    if "all" in labels_to_remove:
+        # have to do weirdness since its a set
+        labels_to_remove.remove("all")
+        for tick in ["left", "right", "top", "bottom"]:
+            labels_to_remove.add(tick)
+
+    # create a dictionary to record all the places the labels should be
+    places = {"top": True,
+              "bottom": True,
+              "left": True,
+              "right": True}
+
+    for label in labels_to_remove:
+        try:
+            places[label] = False
+        except KeyError:
+            raise ValueError("You can only remove the `top`, `bottom`, "
+                             "`left`, and `right` labels. ")
+
+    ax.tick_params(labeltop=places["top"], labelbottom=places["bottom"],
+                   labelleft=places["left"], labelright=places["right"])
+
+    return ax
+
+
+def legend(facecolor="None", *args, **kwargs):
     """Create a nice looking legend.
 
     Works by calling the ax.legend() function with the given args and kwargs.
@@ -520,7 +655,8 @@ def legend(facecolor="light", *args, **kwargs):
                       default options: "light" and "dark". Light will be white,
                       and dark will be the same color as the dark ax. If any
                       other color is passed in, then that color will be the one
-                      used.
+                      used. If nothing is passed in, the legend will be
+                      transparent.
     :type facecolor: str
     :param args: non-keyword arguments passed on to the ax.legend() fuction.
     :keyword ax: Axes object to plot on.
@@ -529,7 +665,7 @@ def legend(facecolor="light", *args, **kwargs):
                    function. This will be things like loc, and title, etc.
     :return: legend object returned by the ax.legend() function.
 
-    The default legend is a light background with no border, like so.
+    The default legend is a transparent background with no border, like so.
 
     .. plot::
         :include-source:
@@ -620,7 +756,9 @@ def legend(facecolor="light", *args, **kwargs):
         facecolor = "#FFFFFF"
     elif facecolor == "dark":
         facecolor = '#E5E5E5'
-    # otherwise, leave facecolor alone
+    # otherwise, make facecolor transparent
+    else:
+        facecolor = "None"
 
     # push the legend a little farther away from the edge.
     kwargs.setdefault('borderaxespad', 0.75)
@@ -915,3 +1053,28 @@ def easy_add_text(text, location, **kwargs):
 
     # then add the text.
     return add_text(x_value, y_value, text, coords="axes", **kwargs)
+
+
+def savefig(fig, *args, **kwargs):
+    """
+    Saves the figure with some sugar to make it better.
+
+    Automatically saves as pdf if not specified. If it is specified to save
+    as anything other than a pdf, it is saved with high dpi. The figure
+    is also saved with a transparent background.
+
+    :param fig: Figure to save
+    :param kwargs: additional parameters that will be passed on to the
+                   fig.savefig() function.
+    :return: None, but saves the plot.
+    """
+
+    kwargs.setdefault("format", "pdf")
+    if "format" in kwargs and kwargs["format"] != "pdf":
+        kwargs.setdefault("dpi", 300)
+
+    kwargs.setdefault("transparent", True)
+
+    fig.savefig(*args, **kwargs)
+
+
