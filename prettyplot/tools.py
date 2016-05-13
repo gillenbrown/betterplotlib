@@ -1060,8 +1060,7 @@ def savefig(fig, *args, **kwargs):
     Saves the figure with some sugar to make it better.
 
     Automatically saves as pdf if not specified. If it is specified to save
-    as anything other than a pdf, it is saved with high dpi. The figure
-    is also saved with a transparent background.
+    as anything other than a pdf, it is saved with high dpi.
 
     :param fig: Figure to save
     :param kwargs: additional parameters that will be passed on to the
@@ -1072,8 +1071,6 @@ def savefig(fig, *args, **kwargs):
     kwargs.setdefault("format", "pdf")
     if "format" in kwargs and kwargs["format"] != "pdf":
         kwargs.setdefault("dpi", 300)
-
-    kwargs.setdefault("transparent", True)
 
     fig.savefig(*args, **kwargs)
 
