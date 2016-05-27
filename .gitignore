@@ -6,4 +6,8 @@
 
 *.pyc
 
-docs/_build
+docs/_*
+docs/Makefile
+dist
+betterplotlib.egg-info
+build
