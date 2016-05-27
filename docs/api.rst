@@ -1,6 +1,6 @@
 .. _api_ref:
 
-.. currentmodule:: prettyplot
+.. currentmodule:: betterplotlib
 
 API reference
 =============

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# prettyplot documentation build configuration file, created by
+# betterplotlib documentation build configuration file, created by
 # sphinx-quickstart on Fri Aug 14 06:53:50 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -66,7 +66,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'prettyplot'
+project = u'betterplotlib'
 copyright = u'2015, Gillen Brown'
 author = u'Gillen Brown'
 
@@ -220,7 +220,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'prettyplotdoc'
+htmlhelp_basename = 'betterplotlibdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -242,7 +242,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'prettyplot.tex', u'prettyplot Documentation',
+  (master_doc, 'betterplotlib.tex', u'betterplotlib Documentation',
    u'Gillen Brown', 'manual'),
 ]
 
@@ -272,7 +272,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'prettyplot', u'prettyplot Documentation',
+    (master_doc, 'betterplotlib', u'betterplotlib Documentation',
      [author], 1)
 ]
 
@@ -286,8 +286,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'prettyplot', u'prettyplot Documentation',
-   author, 'prettyplot', 'One line description of project.',
+  (master_doc, 'betterplotlib', u'betterplotlib Documentation',
+   author, 'betterplotlib', 'One line description of project.',
    'Miscellaneous'),
 ]
 

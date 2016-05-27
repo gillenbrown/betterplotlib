@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from cycler import cycler
 import numpy as np
 
-import colors
+from . import colors
 
 
 def default_style():
@@ -176,13 +176,13 @@ def make_ax_dark(ax=None, minor_ticks=False):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
 
-        ppl.set_style()
+        bpl.default_style()
 
         fig, (ax0, ax1) = plt.subplots(figsize=[12, 5], ncols=2)
-        ppl.make_ax_dark(ax1)
+        bpl.make_ax_dark(ax1)
         ax0.set_title("Regular")
         ax1.set_title("Dark")
 
@@ -229,10 +229,10 @@ def scatter(*args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         x1 = np.random.normal(0, scale=0.5, size=500)
         y1 = np.random.normal(0, scale=0.5, size=500)
@@ -241,9 +241,9 @@ def scatter(*args, **kwargs):
         x3 = np.random.normal(1, scale=0.5, size=500)
         y3 = np.random.normal(1, scale=0.5, size=500)
 
-        ppl.scatter(x1, y1)
-        ppl.scatter(x2, y2)
-        ppl.scatter(x3, y3)
+        bpl.scatter(x1, y1)
+        bpl.scatter(x2, y2)
+        bpl.scatter(x3, y3)
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -340,38 +340,38 @@ def hist(*args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         data = np.random.normal(0, 2, 10000)
 
-        ppl.hist(data)
+        bpl.hist(data)
 
     There are also plenty of options that make other histograms look nice too.
 
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         data1 = np.random.normal(-6, 1, size=10000)
         data2 = np.random.normal(-2, 1, size=10000)
         data3 = np.random.normal(2, 1, size=10000)
         data4 = np.random.normal(6, 1, size=10000)
         bin_size = 0.5
-        ppl.hist(data1, rel_freq=True, bin_size=bin_size)
-        ppl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", linewidth=5)
-        ppl.hist(data3, rel_freq=True, bin_size=bin_size, histtype="stepfilled", hatch="o", alpha=0.8)
-        ppl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", hatch="x", linewidth=4)
+        bpl.hist(data1, rel_freq=True, bin_size=bin_size)
+        bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", linewidth=5)
+        bpl.hist(data3, rel_freq=True, bin_size=bin_size, histtype="stepfilled", hatch="o", alpha=0.8)
+        bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", hatch="x", linewidth=4)
 
-        ppl.add_labels(y_label="Relative Frequency")
+        bpl.add_labels(y_label="Relative Frequency")
 
     Here is a demo of all the hatch styles. Repeat each symbol more for a
     denser pattern. I would only use hatching when using `histtype` as either
@@ -381,17 +381,17 @@ def hist(*args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         data = np.random.uniform(0, 0.9, 10000)
 
         for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
             bins = [min(data), max(data)]
-            ppl.hist(data, histtype="stepfilled", hatch=hatch, bins=bins)
+            bpl.hist(data, histtype="stepfilled", hatch=hatch, bins=bins)
             data += 1
 
     If you specify histtype="step", the hatching is the same color as the
@@ -400,17 +400,17 @@ def hist(*args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         data = np.random.uniform(0, 0.9, 10000)
 
         for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
             bins = [min(data), max(data)]
-            ppl.hist(data, histtype="step", hatch=hatch, bins=bins)
+            bpl.hist(data, histtype="step", hatch=hatch, bins=bins)
             data += 1
     """
 
@@ -493,18 +493,18 @@ def remove_spines(spines_to_remove, ax=None):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
 
-        ppl.set_style()
+        bpl.default_style()
 
         fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=[10, 5])
 
         ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
 
-        ppl.remove_spines(["top", "right"], ax=ax0)
-        ppl.remove_spines(["all"], ax=ax1)
+        bpl.remove_spines(["top", "right"], ax=ax0)
+        bpl.remove_spines(["all"], ax=ax1)
 
         ax0.set_title("removed top/right spines")
         ax1.set_title("removed all spines")
@@ -550,18 +550,18 @@ def remove_ticks(ticks_to_remove, ax=None):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
 
-        ppl.set_style()
+        bpl.default_style()
 
         fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=[10, 5])
 
         ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
 
-        ppl.remove_ticks(["top", "right"], ax=ax0)
-        ppl.remove_ticks(["all"], ax=ax1)
+        bpl.remove_ticks(["top", "right"], ax=ax0)
+        bpl.remove_ticks(["all"], ax=ax1)
 
         ax0.set_title("removed top/right ticks")
         ax1.set_title("removed all ticks")
@@ -670,37 +670,37 @@ def legend(facecolor="None", *args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         x = np.arange(0, 5, 0.1)
 
         plt.plot(x, x, label="x")
         plt.plot(x, 2*x, label="2x")
         plt.plot(x, 3*x, label="3x")
-        ppl.legend()
+        bpl.legend()
 
     The dark legend is designed for the dark axes in mind.
 
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         x = np.arange(0, 5, 0.1)
 
         plt.plot(x, x, label="x")
         plt.plot(x, 2*x, label="2x")
         plt.plot(x, 3*x, label="3x")
-        ppl.make_ax_dark()
-        ppl.legend("dark")
+        bpl.make_ax_dark()
+        bpl.legend("dark")
 
     That said, the other combinations look good too. I especially like the
     light legend on the dark background.
@@ -708,11 +708,11 @@ def legend(facecolor="None", *args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         x = np.arange(0, 5, 0.1)
 
@@ -725,9 +725,9 @@ def legend(facecolor="None", *args, **kwargs):
 
         ax0, ax1 = axs
 
-        ppl.legend("dark", ax=ax0)
-        ppl.make_ax_dark(ax1)
-        ppl.legend("light", ax=ax1)
+        bpl.legend("dark", ax=ax0)
+        bpl.make_ax_dark(ax1)
+        bpl.legend("light", ax=ax1)
 
 
     You can still pass in any kwargs to the legend function you want.
@@ -735,18 +735,18 @@ def legend(facecolor="None", *args, **kwargs):
     .. plot::
         :include-source:
 
-        import prettyplot as ppl
+        import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
 
-        ppl.set_style()
+        bpl.default_style()
 
         x = np.arange(0, 5, 0.1)
 
         plt.plot(x, x, label="x")
         plt.plot(x, 2*x, label="2x")
         plt.plot(x, 3*x, label="3x")
-        ppl.legend(fontsize=20, loc=6, title="Title")
+        bpl.legend(fontsize=20, loc=6, title="Title")
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -962,37 +962,37 @@ def easy_add_text(text, location, **kwargs):
         :include-source:
 
         import matplotlib.pyplot as plt
-        import prettyplot as ppl
+        import betterplotlib as bpl
 
-        ppl.set_style()
+        bpl.default_style()
 
-        ppl.easy_add_text("1", 1)
-        ppl.easy_add_text("2", 2)
-        ppl.easy_add_text("3", 3)
-        ppl.easy_add_text("4", 4)
-        ppl.easy_add_text("5", 5)
-        ppl.easy_add_text("6", 6)
-        ppl.easy_add_text("7", 7)
-        ppl.easy_add_text("8", 8)
-        ppl.easy_add_text("9", 9)
+        bpl.easy_add_text("1", 1)
+        bpl.easy_add_text("2", 2)
+        bpl.easy_add_text("3", 3)
+        bpl.easy_add_text("4", 4)
+        bpl.easy_add_text("5", 5)
+        bpl.easy_add_text("6", 6)
+        bpl.easy_add_text("7", 7)
+        bpl.easy_add_text("8", 8)
+        bpl.easy_add_text("9", 9)
 
     .. plot::
         :include-source:
 
         import matplotlib.pyplot as plt
-        import prettyplot as ppl
+        import betterplotlib as bpl
 
-        ppl.set_style()
+        bpl.default_style()
 
-        ppl.easy_add_text("upper left", "upper left")
-        ppl.easy_add_text("upper center", "upper center")
-        ppl.easy_add_text("upper right", "upper right")
-        ppl.easy_add_text("center left", "center left")
-        ppl.easy_add_text("center", "center")
-        ppl.easy_add_text("center right", "center right")
-        ppl.easy_add_text("lower left", "lower left")
-        ppl.easy_add_text("lower center", "lower center")
-        ppl.easy_add_text("lower right", "lower right")
+        bpl.easy_add_text("upper left", "upper left")
+        bpl.easy_add_text("upper center", "upper center")
+        bpl.easy_add_text("upper right", "upper right")
+        bpl.easy_add_text("center left", "center left")
+        bpl.easy_add_text("center", "center")
+        bpl.easy_add_text("center right", "center right")
+        bpl.easy_add_text("lower left", "lower left")
+        bpl.easy_add_text("lower center", "lower center")
+        bpl.easy_add_text("lower right", "lower right")
 
 
     """
