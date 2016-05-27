@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to betterplotlib's documentation!
-======================================
+===========================================
 
 betterplotlib is a Python library that is designed to make plotting with Matplotlib easier, and results in prettier plots.
 

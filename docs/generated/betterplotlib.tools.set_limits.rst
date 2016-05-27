@@ -1,5 +1,5 @@
 betterplotlib.tools.set_limits
-===========================
+===============================
 
 .. currentmodule:: betterplotlib.tools
 

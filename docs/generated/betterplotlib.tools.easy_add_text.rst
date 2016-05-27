@@ -1,5 +1,5 @@
 betterplotlib.tools.easy_add_text
-==============================
+==================================
 
 .. currentmodule:: betterplotlib.tools
 

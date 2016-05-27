@@ -1,5 +1,5 @@
 betterplotlib.tools.add_labels
-===========================
+==================================
 
 .. currentmodule:: betterplotlib.tools
 

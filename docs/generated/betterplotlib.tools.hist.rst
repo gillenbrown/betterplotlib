@@ -1,5 +1,5 @@
 betterplotlib.tools.hist
-=====================
+==================================
 
 .. currentmodule:: betterplotlib.tools
 

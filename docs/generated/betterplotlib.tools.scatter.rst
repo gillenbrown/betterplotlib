@@ -1,5 +1,5 @@
 betterplotlib.tools.scatter
-========================
+===============================
 
 .. currentmodule:: betterplotlib.tools
 
