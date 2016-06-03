@@ -204,6 +204,33 @@ def make_ax_dark(ax=None, minor_ticks=False):
 
     return ax
 
+def _alpha(n, scale=2000):
+    """
+    Calculate a rough guess for the best alpha value for a default scatterplot.
+
+    This is calculated with the equation 
+
+    .. math::
+        \\alpha = \\frac{0.99}{1 + \\frac{n}{\\text{scale}}}
+
+    This is done so that is ranges from nearly 1 for small values of n to 0.01
+    for very large datasets. Note that very large datasets should probably use 
+    a contour plot, but this is avaiable.
+
+    :param n: Length of the dataset that will be plotted in the scatterplot.
+    :type n: int
+    :param scale: Parameter in the function that determines the alpha value.
+                  Defaults to 2000. The larger the value, the more opaque 
+                  points will be for a given n.
+    :type scale: float
+    :return: Guess at an alpha value for a scatterplot.
+    :rtype: float
+
+    """
+
+    return 0.99 / (1.0 + (n / float(scale)))  # turn scale into a float to make
+                                              # sure it still works in Python 2
+
 
 def scatter(*args, **kwargs):
     """
@@ -212,6 +239,9 @@ def scatter(*args, **kwargs):
     The call works just like a call to plt.scatter. It will set a few default
     parameters, but anything you pass in will override the default parameters.
     This function also uses the color cycle, unlike the default scatter.
+
+    It also automatically determines a guess at the proper alpha (transparency)
+    of the points in the plot.
 
     NOTE: the `c` parameter tells just the facecolor of the points, while
     `color` specifies the whole color of the point, including the edge line
@@ -257,7 +287,9 @@ def scatter(*args, **kwargs):
     # I use setdefault to do that, which puts the values in if they don't
     # already exist, but won't overwrite anything.
     kwargs.setdefault('linewidth', 0.25)
-    kwargs.setdefault('alpha', 0.5)
+    # use the function we defined above to get the proper alpha value.
+    kwargs.setdefault('alpha', _alpha(len(args[0])))
+
     # edgecolor is a weird case, since it shouldn't be set if the user
     # specifies 'color', since that refers to the whole point, not just the
     # color of the point. It includes the edge color.
@@ -265,6 +297,52 @@ def scatter(*args, **kwargs):
         kwargs.setdefault('edgecolor', colors.almost_black)
 
     return ax.scatter(*args, **kwargs)
+
+
+def _bin_width(data):
+    """
+    Gets a reasonable bin size, rounded so that it lines up with plot ticks.
+
+    This stats by using the Freedman Diaconis Algorithm, which is defined by
+
+    .. math:
+        h = 2 * IQR * n^{-1/3}
+
+    where IQR is the interquartile range, n is the number of data poings, and
+    h is the bin size.
+
+    This bin size is then rounded to the one closest to it among the 
+    possibilites, which are of the format [1, 2, 4, 5, 10] * 10^n, where n 
+    is some integer. This has the effect of making the bin edges line up with
+    the ticks that are automatically added to matplotlib plots. This makes 
+    the resulting histograms looks nicer, and still have reasonable bin sizes.
+
+    :param data: Raw data that will be used to create the histogram.
+    :type data: list
+    :return: Appproximately correct bin size.
+    :rtype: float
+    """
+
+    # To use the Freedman Diaconis rule, we need to calculate the inter 
+    # quartile range, which is the distance between the 25th and 75th 
+    # percentiles.
+    iqr = np.percentile(data, 75) - np.percentile(data, 25)
+    # then we can use the rule.
+    fd_bin_width = 2 * iqr * len(data) **(-1.0/3.0)
+
+    # we then want to have it choose among the best of certain bins. We first
+    # define the bins we want it to be able to choose. We make them all 
+    # multiples of 10^n, where n is the rounded log of the bin width. This 
+    # makes them be in the same order of magnitude as the original bin size.
+    exponent = np.floor(np.log10(fd_bin_width))
+    possible_bins = [x * 10**exponent for x in [1, 2, 4, 5, 10]]
+
+    # we then figure out which one is closest to the original
+    bin_diffs = [abs(fd_bin_width - pos_width) for pos_width in possible_bins]
+    best_idx = bin_diffs.index(min(bin_diffs))
+    # the indices are the same between the diffs and originals, so we know 
+    # which index to get.
+    return possible_bins[best_idx]
 
 
 def _binning(data, bin_size):
@@ -446,8 +524,8 @@ def hist(*args, **kwargs):
                          "used together. Use `bins` if you want to "
                          "pass your own bins, or use `bin_size` to "
                          "have the code determine its own bins. ")
-    if "bin_size" in kwargs and "bins" not in kwargs:
-        kwargs.setdefault("bins", _binning(args[0], kwargs.pop("bin_size")))
+    kwargs.setdefault("bin_size", _bin_width(args[0]))
+    kwargs.setdefault("bins", _binning(args[0], kwargs.pop("bin_size")))
 
     # plot the histogram, and keep the results
     hist_results = ax.hist(*args, **kwargs)
