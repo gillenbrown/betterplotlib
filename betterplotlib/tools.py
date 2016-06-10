@@ -6,12 +6,7 @@ import numpy as np
 from . import colors
 
 
-def default_style():
-    """
-    Sets matplotlib parameters to make default plots prettier without effort.
-
-    :return: None
-    """
+def _common_style():
 
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
@@ -25,6 +20,21 @@ def default_style():
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
+
+    # I like my own color cycle based on one of the Tableu sets.
+    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+    # change the colormap while I'm at it.
+    mpl.rcParams['image.cmap'] = 'viridis'
+
+def default_style():
+    """
+    Sets matplotlib parameters to make default plots prettier without effort.
+
+    :return: None
+    """
+    _common_style()
+    
+    # Font options
     mpl.rcParams['axes.titlesize'] = 16
     mpl.rcParams['font.size'] = 14
     mpl.rcParams['axes.labelsize'] = 14
@@ -40,8 +50,7 @@ def default_style():
     mpl.rcParams['xtick.color'] = colors.almost_black
     mpl.rcParams['ytick.color'] = colors.almost_black
     mpl.rcParams['grid.color'] = colors.almost_black
-    # I like my own color cycle based on one of the Tableu sets.
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+    
 
 def presentation_style():
     """
@@ -52,18 +61,8 @@ def presentation_style():
     :return: None
     """
 
-    mpl.rcParams['legend.scatterpoints'] = 1
-    mpl.rcParams['savefig.format'] = 'pdf'
-    mpl.rcParams['axes.formatter.useoffset'] = False
-    # mpl.rcParams['figure.dpi'] = 200
-    mpl.rcParams['figure.figsize'] = [10, 7]
+    _common_style()
 
-    # Font options
-    mpl.rcParams['font.family'] = 'sans-serif'
-    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
-    mpl.rcParams['font.weight'] = 'bold'
-    mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
     mpl.rcParams['axes.titlesize'] = 20
     mpl.rcParams['font.size'] = 18
     mpl.rcParams['axes.labelsize'] = 18
@@ -79,8 +78,6 @@ def presentation_style():
     mpl.rcParams['xtick.color'] = colors.almost_black
     mpl.rcParams['ytick.color'] = colors.almost_black
     mpl.rcParams['grid.color'] = colors.almost_black
-    # I like my own color cycle based on one of the Tableu sets.
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
 
 
 def white_style():
@@ -93,19 +90,8 @@ def white_style():
 
     :return: None
     """
+    _common_style()
 
-    mpl.rcParams['legend.scatterpoints'] = 1
-    mpl.rcParams['savefig.format'] = 'pdf'
-    mpl.rcParams['axes.formatter.useoffset'] = False
-    # mpl.rcParams['figure.dpi'] = 200
-    mpl.rcParams['figure.figsize'] = [10, 7]
-
-    # Font options
-    mpl.rcParams['font.family'] = 'sans-serif'
-    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
-    mpl.rcParams['font.weight'] = 'bold'
-    mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
     mpl.rcParams['axes.titlesize'] = 20
     mpl.rcParams['font.size'] = 18
     mpl.rcParams['axes.labelsize'] = 18
@@ -298,6 +284,9 @@ def scatter(*args, **kwargs):
 
     return ax.scatter(*args, **kwargs)
 
+
+def _freedman_diaconis(data):
+    pass
 
 def _bin_width(data):
     """
