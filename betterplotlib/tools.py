@@ -1276,6 +1276,14 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
         fig, axs = plt.subplots(nrows=2, ncols=2)
         [ax1, ax2], [ax3, ax4] = axs
+
+        xs = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(0, 1, 100000)])
+        ys = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(3, 1, 100000)])
+                             
         bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax1)
 
         bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="modified_greys", 
@@ -1314,7 +1322,7 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
     
     # then we can set a bunch of default parameters for the contours
     contour_kwargs.setdefault("linewidths", 2)
-    contour_kwargs["zorder"] = 2
+    contour_kwargs["zorder"] = 3
     if "cmap" not in contour_kwargs  and "colors" not in contour_kwargs:
         contour_kwargs.setdefault("colors", colors.almost_black)
 
@@ -1327,7 +1335,7 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
     
     # we can then go ahead and plot the filled contours, then the contour lines
     ax.contourf(x_centers, y_centers, hist, levels=levels, cmap=fill_cmap, 
-                zorder=1)
+                zorder=2)
     contours = ax.contour(x_centers, y_centers, hist, **contour_kwargs)
 
     # we saved the output from the contour, since it has information about the
@@ -1344,7 +1352,7 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
     # now we can do our scatterplot.
     scatter_kwargs.setdefault("alpha", 1.0)
-    scatter_kwargs["zorder"] = 0
+    scatter_kwargs["zorder"] = 1
     scatter(outside_xs, outside_ys, ax=ax, **scatter_kwargs)
 
     return contours
