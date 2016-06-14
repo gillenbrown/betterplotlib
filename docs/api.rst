@@ -15,8 +15,10 @@ Axes
     tools.make_ax_dark
     tools.remove_spines
     tools.remove_ticks
+    tools.remove_labels
     tools.equal_scale
     tools.set_limits
+    tools.savefig
 
 Plotting
 -------------------
@@ -25,6 +27,7 @@ Plotting
 
     tools.scatter
     tools.hist
+    tools.contour_scatter
 
 
 Labels and Text

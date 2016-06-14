@@ -1,6 +1,8 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from cycler import cycler
+from matplotlib import colors as mpl_colors
+from matplotlib import path
 import numpy as np
 
 from . import colors
@@ -286,12 +288,7 @@ def scatter(*args, **kwargs):
 
 
 def _freedman_diaconis(data):
-    pass
-
-def _bin_width(data):
     """
-    Gets a reasonable bin size, rounded so that it lines up with plot ticks.
-
     This stats by using the Freedman Diaconis Algorithm, which is defined by
 
     .. math:
@@ -299,8 +296,20 @@ def _bin_width(data):
 
     where IQR is the interquartile range, n is the number of data poings, and
     h is the bin size.
+    """
+    # To use the Freedman Diaconis rule, we need to calculate the inter 
+    # quartile range, which is the distance between the 25th and 75th 
+    # percentiles.
+    iqr = np.percentile(data, 75) - np.percentile(data, 25)
+    # then we can use the rule.
+    return 2 * iqr * len(data) **(-1.0/3.0)
 
-    This bin size is then rounded to the one closest to it among the 
+def _rounded_bin_width(data):
+    """
+    Gets a reasonable bin size, rounded so that it lines up with plot ticks.
+
+    This starts by getting the bin size recommended by the Freedman Diaconis 
+    algorithm. This bin size is then rounded to the one closest to it among the 
     possibilites, which are of the format [1, 2, 4, 5, 10] * 10^n, where n 
     is some integer. This has the effect of making the bin edges line up with
     the ticks that are automatically added to matplotlib plots. This makes 
@@ -311,13 +320,7 @@ def _bin_width(data):
     :return: Appproximately correct bin size.
     :rtype: float
     """
-
-    # To use the Freedman Diaconis rule, we need to calculate the inter 
-    # quartile range, which is the distance between the 25th and 75th 
-    # percentiles.
-    iqr = np.percentile(data, 75) - np.percentile(data, 25)
-    # then we can use the rule.
-    fd_bin_width = 2 * iqr * len(data) **(-1.0/3.0)
+    fd_bin_width = _freedman_diaconis(data)
 
     # we then want to have it choose among the best of certain bins. We first
     # define the bins we want it to be able to choose. We make them all 
@@ -513,7 +516,7 @@ def hist(*args, **kwargs):
                          "used together. Use `bins` if you want to "
                          "pass your own bins, or use `bin_size` to "
                          "have the code determine its own bins. ")
-    kwargs.setdefault("bin_size", _bin_width(args[0]))
+    kwargs.setdefault("bin_size", _rounded_bin_width(args[0]))
     kwargs.setdefault("bins", _binning(args[0], kwargs.pop("bin_size")))
 
     # plot the histogram, and keep the results
@@ -1140,5 +1143,210 @@ def savefig(fig, *args, **kwargs):
         kwargs.setdefault("dpi", 300)
 
     fig.savefig(*args, **kwargs)
+
+def _centers(edges):
+    """
+
+    """
+    centers = []
+    for left_edge_idx in range(len(edges) - 1):
+        centers.append((edges[left_edge_idx] + edges[left_edge_idx + 1]) / 2.0)
+    return centers
+
+def _make_density_contours(xs, ys, bins=None, bin_size=None):
+    if bins is not None and bin_size is not None:
+        raise ValueError("The `bins` and `bin_size` keywords cannot be "
+                         "used together. Use `bins` if you want to "
+                         "pass your own bins, or use `bin_size` to "
+                         "have the code determine its own bins. ")
+    elif (bin_size is not None) or (bin_size is None and bins is None):
+        if bin_size is None:
+            x_bin_size = _freedman_diaconis(xs)
+            y_bin_size = _freedman_diaconis(ys)
+        else:
+            x_bin_size = bin_size
+            y_bin_size = bin_size
+        x_bins = _binning(xs, x_bin_size)
+        y_bins = _binning(xs, y_bin_size)
+        bins = [x_bins, y_bins]
+        hist, x_edges, y_edges = np.histogram2d(xs, ys, bins) 
+    elif bins is not None:
+        hist, x_edges, y_edges = np.histogram2d(xs, ys, bins)
+
+    x_centers = _centers(x_edges)
+    y_centers = _centers(y_edges)
+    
+    return x_centers, y_centers, hist.transpose()
+
+def density_contour(xs, ys, bins=None, bin_size=None, **kwargs):
+    
+    x_centers, y_centers, hist = _make_density_contours(xs, ys, bins, bin_size)
+    
+    kwargs.setdefault("linewidths", 2)
+    if "cmap" not in kwargs:
+        kwargs.setdefault("colors", colors.almost_black)
+    
+    plt.contour(x_centers, y_centers, hist, **kwargs)
+    
+def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None, 
+                    min_level=5, num_contours=7, scatter_kwargs=dict(),
+                    contour_kwargs=dict(), ax=None):
+    """
+    Create a contour plot with scatter points in the sparse regions.
+
+    When a dataset is large, plotting a scatterplot is often really hard to 
+    understand, due to many points overlapping and the high density of points
+    overall. A contour or hexbin plot solves many of these problems, but these
+    still have the disadvantage of making outliers less obvious. A simple 
+    solution is to plot contours in the dense regions, while plotting
+    individual points where the density is low. That is what this function does.
+
+    Here's how this works under the hood. Skip this paragraph if you don't 
+    care; it won't affect how you use this. This function uses the numpy 
+    2D histogram function to create an array representing the density in each
+    region. If no binning info is specified by the user, the Freedman-Diaconis
+    algorithm is used in both dimensions to find the ideal bin size for the 
+    data. First, an opaque filled contour is plotted, then the contour lines
+    are put on top. Then the outermost contour is made into a matplotlib
+    path object, which lets us check which of the points are outside of this
+    contour. Only the points that are outside are plotted.
+
+    The parameters of this function are more complicated than others in 
+    betterplotlib and are somewhat arbitrary, so please read the info below 
+    carefully. The examples should make things more clear also.
+
+    :param xs: list of x values of your data
+    :type xs: list
+    :param ys: list of y values of your data
+    :type ys: list
+    :param fill_cmap: Colormap that will fill the opaque contours. Defaults to 
+                      "white", which is just a solid white fill. You can pass 
+                      any name of a matplotlib colormap, as well as some 
+                      options I have created. "background_grey" gives a solid 
+                      fill that is the same color as the make_ax_dark() 
+                      background. "modified_greys" is a colormap that starts 
+                      at the "background_grey" color, then transitions to black. 
+    :type fill_cmap: str
+    :param bin_size: Size of the bins used in the 2D histogram. This is kind
+                     of an arbitraty parameter. The code will guess a value for
+                     this if none is passed in, but this value isn't always 
+                     good. A smaller value gives noisier contours. A value that
+                     is too large will lead to "chunky" contours. Adjust this
+                     until your contours look good to your eye. That's the best
+                     way to pick a value for this parameter.
+    :type bin_size: float
+    :param min_level: This is another arbitrary parameter that determines how
+                      high the density of points needs to be before the outer
+                      contour is drawn. The higher the value, the more points
+                      will be outside the last contour. Again, adjust this 
+                      until it looks good to your eye. The default parameter 
+                      choice will generally be okay, though.
+    :type min_level: int
+    :param num_contours: Number of contour lines to be drawn between the lowest
+                         and highest density regions. Adjust this until the
+                         plot looks good to your eye.
+    :type num_contours: int
+    :param scatter_kwargs: This is a dictionary of keywords that will be passed
+                           on to the `bpl.scatter()` function. Note that this
+                           doesn't work like normal kwargs. You need to pass 
+                           in a dictionary. This is because we have to separate
+                           the kwargs that go to the scatter function from the
+                           ones that go to the contour function. 
+    :type scatter_kwargs: dict
+    :param contour_kwargs: This is a dictionary of keywords that will be passed
+                           on to the `plt.contour()` function. Note that this
+                           doesn't work like normal kwargs. You need to pass 
+                           in a dictionary. This is because we have to separate
+                           the kwargs that go to the scatter function from the
+                           ones that go to the contour function. 
+    :type contour_kwargs: dict
+    :param ax: Axes object the contour and scatter will be plotted on.
+    :return: The output of the `contour` call will be returned. This doesn't 
+             need to be saved, you can use it if you want. 
+
+    Examples
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        fig, axs = plt.subplots(nrows=2, ncols=2)
+        [ax1, ax2], [ax3, ax4] = axs
+        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax1)
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="modified_greys", 
+                            ax=ax2, contour_kwargs={"linewidths":0})
+        bpl.make_ax_dark(ax2)
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax3, 
+                            contour_kwargs={"cmap":"viridis"},
+                            scatter_kwargs={"s":10, "c":bpl.color_cycle[3]})
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax4, fill_cmap="viridis",
+                            contour_kwargs={"linewidths":1, "colors":"white"},
+                            scatter_kwargs={"s":50, "c":bpl.color_cycle[3], 
+                                            "alpha":0.3})
+
+    """
+    if ax is None:
+        ax, kwargs = _get_ax()
+    
+    # first get the density info we need to make contours
+    x_centers, y_centers, hist = _make_density_contours(xs, ys, 
+                                                        bin_size=bin_size)
+    
+    # then determine what our colormap for the fill will be
+    if fill_cmap == "white":
+        # colormap with one color: white
+        fill_cmap = mpl_colors.ListedColormap(colors="white", N=1)
+    elif fill_cmap == "background_grey":
+        # colormap with one color: the light grey used in backgrounds
+        fill_cmap = mpl_colors.ListedColormap(colors=colors.light_gray, N=1)
+    elif fill_cmap == "modified_greys":
+        # make one that transitions from light grey to black
+        these_colors = [colors.light_gray, "black"]
+        fill_cmap = mpl_colors.LinearSegmentedColormap.from_list("mod_gray", 
+                                                                 these_colors)
+    
+    # then we can set a bunch of default parameters for the contours
+    contour_kwargs.setdefault("linewidths", 2)
+    contour_kwargs["zorder"] = 2
+    if "cmap" not in contour_kwargs  and "colors" not in contour_kwargs:
+        contour_kwargs.setdefault("colors", colors.almost_black)
+
+    # We then want to find the correct heights for the levels of the contours
+    max_hist = int(np.ceil(max(hist.flatten())))
+    levels = np.linspace(min_level, max_hist, num_contours + 1)
+    # we add one to the number of contours because we have the highest one at 
+    # the highest point, so it won't be shown.
+    contour_kwargs["levels"] = levels
+    
+    # we can then go ahead and plot the filled contours, then the contour lines
+    ax.contourf(x_centers, y_centers, hist, levels=levels, cmap=fill_cmap, 
+                zorder=1)
+    contours = ax.contour(x_centers, y_centers, hist, **contour_kwargs)
+
+    # we saved the output from the contour, since it has information about the
+    # shape of the contours we can use to figure out which points are outside
+    # and therefore need to be plotted
+    # first, make a path with the vertices of the outermost contour
+    outside_polygon = path.Path(contours.collections[0].get_segments()[0], 
+                                closed=True)
+    # then figure out which points are inside it
+    which_are_in = outside_polygon.contains_points(zip(xs, ys))
+    # then save the ones that aren't
+    outside_xs = xs[np.where(which_are_in == False)]
+    outside_ys = ys[np.where(which_are_in == False)]
+
+    # now we can do our scatterplot.
+    scatter_kwargs.setdefault("alpha", 1.0)
+    scatter_kwargs["zorder"] = 0
+    scatter(outside_xs, outside_ys, ax=ax, **scatter_kwargs)
+
+    return contours
 
 
