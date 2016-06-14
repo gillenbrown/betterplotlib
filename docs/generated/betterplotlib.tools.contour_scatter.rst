@@ -1,5 +1,5 @@
 betterplotlib.tools.contour_scatter
-==================================
+===================================
 
 .. currentmodule:: betterplotlib.tools
 
