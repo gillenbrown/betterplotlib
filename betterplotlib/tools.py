@@ -1398,11 +1398,11 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
         fig, axs = plt.subplots(nrows=2, ncols=2)
         [ax1, ax2], [ax3, ax4] = axs
 
-        # the default `fill_cmap` is white.
         bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax1,
                             fill_cmap="background_grey",
                             contour_kwargs={"cmap":"magma"},
                             scatter_kwargs={"s":10, "c":bpl.almost_black})
+        bpl.make_ax_dark(ax1)
 
         # or we can choose our own `fill_cmap`
         bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="viridis", ax=ax2,
@@ -1416,12 +1416,13 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
                             contour_kwargs={"linewidths":[2, 0, 0, 0, 0, 0, 0]})
         bpl.make_ax_dark(ax3)
 
+        # the default `fill_cmap` is white.
         bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=3, ax=ax4,
                             scatter_kwargs={"marker":"^", "linewidth":0.2,
                                             "c":bpl.color_cycle[1]},
                             contour_kwargs={"linestyles":["solid", "dashed", 
                                                           "dashed", "dashed"]})
-        bpl.make_ax_dark(ax1)
+
 
     """
     if ax is None:
