@@ -1268,7 +1268,6 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
              need to be saved, you can use it if you want. 
 
     Examples
-    ========
 
     First, we'll show why this plot is useful. This won't use any of the 
     fancy settings, other than `bin_size`, which is used to make the contours
