@@ -28,6 +28,7 @@ Plotting
     tools.scatter
     tools.hist
     tools.contour_scatter
+    tools.density_contour
 
 
 Labels and Text

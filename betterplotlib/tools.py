@@ -1149,50 +1149,133 @@ def savefig(fig, *args, **kwargs):
 
 def _centers(edges):
     """
+    This takes histogram edges and calculates the centers of each bin.
 
+    All this does is take the average of each pair of edges.
+
+    :param edges: List of edges of the bins of the histogram.
+    :type edges: list
+    :return: list of bin centers
+    :rtype: list of float
     """
     centers = []
     for left_edge_idx in range(len(edges) - 1):
+        # average the left and right edges
         centers.append((edges[left_edge_idx] + edges[left_edge_idx + 1]) / 2.0)
     return centers
 
-def _make_density_contours(xs, ys, bins=None, bin_size=None):
+def _make_density_contours(xs, ys, bin_size=None, bins=None):
+    """
+    This is the underlying function that is used by the contour plots.
+
+    This smartly makes a 2D histogram, which is what is passed on to the 
+    contour functions. The user can specify the number of bins, the specific
+    bin edges, or the bin_size. If either the number of bins or bin edges is 
+    passed in, the `numpy.histogram2d()` function will use those in the way
+    that it normally does. If `bin_size` is specified, then bins with that 
+    size will span the entire data range. If nothing is specified, the code
+    will use the Freedman Diaconis algorithm to find a roughly optimal bin
+    size.
+
+    :param xs: list of x values
+    :type xs: list
+    :param ys: list of y values
+    :type ys: list
+    :param bins: Same as for `np.histogram2d()`. Can either be a number, a 
+                 tuple of two numbers, a single list, or a tuple with two lists.
+                 If it one or two numbers, this will be the number of bins.
+                 Lists of numbers will be the bin edges. If only one number
+                 or list is passed in, it will be used for both x and y. If a 
+                 tuple of two lists or numbers is passed in, the first will be 
+                 used for x, the second for y.
+    :param bin_size: Size of the bins that will be used to make the 2D 
+                     histogram. 
+    :type bin_size: float
+    :return: list of x center, list of y centers, and the 2d histogram values.
+             These can be passed on to the contour functions.
+    :rtype: tuple of list, list, np.array
+    """
     if bins is not None and bin_size is not None:
         raise ValueError("The `bins` and `bin_size` keywords cannot be "
                          "used together. Use `bins` if you want to "
                          "pass your own bins, or use `bin_size` to "
                          "have the code determine its own bins. ")
     elif (bin_size is not None) or (bin_size is None and bins is None):
+        # if we got here, we need to make our own bins. If we don't know the 
+        # bin size, find an "optimal" one.
         if bin_size is None:
             x_bin_size = _freedman_diaconis(xs)
             y_bin_size = _freedman_diaconis(ys)
         else:
             x_bin_size = bin_size
             y_bin_size = bin_size
+        # then use that bin size to make the actual bins
         x_bins = _binning(xs, x_bin_size)
         y_bins = _binning(xs, y_bin_size)
         bins = [x_bins, y_bins]
+
+        # we can use this directly in the 2D histogram function.
         hist, x_edges, y_edges = np.histogram2d(xs, ys, bins) 
     elif bins is not None:
+        # the user gave us bins, so let numpy figure it out
         hist, x_edges, y_edges = np.histogram2d(xs, ys, bins)
 
+    # turn the bin edges into bin centers, since that's what matters
     x_centers = _centers(x_edges)
     y_centers = _centers(y_edges)
     
     return x_centers, y_centers, hist.transpose()
 
-def density_contour(xs, ys, bins=None, bin_size=None, **kwargs):
+
+def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
+    """
+    Make a contour plot where the levels are based on the density of the points.
+
+    When a dataset is large, plotting a scatterplot often doesn't look good. 
+    This function makes a contour plot of the density of points, rather than
+    plotting the points themselves. 
+
+    Under the hood, this uses the `np.histogram2d()` function to create a 2D
+    histogram, which is then used to create the contours. 
+
+    You may be interested in the `contour_scatter()` function, too.
+
+    :param xs: list of x values
+    :type xs: list
+    :param ys: list of y values
+    :type ys: list
+    :param bin_size: Size of the bins used in the 2D histogram. This is kind
+                     of an arbitraty parameter. The code will guess a value for
+                     this if none is passed in, but this value isn't always 
+                     good. A smaller value gives noisier contours. A value that
+                     is too large will lead to "chunky" contours. Adjust this
+                     until your contours look good to your eye. That's the best
+                     way to pick a value for this parameter.
+    :type bin_size: float
+    :param ax: Axes object to plot on.
+    :param kwargs: Additional keyword arguments that will be passed on to the
+                   contour function.
+    :return: output of the `plt.contour()` function.
+
+    Future: ADD EXAMPLES!!!
+    """
+
+    if ax is None:
+        ax, _ = _get_ax()
     
-    x_centers, y_centers, hist = _make_density_contours(xs, ys, bins, bin_size)
+    # the other function does the hard work
+    x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
     
+    # then set some default parameters
     kwargs.setdefault("linewidths", 2)
-    if "cmap" not in kwargs:
-        kwargs.setdefault("colors", colors.almost_black)
+    if "colors" not in kwargs:
+        kwargs.setdefault("cmap", "viridis")
     
-    plt.contour(x_centers, y_centers, hist, **kwargs)
+    # then we can plot
+    return ax.contour(x_centers, y_centers, hist, **kwargs)
     
-def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None, 
-                    min_level=5, num_contours=7, scatter_kwargs=dict(),
+def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5, 
+                    num_contours=7, scatter_kwargs=dict(), 
                     contour_kwargs=dict(), ax=None):
     """
     Create a contour plot with scatter points in the sparse regions.
@@ -1243,11 +1326,15 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
                       contour is drawn. The higher the value, the more points
                       will be outside the last contour. Again, adjust this 
                       until it looks good to your eye. The default parameter 
-                      choice will generally be okay, though.
+                      choice will generally be okay, though. Also note that if
+                      you want to specify the levels yourself, use the `levels`
+                      keyword.
     :type min_level: int
     :param num_contours: Number of contour lines to be drawn between the lowest
                          and highest density regions. Adjust this until the
-                         plot looks good to your eye.
+                         plot looks good to your eye. Also note that if
+                         you want to specify the levels yourself, use the 
+                         `levels` keyword.
     :type num_contours: int
     :param scatter_kwargs: This is a dictionary of keywords that will be passed
                            on to the `bpl.scatter()` function. Note that this
@@ -1294,8 +1381,9 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
         bpl.scatter(xs, ys, ax=ax1)
         bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax2)
 
-    The scatter plot is okay, but the cntour makes things easier to see. We'll 
-    not mess with some of the other parameters. This plot shows how the 
+    The scatter plot is okay, but the contour makes things easier to see. 
+
+    We'll now mess with some of the other parameters. This plot shows how the 
     `bin_size` parameter changes things. 
 
     .. plot::
@@ -1429,8 +1517,7 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
         ax, kwargs = _get_ax()
     
     # first get the density info we need to make contours
-    x_centers, y_centers, hist = _make_density_contours(xs, ys, 
-                                                        bin_size=bin_size)
+    x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
     
     # then determine what our colormap for the fill will be
     if fill_cmap == "white":
