@@ -1283,14 +1283,14 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
         bpl.default_style()
 
-        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[10, 5])
-
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(0, 1, 100000)])
         ys = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(3, 1, 100000)])
+
+        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[10, 5])
 
         bpl.scatter(xs, ys, ax=ax1)
         bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax2)
@@ -1308,14 +1308,14 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
         bpl.default_style()
 
-        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
-
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(0, 1, 100000)])
         ys = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(3, 1, 100000)])
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
 
         bpl.contour_scatter(xs, ys, bin_size=0.1, ax=ax1)
         bpl.contour_scatter(xs, ys, bin_size=0.2, ax=ax2)
@@ -1337,14 +1337,14 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
         bpl.default_style()
 
-        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
-
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(0, 1, 100000)])
         ys = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(3, 1, 100000)])
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
 
         bpl.contour_scatter(xs, ys, bin_size=0.3, min_level=2, ax=ax1)
         bpl.contour_scatter(xs, ys, bin_size=0.3, min_level=15, ax=ax2)
@@ -1363,16 +1363,14 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
 
         bpl.default_style()
 
-        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
-
-        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
-
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(0, 1, 100000)])
         ys = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(3, 1, 100000)])
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
 
         bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=2, ax=ax1)
         bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=5, ax=ax2)
@@ -1390,6 +1388,13 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
         import betterplotlib as bpl
 
         bpl.default_style()
+
+        xs = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(0, 1, 100000)])
+        ys = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(3, 1, 100000)])
 
         fig, axs = plt.subplots(nrows=2, ncols=2)
         [ax1, ax2], [ax3, ax4] = axs
