@@ -437,9 +437,12 @@ def hist(*args, **kwargs):
         data4 = np.random.normal(6, 1, size=10000)
         bin_size = 0.5
         bpl.hist(data1, rel_freq=True, bin_size=bin_size)
-        bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", linewidth=5)
-        bpl.hist(data3, rel_freq=True, bin_size=bin_size, histtype="stepfilled", hatch="o", alpha=0.8)
-        bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", hatch="x", linewidth=4)
+        bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", 
+                 linewidth=5)
+        bpl.hist(data3, rel_freq=True, bin_size=bin_size, 
+                 histtype="stepfilled", hatch="o", alpha=0.8)
+        bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", 
+                 hatch="x", linewidth=4)
 
         bpl.add_labels(y_label="Relative Frequency")
 
@@ -1265,17 +1268,22 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
              need to be saved, you can use it if you want. 
 
     Examples
+    ========
+
+    First, we'll show why this plot is useful. This won't use any of the 
+    fancy settings, other than `bin_size`, which is used to make the contours
+    look nicer. 
 
     .. plot::
         :include-source:
 
         import matplotlib.pyplot as plt
+        import numpy as np
         import betterplotlib as bpl
 
         bpl.default_style()
 
-        fig, axs = plt.subplots(nrows=2, ncols=2)
-        [ax1, ax2], [ax3, ax4] = axs
+        fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=[10, 5])
 
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
@@ -1283,21 +1291,133 @@ def contour_scatter(xs, ys, fill_cmap="white", bins=None, bin_size=None,
         ys = np.concatenate([np.random.normal(0, 1, 100000),
                              np.random.normal(3, 1, 100000),
                              np.random.normal(3, 1, 100000)])
-                             
-        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax1)
 
-        bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="modified_greys", 
-                            ax=ax2, contour_kwargs={"linewidths":0})
-        bpl.make_ax_dark(ax2)
+        bpl.scatter(xs, ys, ax=ax1)
+        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax2)
 
-        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax3, 
-                            contour_kwargs={"cmap":"viridis"},
-                            scatter_kwargs={"s":10, "c":bpl.color_cycle[3]})
+    The scatter plot is okay, but the cntour makes things easier to see. We'll 
+    not mess with some of the other parameters. This plot shows how the 
+    `bin_size` parameter changes things. 
 
-        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax4, fill_cmap="viridis",
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
+
+        xs = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(0, 1, 100000)])
+        ys = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(3, 1, 100000)])
+
+        bpl.contour_scatter(xs, ys, bin_size=0.1, ax=ax1)
+        bpl.contour_scatter(xs, ys, bin_size=0.2, ax=ax2)
+        bpl.contour_scatter(xs, ys, bin_size=0.5, ax=ax3)
+
+    You can see how small values of `bin_size` lead to more noisy contours. 
+    The code will attempt to choose its own value of `bin_size` if nothing is
+    specified, but it's normally not a very good choice.
+
+    For a given value of `bin_size`, changing `min_level` adjusts the height 
+    at which the first contours are drawn.
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
+
+        xs = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(0, 1, 100000)])
+        ys = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(3, 1, 100000)])
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, min_level=2, ax=ax1)
+        bpl.contour_scatter(xs, ys, bin_size=0.3, min_level=15, ax=ax2)
+        bpl.contour_scatter(xs, ys, bin_size=0.3, min_level=50, ax=ax3)
+
+    The code sets `min_level = 5` if you don't set it.
+
+    As expected, `num_contours` adjusts the number of contors drawn. 
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
+
+        fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=[15, 5])
+
+        xs = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(0, 1, 100000)])
+        ys = np.concatenate([np.random.normal(0, 1, 100000),
+                             np.random.normal(3, 1, 100000),
+                             np.random.normal(3, 1, 100000)])
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=2, ax=ax1)
+        bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=5, ax=ax2)
+        bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=10, ax=ax3)
+
+    Now we can mess with the fun stuff, which is the `fill_cmap` param and the
+    kwargs that get passed to the `scatter` and `contour` function calls. 
+    There is a lot of stuff going on here, just for demonstration purposes.
+
+    .. plot::
+        :include-source:
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        fig, axs = plt.subplots(nrows=2, ncols=2)
+        [ax1, ax2], [ax3, ax4] = axs
+
+        # the default `fill_cmap` is white.
+        bpl.contour_scatter(xs, ys, bin_size=0.3, ax=ax1,
+                            fill_cmap="background_grey",
+                            contour_kwargs={"cmap":"magma"},
+                            scatter_kwargs={"s":10, "c":bpl.almost_black})
+
+        # or we can choose our own `fill_cmap`
+        bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="viridis", ax=ax2,
                             contour_kwargs={"linewidths":1, "colors":"white"},
                             scatter_kwargs={"s":50, "c":bpl.color_cycle[3], 
                                             "alpha":0.3})
+
+        # There are also my colormaps that work with the dark axes
+        bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="modified_greys",
+                            num_contours=7, ax=ax3,
+                            contour_kwargs={"linewidths":[2, 0, 0, 0, 0, 0, 0]})
+        bpl.make_ax_dark(ax3)
+
+        bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=3, ax=ax4,
+                            scatter_kwargs={"marker":"^", "linewidth":0.2,
+                                            "c":bpl.color_cycle[1]},
+                            contour_kwargs={"linestyles":["solid", "dashed", 
+                                                          "dashed", "dashed"]})
+        bpl.make_ax_dark(ax1)
 
     """
     if ax is None:
