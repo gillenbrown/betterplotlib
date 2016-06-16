@@ -1211,7 +1211,7 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
             y_bin_size = bin_size
         # then use that bin size to make the actual bins
         x_bins = _binning(xs, x_bin_size)
-        y_bins = _binning(xs, y_bin_size)
+        y_bins = _binning(ys, y_bin_size)
         bins = [x_bins, y_bins]
 
         # we can use this directly in the 2D histogram function.
