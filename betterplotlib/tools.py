@@ -1465,7 +1465,9 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
 
     Now we can mess with the fun stuff, which is the `fill_cmap` param and the
     kwargs that get passed to the `scatter` and `contour` function calls. 
-    There is a lot of stuff going on here, just for demonstration purposes.
+    There is a lot of stuff going on here, just for demonstration purposes. 
+    Note that the code has some default parameters that it will choose if you
+    don't specify anything.
 
     .. plot::
         :include-source:
@@ -1501,17 +1503,56 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
         # There are also my colormaps that work with the dark axes
         bpl.contour_scatter(xs, ys, bin_size=0.3, fill_cmap="modified_greys",
                             num_contours=7, ax=ax3,
-                            contour_kwargs={"linewidths":[2, 0, 0, 0, 0, 0, 0]})
+                            scatter_kwargs={"c": bpl.color_cycle[0]},
+                            contour_kwargs={"linewidths":[2, 0, 0, 0, 0, 0, 0],
+                                            "colors":bpl.almost_black})
         bpl.make_ax_dark(ax3)
 
         # the default `fill_cmap` is white.
         bpl.contour_scatter(xs, ys, bin_size=0.3, num_contours=3, ax=ax4,
                             scatter_kwargs={"marker":"^", "linewidth":0.2,
-                                            "c":bpl.color_cycle[1]},
+                                            "c":bpl.color_cycle[1], "s":20},
                             contour_kwargs={"linestyles":["solid", "dashed", 
-                                                          "dashed", "dashed"]})
+                                                          "dashed", "dashed"],
+                                            "colors":bpl.almost_black})
 
+    Note that the contours will work appropriately for datasets with "holes", 
+    as demonstrated here.
+    
+    .. plot::
+        :include-source:
 
+        import matplotlib.pyplot as plt
+        import numpy as np
+        import betterplotlib as bpl
+
+        bpl.default_style()
+
+        rad1 = np.random.normal(10, 0.75, 100000)
+        theta1 = np.random.uniform(0, 2 * np.pi, 100000)
+        x1 = [r * np.cos(t) for r, t in zip(rad1, theta1)]
+        y1 = [r * np.sin(t) for r, t in zip(rad1, theta1)]
+
+        rad2 = np.random.normal(20, 0.75, 200000)
+        theta2 = np.random.uniform(0, 2 * np.pi, 200000)
+        x2 = [r * np.cos(t) for r, t in zip(rad2, theta2)]
+        y2 = [r * np.sin(t) for r, t in zip(rad2, theta2)]
+
+        rad3 = np.random.normal(12, 0.75, 120000)
+        theta3 = np.random.uniform(0, 2 * np.pi, 120000)
+        x3 = [r * np.cos(t) + 10 for r, t in zip(rad3, theta3)]
+        y3 = [r * np.sin(t) + 10 for r, t in zip(rad3, theta3)]
+
+        x4 = np.random.uniform(-20, 20, 35000)
+        y4 = x4 + np.random.normal(0, 0.5, 35000)
+
+        y5 = y4 * (-1)
+
+        xs = np.concatenate([x1, x2, x3, x4, x4])
+        ys = np.concatenate([y1, y2, y3, y4, y5])
+
+        bpl.contour_scatter(xs, ys)
+        bpl.equal_scale()
     """
     if ax is None:
         ax, kwargs = _get_ax()
@@ -1535,8 +1576,8 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
     # then we can set a bunch of default parameters for the contours
     contour_kwargs.setdefault("linewidths", 2)
     contour_kwargs["zorder"] = 3
-    if "cmap" not in contour_kwargs  and "colors" not in contour_kwargs:
-        contour_kwargs.setdefault("colors", colors.almost_black)
+    if "colors" not in contour_kwargs:
+        contour_kwargs.setdefault("cmap", "viridis")
 
     # We then want to find the correct heights for the levels of the contours
     max_hist = int(np.ceil(max(hist.flatten())))
@@ -1576,6 +1617,9 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
 
     # now we can do our scatterplot.
     scatter_kwargs.setdefault("alpha", 1.0)
+    scatter_kwargs.setdefault("s", 10)
+    if "c" not in scatter_kwargs:
+        scatter_kwargs.setdefault("color", colors.almost_black)
     scatter_kwargs["zorder"] = 1
     scatter(outside_xs, outside_ys, ax=ax, **scatter_kwargs)
 
