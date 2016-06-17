@@ -1552,15 +1552,27 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
 
     # we saved the output from the contour, since it has information about the
     # shape of the contours we can use to figure out which points are outside
-    # and therefore need to be plotted
-    # first, make a path with the vertices of the outermost contour
-    outside_polygon = path.Path(contours.collections[0].get_segments()[0], 
-                                closed=True)
-    # then figure out which points are inside it
-    which_are_in = outside_polygon.contains_points(zip(xs, ys))
-    # then save the ones that aren't
-    outside_xs = xs[np.where(which_are_in == False)]
-    outside_ys = ys[np.where(which_are_in == False)]
+    # and therefore need to be plotted. There may be multiple outside contours,
+    # especially if the shape is complicated, so we test to see how many 
+    # each point is inside
+    shapes_in = np.zeros(len(xs))
+    for line in contours.collections[0].get_segments():
+        # make a closed shape with the line
+        polygon = path.Path(line, closed=True)
+        # then figure out which points are inside it
+        shapes_in += polygon.contains_points(zip(xs, ys))
+
+    # the ones that need to be hidden are inside an odd number of shapes. This
+    # shounds weird, but actually works. If we have a ring of points, the 
+    # outliers in the middle will be inside the outermost and innermost 
+    # contours, so they are inside two shapes. We want to plot these. So we 
+    # plot the ones that are divisible by two.
+    plot_idx = np.where(shapes_in % 2 == 0)
+
+    # We then get these elements. The multiple indexing is only supported for
+    # numpy arrays, not Python lists, so convert our values to that first.
+    outside_xs = np.array(xs)[plot_idx]
+    outside_ys = np.array(ys)[plot_idx]
 
     # now we can do our scatterplot.
     scatter_kwargs.setdefault("alpha", 1.0)
