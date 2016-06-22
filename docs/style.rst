@@ -1,11 +1,19 @@
-Styles
-==================================
+.. _api_ref:
+
+.. _tools_api:
 
 .. currentmodule:: betterplotlib.tools
 
-.. autofunction:: default_style
+Styles
+==================================
 
-.. autofunction:: presentation_style
+Betterplotlib has multiple style options that make plots look better in 
+general. `default_style()` is the best choice for everyday usage. 
+`presentation_style()` makes font larger for easily readable presentations.
+`white_style()` also makes the text larger, but also makes lines white, so they
+are visible against a dark background in a presentation.
+
+.. autofunction:: default_style
 
 .. autofunction:: presentation_style
 

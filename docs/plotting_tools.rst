@@ -2,13 +2,10 @@
 
 .. currentmodule:: betterplotlib
 
-API reference
-=============
-
 .. _tools_api:
 
-Style
-------------------
+Plotting Tools
+===============
 
 Axes
 ------------------

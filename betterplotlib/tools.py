@@ -9,6 +9,9 @@ from . import colors
 
 
 def _common_style():
+    """
+    Set some of the style options used by all styles.
+    """
 
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
