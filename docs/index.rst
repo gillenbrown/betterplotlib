@@ -15,6 +15,7 @@ Contents:
    
    style
    plotting_tools
+   examples.ipynb
 
 
 
