@@ -12,8 +12,8 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-   api
+   style
+   plotting_tools
 
 
 
