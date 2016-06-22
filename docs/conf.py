@@ -39,12 +39,14 @@ extensions = [
     'nbsphinx'
 ]
 
+nbsphinx_timeout = -1  # Time in seconds; use -1 for no timeout
+
 # import mock
 # MOCK_MODULES = ['matplotlib', 'matplotlib.cbook', 'matplotlib.pyplot']
 # for mod_name in MOCK_MODULES:
 #     sys.modules[mod_name] = mock.Mock()
 
-autosummary_generate = True
+autosummary_generate = False
 
 # Include the example source for plots in API docs
 plot_include_source = True
