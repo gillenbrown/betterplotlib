@@ -15,7 +15,7 @@ are visible against a dark background in a presentation.
 
 The following table shows which parameters are set in which style.
 
-## Font Options
+Font Options
 ---------------
 
 +--------------------+------------+---------------+-------+
@@ -44,9 +44,8 @@ The following table shows which parameters are set in which style.
 | `legend.fontsize`  | 13         | 17                    |
 +--------------------+------------+---------------+-------+
 | `text.color`       | bpl.almost_black           | white |
-+--------------------+                            |       |
-| `patch.edgecolor`  |                            |       |
 +--------------------+------------+---------------+-------+
+
 
 
 
