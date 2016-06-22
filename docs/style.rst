@@ -15,6 +15,7 @@ are visible against a dark background in a presentation.
 
 The following table shows which parameters are set in which style.
 
++--------------------+------------+---------------+-------+
 |  Font Options                                           |
 +====================+============+===============+=======+ 
 | Parameter          | Default    | Presentation  | White |
