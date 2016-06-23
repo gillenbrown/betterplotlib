@@ -87,7 +87,7 @@ These other parameters are constant for all styles.
 +----------------------------+---------+
 
 API
-===
+---
 
 The following show the ways to set each style. 
 
