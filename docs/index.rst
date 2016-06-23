@@ -11,7 +11,7 @@ betterplotlib is a Python library that is designed to make plotting with Matplot
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
    style
    plotting_tools
