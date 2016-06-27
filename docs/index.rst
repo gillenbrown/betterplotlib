@@ -8,6 +8,13 @@ Welcome to betterplotlib's documentation!
 
 betterplotlib is a Python library that is designed to make plotting with Matplotlib easier, and results in prettier plots.
 
+Installation
+------------
+
+The package is available in PyPI, so you can install with `pip install betterplotlib`.
+This is the easiest way. You can also download from 
+[Github.](https://github.com/gillenbrown/betterplotlib)
+
 Contents:
 
 .. toctree::
