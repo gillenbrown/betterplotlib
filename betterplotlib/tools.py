@@ -443,7 +443,9 @@ def remove_spines(spines_to_remove, ax=None):
     is the one that counts. Calling this multiple times on the same axes
     would be weird, though, since you can specify multiple axes in one call.
     If you really need to call it multiple times and it is breaking, let me
-    know and I can try to fix it.
+    know and I can try to fix it. This also can break when used with the 
+    various `remove_*()` functions. Order matters with these calls, for some
+    reason. 
 
     :param spines_to_remove: List of the desired spines to remove. Can choose
                              from "all", "top", "bottom", "left", or "right".
@@ -502,6 +504,11 @@ def remove_ticks(ticks_to_remove, ax=None):
 
     Like most of these function, the axis is modified in place when the ticks
     are removed, so the axis object doesn't really need to be returned.
+
+    Note that this can break when used with the various `remove_*()` functions. 
+    Order matters with these calls, presumably due to something with the way 
+    matplotlib works under the hood. Mess around with it if you're having 
+    trouble. 
 
     :param ticks_to_remove: locations where ticks need to be removed from.
                             Pass in a list, and choose from: "all, "top",
@@ -563,47 +570,57 @@ def remove_ticks(ticks_to_remove, ax=None):
 
 def remove_labels(labels_to_remove, ax=None):
     """
-    Removes the laels and tick marks from an axis border.
+    Removes the labels and tick marks from an axis border.
 
     This is useful for making conceptual plots where the numbers on the axis
-    don't matter.
+    don't matter. Axes labels still work, also.
 
-    :param labels_to_remove: location of labels to remove. Pass in a list,
-                             and choose from: "all, "top", 'bottom",
-                             "left", or "right".
-    :type labels_to_remove: list
+    Note that this can break when used with the various `remove_*()` functions. 
+    Order matters with these calls, presumably due to something with the way 
+    matplotlib works under the hood. Mess around with it if you're having 
+    trouble. 
+
+    :param labels_to_remove: location of labels to remove. Choose from: 
+                             "both", "x", or "y".
+    :type labels_to_remove: str
     :param ax: Axes object to remove ticks from. This can be ignored.
     :type ax: matplotlib.axes
     :return: axis object with the labels removed.
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 5, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+
+        bpl.remove_labels("y")
+        bpl.remove_ticks(["top"])
+        bpl.add_labels("Conceptual plot", "Axes labels still work")
+        
     """
 
     # TODO: create example
     if ax is None:
         ax, kwargs = _get_ax()
 
-    # If they want to remove all labels, turn that into workable infomation
-    labels_to_remove = set(labels_to_remove)  # to remove duplicates
-    if "all" in labels_to_remove:
-        # have to do weirdness since its a set
-        labels_to_remove.remove("all")
-        for tick in ["left", "right", "top", "bottom"]:
-            labels_to_remove.add(tick)
-
-    # create a dictionary to record all the places the labels should be
-    places = {"top": True,
-              "bottom": True,
-              "left": True,
-              "right": True}
-
-    for label in labels_to_remove:
-        try:
-            places[label] = False
-        except KeyError:
-            raise ValueError("You can only remove the `top`, `bottom`, "
-                             "`left`, and `right` labels. ")
-
-    ax.tick_params(labeltop=places["top"], labelbottom=places["bottom"],
-                   labelleft=places["left"], labelright=places["right"])
+    # validate their input
+    if labels_to_remove not in ["both", "x", "y"]:
+        raise ValueError('Please pass in either "x", "y", or "both".')
+    
+    # then set the tick parameters.
+    ax.tick_params(axis=labels_to_remove, bottom=False, top=False, left=False,
+                   right=False, labelbottom=False, labeltop=False, 
+                   labelleft=False, labelright=False)
 
     return ax
 
@@ -752,10 +769,67 @@ def equal_scale(ax=None):
 
     It's really one one command, but it's one I have a hard time remembering.
 
+    Note that this keeps the range the same from the plot as before, so you
+    may want to adjust the limits to make the plot look better. It will 
+    keep the axes adjusted the same, though, no matter how you change the limits
+    afterward. 
+
     :param ax: Axis to make equal scale.
     :type ax: matplotlib.axes
     :return: axis that was passed in. It is modified in place, though, so even
              if its result is not assigned to anything it will still work.
+
+    Examples:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        # make a Gaussian with more spread in y direction
+        xs = np.random.normal(0, 1, 10000)
+        ys = np.random.normal(0, 2, 10000)
+
+        fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+
+        bpl.scatter(xs, ys, ax=ax1)
+        bpl.scatter(xs, ys, ax=ax2)
+
+        bpl.equal_scale(ax2)
+
+        bpl.add_labels(title="Looks symmetric", ax=ax1)
+        bpl.add_labels(title="Shows true shape", ax=ax2)
+
+    Here is proof that changing the limits don't change the scaling between
+    the axes. 
+
+    ..plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        # make a Gaussian with more spread in y direction
+        xs = np.random.normal(0, 1, 10000)
+        ys = np.random.normal(0, 2, 10000)
+
+        fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+
+        bpl.scatter(xs, ys, ax=ax1)
+        bpl.scatter(xs, ys, ax=ax2)
+
+        bpl.equal_scale(ax1)
+        bpl.equal_scale(ax2)
+
+        bpl.set_limits(-10, 10, -4, 4, ax=ax1)
+        bpl.set_limits(-5, 5, -10, 10, ax=ax2)
     """
     if ax is None:
         ax, kwargs = _get_ax()
