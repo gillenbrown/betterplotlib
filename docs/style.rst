@@ -2,7 +2,7 @@
 
 .. currentmodule:: betterplotlib
 
-.. _tools_api:
+.. _styles_api:
 
 Styles
 ==================================
@@ -12,6 +12,9 @@ general. `default_style()` is the best choice for everyday usage.
 `presentation_style()` makes font larger for easily readable presentations.
 `white_style()` also makes the text larger, but also makes lines white, so they
 are visible against a dark background in a presentation.
+
+The general best practice is to call the style once at the beginning of the
+file or notebook, right after the imports. 
 
 The following table shows which parameters are set in which style.
 
