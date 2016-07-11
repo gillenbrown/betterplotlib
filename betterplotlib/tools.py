@@ -606,7 +606,7 @@ def remove_labels(labels_to_remove, ax=None):
         bpl.remove_labels("y")
         bpl.remove_ticks(["top"])
         bpl.add_labels("Conceptual plot", "Axes labels still work")
-        
+
     """
 
     # TODO: create example
@@ -807,7 +807,7 @@ def equal_scale(ax=None):
     Here is proof that changing the limits don't change the scaling between
     the axes. 
 
-    ..plot::
+    .. plot::
         :include-source:
 
         import betterplotlib as bpl
@@ -830,6 +830,7 @@ def equal_scale(ax=None):
 
         bpl.set_limits(-10, 10, -4, 4, ax=ax1)
         bpl.set_limits(-5, 5, -10, 10, ax=ax2)
+
     """
     if ax is None:
         ax, kwargs = _get_ax()
@@ -860,6 +861,23 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
     :param kwargs: additional keyword arguments that will be passed on to
                    all the labels you make.
     :return: None
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 10, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+        bpl.add_labels("X value", "Y value", "Title")
     """
     ax, kwargs = _get_ax(**kwargs)
     if x_label is not None:
@@ -891,6 +909,27 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
     :param kwargs: Kwargs for the set_limits() functions. Can also include
                    the axis, with the ax keyword.
     :return: none.
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 10, 0.01)
+        ys = np.cos(xs)
+
+        fig, [ax1, ax2] = plt.subplots(ncols=2)
+
+        ax1.plot(xs, ys)
+
+        ax2.plot(xs, ys)
+        bpl.set_limits(0, 2*np.pi, -1.1, 1.1, ax=ax2)        
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -933,6 +972,24 @@ def add_text(x, y, text, coords="data", **kwargs):
     :param kwargs: any additional keyword arguments to pass on the text
                    function. Pass things you would pass to plt.text()
     :return: Same as output of plt.text().
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 7, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+        bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
+        bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
 
     # this function takes care of the transform keyword already, so don't
