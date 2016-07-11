@@ -1248,53 +1248,59 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
     
     return x_centers, y_centers, hist.transpose()
 
+# ==============================================================================
 
-def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
-    """
-    Make a contour plot where the levels are based on the density of the points.
+# Density Contour removed for now, but I didn't want to delete it.
 
-    When a dataset is large, plotting a scatterplot often doesn't look good. 
-    This function makes a contour plot of the density of points, rather than
-    plotting the points themselves. 
 
-    Under the hood, this uses the `np.histogram2d()` function to create a 2D
-    histogram, which is then used to create the contours. 
+# def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
+#     """
+#     Make a contour plot where the levels are based on the density of the points.
 
-    You may be interested in the `contour_scatter()` function, too.
+#     When a dataset is large, plotting a scatterplot often doesn't look good. 
+#     This function makes a contour plot of the density of points, rather than
+#     plotting the points themselves. 
 
-    :param xs: list of x values
-    :type xs: list
-    :param ys: list of y values
-    :type ys: list
-    :param bin_size: Size of the bins used in the 2D histogram. This is kind
-                     of an arbitrary parameter. The code will guess a value for
-                     this if none is passed in, but this value isn't always 
-                     good. A smaller value gives noisier contours. A value that
-                     is too large will lead to "chunky" contours. Adjust this
-                     until your contours look good to your eye. That's the best
-                     way to pick a value for this parameter.
-    :type bin_size: float
-    :param ax: Axes object to plot on.
-    :param kwargs: Additional keyword arguments that will be passed on to the
-                   contour function.
-    :return: output of the `plt.contour()` function.
+#     Under the hood, this uses the `np.histogram2d()` function to create a 2D
+#     histogram, which is then used to create the contours. 
 
-    Future: ADD EXAMPLES!!!
-    """
+#     You may be interested in the `contour_scatter()` function, too.
 
-    if ax is None:
-        ax, _ = _get_ax()
+#     :param xs: list of x values
+#     :type xs: list
+#     :param ys: list of y values
+#     :type ys: list
+#     :param bin_size: Size of the bins used in the 2D histogram. This is kind
+#                      of an arbitrary parameter. The code will guess a value for
+#                      this if none is passed in, but this value isn't always 
+#                      good. A smaller value gives noisier contours. A value that
+#                      is too large will lead to "chunky" contours. Adjust this
+#                      until your contours look good to your eye. That's the best
+#                      way to pick a value for this parameter.
+#     :type bin_size: float
+#     :param ax: Axes object to plot on.
+#     :param kwargs: Additional keyword arguments that will be passed on to the
+#                    contour function.
+#     :return: output of the `plt.contour()` function.
+
+#     Future: ADD EXAMPLES!!!
+#     """
+
+#     if ax is None:
+#         ax, _ = _get_ax()
     
-    # the other function does the hard work
-    x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
+#     # the other function does the hard work
+#     x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
     
-    # then set some default parameters
-    kwargs.setdefault("linewidths", 2)
-    if "colors" not in kwargs:
-        kwargs.setdefault("cmap", "viridis")
+#     # then set some default parameters
+#     kwargs.setdefault("linewidths", 2)
+#     if "colors" not in kwargs:
+#         kwargs.setdefault("cmap", "viridis")
     
-    # then we can plot
-    return ax.contour(x_centers, y_centers, hist, **kwargs)
+#     # then we can plot
+#     return ax.contour(x_centers, y_centers, hist, **kwargs)
+
+# ==============================================================================
     
 def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5, 
                     num_contours=7, scatter_kwargs=dict(), 
