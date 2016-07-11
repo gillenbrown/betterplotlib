@@ -1,118 +1,9 @@
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-from cycler import cycler
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 import numpy as np
 
 from . import colors
-
-
-def _common_style():
-
-    mpl.rcParams['legend.scatterpoints'] = 1
-    mpl.rcParams['savefig.format'] = 'pdf'
-    mpl.rcParams['axes.formatter.useoffset'] = False
-    # mpl.rcParams['figure.dpi'] = 200
-    mpl.rcParams['figure.figsize'] = [10, 7]
-
-    # Font options
-    mpl.rcParams['font.family'] = 'sans-serif'
-    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
-    mpl.rcParams['font.weight'] = 'bold'
-    mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
-
-    # I like my own color cycle based on one of the Tableu sets.
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
-    # change the colormap while I'm at it.
-    mpl.rcParams['image.cmap'] = 'viridis'
-
-def default_style():
-    """
-    Sets matplotlib parameters to make default plots prettier without effort.
-
-    :return: None
-    """
-    _common_style()
-    
-    # Font options
-    mpl.rcParams['axes.titlesize'] = 16
-    mpl.rcParams['font.size'] = 14
-    mpl.rcParams['axes.labelsize'] = 14
-    mpl.rcParams['xtick.labelsize'] = 12
-    mpl.rcParams['ytick.labelsize'] = 12
-    mpl.rcParams['legend.fontsize'] = 13
-
-    # colors
-    mpl.rcParams['patch.edgecolor'] = colors.almost_black
-    mpl.rcParams['text.color'] = colors.almost_black
-    mpl.rcParams['axes.edgecolor'] = colors.almost_black
-    mpl.rcParams['axes.labelcolor'] = colors.almost_black
-    mpl.rcParams['xtick.color'] = colors.almost_black
-    mpl.rcParams['ytick.color'] = colors.almost_black
-    mpl.rcParams['grid.color'] = colors.almost_black
-    
-
-def presentation_style():
-    """
-    Same as default_style, but with larger text.
-
-    Useful for powerpoint presentations where large font is nice.
-
-    :return: None
-    """
-
-    _common_style()
-
-    mpl.rcParams['axes.titlesize'] = 20
-    mpl.rcParams['font.size'] = 18
-    mpl.rcParams['axes.labelsize'] = 18
-    mpl.rcParams['xtick.labelsize'] = 16
-    mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 17
-
-    # colors
-    mpl.rcParams['patch.edgecolor'] = colors.almost_black
-    mpl.rcParams['text.color'] = colors.almost_black
-    mpl.rcParams['axes.edgecolor'] = colors.almost_black
-    mpl.rcParams['axes.labelcolor'] = colors.almost_black
-    mpl.rcParams['xtick.color'] = colors.almost_black
-    mpl.rcParams['ytick.color'] = colors.almost_black
-    mpl.rcParams['grid.color'] = colors.almost_black
-
-
-def white_style():
-    """
-    Sets a style good for presenting on dark backgrounds.
-
-    This was designed to use for creating plots that will be used in
-    PowerPoint slides with a dark background. The text is larger to make
-    more viewable plots, as well.
-
-    :return: None
-    """
-    _common_style()
-
-    mpl.rcParams['axes.titlesize'] = 20
-    mpl.rcParams['font.size'] = 18
-    mpl.rcParams['axes.labelsize'] = 18
-    mpl.rcParams['xtick.labelsize'] = 16
-    mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 17
-
-    # colors
-    mpl.rcParams['patch.edgecolor'] = "w"
-    mpl.rcParams['text.color'] = "w"
-    mpl.rcParams['axes.edgecolor'] = "w"
-    mpl.rcParams['axes.labelcolor'] = "w"
-    mpl.rcParams['xtick.color'] = "w"
-    mpl.rcParams['ytick.color'] = "w"
-    mpl.rcParams['grid.color'] = "w"
-    # I like my own color cycle based on one of the Tableu sets, but with
-    # added colors in front that look better on dark backgrounds
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
-                                             colors.color_cycle)
 
 
 def _get_ax(**kwargs):
@@ -552,7 +443,9 @@ def remove_spines(spines_to_remove, ax=None):
     is the one that counts. Calling this multiple times on the same axes
     would be weird, though, since you can specify multiple axes in one call.
     If you really need to call it multiple times and it is breaking, let me
-    know and I can try to fix it.
+    know and I can try to fix it. This also can break when used with the 
+    various `remove_*()` functions. Order matters with these calls, for some
+    reason. 
 
     :param spines_to_remove: List of the desired spines to remove. Can choose
                              from "all", "top", "bottom", "left", or "right".
@@ -611,6 +504,11 @@ def remove_ticks(ticks_to_remove, ax=None):
 
     Like most of these function, the axis is modified in place when the ticks
     are removed, so the axis object doesn't really need to be returned.
+
+    Note that this can break when used with the various `remove_*()` functions. 
+    Order matters with these calls, presumably due to something with the way 
+    matplotlib works under the hood. Mess around with it if you're having 
+    trouble. 
 
     :param ticks_to_remove: locations where ticks need to be removed from.
                             Pass in a list, and choose from: "all, "top",
@@ -672,47 +570,57 @@ def remove_ticks(ticks_to_remove, ax=None):
 
 def remove_labels(labels_to_remove, ax=None):
     """
-    Removes the laels and tick marks from an axis border.
+    Removes the labels and tick marks from an axis border.
 
     This is useful for making conceptual plots where the numbers on the axis
-    don't matter.
+    don't matter. Axes labels still work, also.
 
-    :param labels_to_remove: location of labels to remove. Pass in a list,
-                             and choose from: "all, "top", 'bottom",
-                             "left", or "right".
-    :type labels_to_remove: list
+    Note that this can break when used with the various `remove_*()` functions. 
+    Order matters with these calls, presumably due to something with the way 
+    matplotlib works under the hood. Mess around with it if you're having 
+    trouble. 
+
+    :param labels_to_remove: location of labels to remove. Choose from: 
+                             "both", "x", or "y".
+    :type labels_to_remove: str
     :param ax: Axes object to remove ticks from. This can be ignored.
     :type ax: matplotlib.axes
     :return: axis object with the labels removed.
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 5, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+
+        bpl.remove_labels("y")
+        bpl.remove_ticks(["top"])
+        bpl.add_labels("Conceptual plot", "Axes labels still work")
+
     """
 
     # TODO: create example
     if ax is None:
         ax, kwargs = _get_ax()
 
-    # If they want to remove all labels, turn that into workable infomation
-    labels_to_remove = set(labels_to_remove)  # to remove duplicates
-    if "all" in labels_to_remove:
-        # have to do weirdness since its a set
-        labels_to_remove.remove("all")
-        for tick in ["left", "right", "top", "bottom"]:
-            labels_to_remove.add(tick)
-
-    # create a dictionary to record all the places the labels should be
-    places = {"top": True,
-              "bottom": True,
-              "left": True,
-              "right": True}
-
-    for label in labels_to_remove:
-        try:
-            places[label] = False
-        except KeyError:
-            raise ValueError("You can only remove the `top`, `bottom`, "
-                             "`left`, and `right` labels. ")
-
-    ax.tick_params(labeltop=places["top"], labelbottom=places["bottom"],
-                   labelleft=places["left"], labelright=places["right"])
+    # validate their input
+    if labels_to_remove not in ["both", "x", "y"]:
+        raise ValueError('Please pass in either "x", "y", or "both".')
+    
+    # then set the tick parameters.
+    ax.tick_params(axis=labels_to_remove, bottom=False, top=False, left=False,
+                   right=False, labelbottom=False, labeltop=False, 
+                   labelleft=False, labelright=False)
 
     return ax
 
@@ -861,10 +769,68 @@ def equal_scale(ax=None):
 
     It's really one one command, but it's one I have a hard time remembering.
 
+    Note that this keeps the range the same from the plot as before, so you
+    may want to adjust the limits to make the plot look better. It will 
+    keep the axes adjusted the same, though, no matter how you change the limits
+    afterward. 
+
     :param ax: Axis to make equal scale.
     :type ax: matplotlib.axes
     :return: axis that was passed in. It is modified in place, though, so even
              if its result is not assigned to anything it will still work.
+
+    Examples:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        # make a Gaussian with more spread in y direction
+        xs = np.random.normal(0, 1, 10000)
+        ys = np.random.normal(0, 2, 10000)
+
+        fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+
+        bpl.scatter(xs, ys, ax=ax1)
+        bpl.scatter(xs, ys, ax=ax2)
+
+        bpl.equal_scale(ax2)
+
+        bpl.add_labels(title="Looks symmetric", ax=ax1)
+        bpl.add_labels(title="Shows true shape", ax=ax2)
+
+    Here is proof that changing the limits don't change the scaling between
+    the axes. 
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        # make a Gaussian with more spread in y direction
+        xs = np.random.normal(0, 1, 10000)
+        ys = np.random.normal(0, 2, 10000)
+
+        fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+
+        bpl.scatter(xs, ys, ax=ax1)
+        bpl.scatter(xs, ys, ax=ax2)
+
+        bpl.equal_scale(ax1)
+        bpl.equal_scale(ax2)
+
+        bpl.set_limits(-10, 10, -4, 4, ax=ax1)
+        bpl.set_limits(-5, 5, -10, 10, ax=ax2)
+
     """
     if ax is None:
         ax, kwargs = _get_ax()
@@ -895,6 +861,23 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
     :param kwargs: additional keyword arguments that will be passed on to
                    all the labels you make.
     :return: None
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 10, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+        bpl.add_labels("X value", "Y value", "Title")
     """
     ax, kwargs = _get_ax(**kwargs)
     if x_label is not None:
@@ -926,6 +909,27 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
     :param kwargs: Kwargs for the set_limits() functions. Can also include
                    the axis, with the ax keyword.
     :return: none.
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 10, 0.01)
+        ys = np.cos(xs)
+
+        fig, [ax1, ax2] = plt.subplots(ncols=2)
+
+        ax1.plot(xs, ys)
+
+        ax2.plot(xs, ys)
+        bpl.set_limits(0, 2*np.pi, -1.1, 1.1, ax=ax2)        
     """
 
     ax, kwargs = _get_ax(**kwargs)
@@ -968,6 +972,24 @@ def add_text(x, y, text, coords="data", **kwargs):
     :param kwargs: any additional keyword arguments to pass on the text
                    function. Pass things you would pass to plt.text()
     :return: Same as output of plt.text().
+
+    Example:
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        bpl.default_style()
+
+        xs = np.arange(0, 7, 0.1)
+        ys = xs**2
+
+        plt.plot(xs, ys)
+        bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
+        bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
 
     # this function takes care of the transform keyword already, so don't
@@ -1226,53 +1248,59 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
     
     return x_centers, y_centers, hist.transpose()
 
+# ==============================================================================
 
-def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
-    """
-    Make a contour plot where the levels are based on the density of the points.
+# Density Contour removed for now, but I didn't want to delete it.
 
-    When a dataset is large, plotting a scatterplot often doesn't look good. 
-    This function makes a contour plot of the density of points, rather than
-    plotting the points themselves. 
 
-    Under the hood, this uses the `np.histogram2d()` function to create a 2D
-    histogram, which is then used to create the contours. 
+# def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
+#     """
+#     Make a contour plot where the levels are based on the density of the points.
 
-    You may be interested in the `contour_scatter()` function, too.
+#     When a dataset is large, plotting a scatterplot often doesn't look good. 
+#     This function makes a contour plot of the density of points, rather than
+#     plotting the points themselves. 
 
-    :param xs: list of x values
-    :type xs: list
-    :param ys: list of y values
-    :type ys: list
-    :param bin_size: Size of the bins used in the 2D histogram. This is kind
-                     of an arbitraty parameter. The code will guess a value for
-                     this if none is passed in, but this value isn't always 
-                     good. A smaller value gives noisier contours. A value that
-                     is too large will lead to "chunky" contours. Adjust this
-                     until your contours look good to your eye. That's the best
-                     way to pick a value for this parameter.
-    :type bin_size: float
-    :param ax: Axes object to plot on.
-    :param kwargs: Additional keyword arguments that will be passed on to the
-                   contour function.
-    :return: output of the `plt.contour()` function.
+#     Under the hood, this uses the `np.histogram2d()` function to create a 2D
+#     histogram, which is then used to create the contours. 
 
-    Future: ADD EXAMPLES!!!
-    """
+#     You may be interested in the `contour_scatter()` function, too.
 
-    if ax is None:
-        ax, _ = _get_ax()
+#     :param xs: list of x values
+#     :type xs: list
+#     :param ys: list of y values
+#     :type ys: list
+#     :param bin_size: Size of the bins used in the 2D histogram. This is kind
+#                      of an arbitrary parameter. The code will guess a value for
+#                      this if none is passed in, but this value isn't always 
+#                      good. A smaller value gives noisier contours. A value that
+#                      is too large will lead to "chunky" contours. Adjust this
+#                      until your contours look good to your eye. That's the best
+#                      way to pick a value for this parameter.
+#     :type bin_size: float
+#     :param ax: Axes object to plot on.
+#     :param kwargs: Additional keyword arguments that will be passed on to the
+#                    contour function.
+#     :return: output of the `plt.contour()` function.
+
+#     Future: ADD EXAMPLES!!!
+#     """
+
+#     if ax is None:
+#         ax, _ = _get_ax()
     
-    # the other function does the hard work
-    x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
+#     # the other function does the hard work
+#     x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
     
-    # then set some default parameters
-    kwargs.setdefault("linewidths", 2)
-    if "colors" not in kwargs:
-        kwargs.setdefault("cmap", "viridis")
+#     # then set some default parameters
+#     kwargs.setdefault("linewidths", 2)
+#     if "colors" not in kwargs:
+#         kwargs.setdefault("cmap", "viridis")
     
-    # then we can plot
-    return ax.contour(x_centers, y_centers, hist, **kwargs)
+#     # then we can plot
+#     return ax.contour(x_centers, y_centers, hist, **kwargs)
+
+# ==============================================================================
     
 def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5, 
                     num_contours=7, scatter_kwargs=dict(), 

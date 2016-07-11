@@ -35,15 +35,18 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'plot_directive'
+    'plot_directive', 
+    'nbsphinx'
 ]
+
+nbsphinx_timeout = -1  # Time in seconds; use -1 for no timeout
 
 # import mock
 # MOCK_MODULES = ['matplotlib', 'matplotlib.cbook', 'matplotlib.pyplot']
 # for mod_name in MOCK_MODULES:
 #     sys.modules[mod_name] = mock.Mock()
 
-autosummary_generate = True
+autosummary_generate = False
 
 # Include the example source for plots in API docs
 plot_include_source = True
@@ -94,7 +97,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
