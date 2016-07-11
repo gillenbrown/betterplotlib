@@ -1,5 +1,7 @@
 import matplotlib as mpl
 from cycler import cycler
+import warnings
+import os
 
 from . import colors
 
@@ -16,7 +18,32 @@ def _common_style():
 
     # Font options
     mpl.rcParams['font.family'] = 'sans-serif'
-    mpl.rcParams['font.sans-serif'] = 'Helvetica Neue'
+
+    # We have to be more suble when setting the font. We want to check that the
+    # use has the font we want.
+    # If you want to change the font, change the line below!
+    font = 'Helvetica Neue'
+
+    # Matplotlib will issue a warning if it can't find the font, so we will
+    # try to find the font, and see if the warning was issued
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+
+        # line that will throw a warning
+        mpl.font_manager.fontManager.findfont(font)
+
+        if len(w) == 0:  # if no warnings
+            mpl.rcParams['font.sans-serif'] = font
+        else:  # there were warnings, so the font wasn't found
+            url = "http://blog.olgabotvinnik.com/blog/2012/11/15/2012-11-15-how-to-set-helvetica-as-the-default-sans-serif-font-in/"
+            this_file = os.path.abspath(__file__)
+            print("Betterplotlib could not find it's default font {}.\n"
+                  "For directions on how to install it, check {}\n"
+                  "You don't need to do step 4 on that page.\n\n"
+                  "You can also change the font to something you'd prefer. To "
+                  "do this, change line 25 of {}".format(font, url, this_file))
+
+    # set the rest of the default parameters
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
