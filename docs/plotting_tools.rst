@@ -28,7 +28,6 @@ Plotting
     scatter
     hist
     contour_scatter
-    density_contour
 
 
 Labels and Text

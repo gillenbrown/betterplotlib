@@ -22,16 +22,17 @@ Contents:
 .. toctree::
    :maxdepth: 1
    
+   examples.ipynb
    style
    plotting_tools
-   examples.ipynb
+   
 
 
 
-Indices and tables
-==================
+.. Indices and tables
+.. ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
 
