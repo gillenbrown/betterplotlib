@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 import numpy as np
+import sys
 
 from . import colors
 
@@ -160,7 +161,10 @@ def scatter(*args, **kwargs):
     # get the color, if it hasn't already been set.
     if 'color' not in kwargs and 'c' not in kwargs:
         # get the default color cycle, and get the next color.
-        kwargs['c'] = ax._get_lines.prop_cycler.next()['color']
+        if sys.version_info.major == 2:
+            kwargs['c'] = ax._get_lines.prop_cycler.next()['color']
+        elif sys.version_info.major == 3:
+            kwargs['c'] = next(ax._get_lines.prop_cycler)['color']
 
     # set other parameters, if they haven't been set already
     # I use setdefault to do that, which puts the values in if they don't
