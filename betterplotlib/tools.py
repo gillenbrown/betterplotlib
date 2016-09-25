@@ -1637,7 +1637,7 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
         # make a closed shape with the line
         polygon = path.Path(line, closed=True)
         # then figure out which points are inside it
-        shapes_in += polygon.contains_points(zip(xs, ys))
+        shapes_in += polygon.contains_points(list(zip(xs, ys)))
 
     # the ones that need to be hidden are inside an odd number of shapes. This
     # shounds weird, but actually works. If we have a ring of points, the 
