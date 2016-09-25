@@ -1613,6 +1613,10 @@ def contour_scatter(xs, ys, fill_cmap="white", bin_size=None, min_level=5,
 
     # We then want to find the correct heights for the levels of the contours
     max_hist = int(np.ceil(max(hist.flatten())))
+    if max_hist < min_level:
+        raise ValueError("Min_level needs to be lower. This will be fixed.")
+        #TODO: actually fix this!
+
     levels = np.linspace(min_level, max_hist, num_contours + 1)
     # we add one to the number of contours because we have the highest one at 
     # the highest point, so it won't be shown.
