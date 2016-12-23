@@ -236,7 +236,7 @@ class Axes_bpl(Axes):
         if 'color' not in kwargs:
             kwargs.setdefault('edgecolor', colors.almost_black)
 
-        return super().scatter(*args, **kwargs)
+        return super(Axes_bpl, self).scatter(*args, **kwargs)
 
     def hist(self, *args, **kwargs):
         """
@@ -395,7 +395,7 @@ class Axes_bpl(Axes):
                                                   kwargs.pop("bin_size")))
 
         # plot the histogram, and keep the results
-        hist_results = super().hist(*args, **kwargs)
+        hist_results = super(Axes_bpl, self).hist(*args, **kwargs)
 
         # set the hatch on the patch objects, which are the last thing in the
         # output of plt.hist()
@@ -713,7 +713,7 @@ class Axes_bpl(Axes):
         # push the legend a little farther away from the edge.
         kwargs.setdefault('borderaxespad', 0.75)
 
-        leg = super().legend(*args, **kwargs)
+        leg = super(Axes_bpl, self).legend(*args, **kwargs)
 
         # TODO: set the fontsize of the title properly. The best way to do it is
         # probably to get the font from one of the other text objects, then
@@ -1257,9 +1257,10 @@ class Axes_bpl(Axes):
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
-        super().contourf(x_centers, y_centers, hist, levels=levels, 
-                         cmap=fill_cmap, zorder=2)
-        contours = super().contour(x_centers, y_centers, hist, **contour_kwargs)
+        super(Axes_bpl, self).contourf(x_centers, y_centers, hist, levels=levels, 
+                                       cmap=fill_cmap, zorder=2)
+        contours = super(Axes_bpl, self).contour(x_centers, y_centers, hist, 
+                                                 **contour_kwargs)
 
         # we saved the output from the contour, since it has information about the
         # shape of the contours we can use to figure out which points are outside
