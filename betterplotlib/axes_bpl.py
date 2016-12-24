@@ -1296,5 +1296,56 @@ class Axes_bpl(Axes):
 
         return contours
 
+    def data_ticks(self, x_data, y_data, extent=0.02, 
+                   color=colors.almost_black):
+        """
+        Puts tiny ticks on the axis borders making the location of each point.
+
+        :param x_data: list of values to mark on the x-axis.
+        :type x_data: list
+        :param y_data: list of values to mark on the y-axis. This doesn't have
+                       to be the same length as `x-data`, necessarily.
+        :type y_data: list
+        :param extent: How far the ticks go up from the x-axis. The default is
+                       0.02, meaning the ticks go 2% of the way to the top of 
+                       the plot. Note that the ticks created by this function
+                       will have the same physical size on both axes. Since in
+                       general the x and y axes aren't the same physical size, 
+                       the ticks on the y-axis will be scaled to match the 
+                       physical size of the x ticks. This means that in the 
+                       default case, the y ticks won't cover 2% of the axis, but
+                       again will be the same physical size as the x ticks. 
+        :type extent: float
+        :param color: Color of the ticks. Defaults to `almost_black`. 
+
+
+        Example
+        
+        .. plot::
+            :include-source:
+
+            import matplotlib.pyplot as plt
+            import numpy as np
+            import betterplotlib as bpl
+            bpl.default_style()
+
+            xs = np.random.normal(0, 1, 100)
+            ys = np.random.normal(0, 1, 100)
+
+            fig, ax = bpl.subplots()
+            ax.scatter(xs, ys)
+            ax.data_ticks(xs, ys)       
+        """
+        for x in x_data:
+            self.axvline(x, ymin=0, ymax=extent, color=color)
+
+        # Since the matplotlib command to ax(h/v)line uses an extent based on 
+        # percentage of the way to the end, to get the same physical size for 
+        # both axes, we have to scale based on the size of the axes
+        h_extent = (self.bbox.height / self.bbox.width) * extent
+        for y in y_data:
+            self.axhline(y, xmin=0, xmax=h_extent, color=color)
+        
+
 
 
