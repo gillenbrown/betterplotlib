@@ -760,7 +760,7 @@ class Axes_bpl(Axes):
             xs = np.random.normal(0, 1, 10000)
             ys = np.random.normal(0, 2, 10000)
 
-            fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+            fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
             ax1.scatter(xs, ys)
             ax2.scatter(xs, ys)
@@ -786,7 +786,7 @@ class Axes_bpl(Axes):
             xs = np.random.normal(0, 1, 10000)
             ys = np.random.normal(0, 2, 10000)
 
-            fig, [ax1, ax2] = plt.subplots(figsize=[12, 5], ncols=2)
+            fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
             ax1.scatter(xs, ys)
             ax2.scatter(xs, ys)
@@ -935,7 +935,7 @@ class Axes_bpl(Axes):
 
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=dict(), 
-                        contour_kwargs=dict(), ax=None):
+                        contour_kwargs=dict()):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1297,7 +1297,7 @@ class Axes_bpl(Axes):
         return contours
 
     def data_ticks(self, x_data, y_data, extent=0.02, 
-                   color=colors.almost_black):
+    def data_ticks(self, x_data, y_data, extent=0.015, *args, **kwargs):
         """
         Puts tiny ticks on the axis borders making the location of each point.
 
@@ -1316,7 +1316,11 @@ class Axes_bpl(Axes):
                        default case, the y ticks won't cover 2% of the axis, but
                        again will be the same physical size as the x ticks. 
         :type extent: float
-        :param color: Color of the ticks. Defaults to `almost_black`. 
+        :param args: Additional arguments to pass to the `axvline` and `axhline`
+                     functions, which is what is used to make each tick.
+        :param kwargs: Additional keyword arguments to pass to the `axvline` and
+                       `axhline` functions. `color` is an important one here, 
+                       and it defaults to `almost_black` here.
 
 
         Example
@@ -1336,15 +1340,18 @@ class Axes_bpl(Axes):
             ax.scatter(xs, ys)
             ax.data_ticks(xs, ys)       
         """
+        kwargs.setdefault("color", colors.almost_black)
+        kwargs.setdefault("linewidth", 0.5)
+
         for x in x_data:
-            self.axvline(x, ymin=0, ymax=extent, color=color)
+            self.axvline(x, ymin=0, ymax=extent, *args, **kwargs)
 
         # Since the matplotlib command to ax(h/v)line uses an extent based on 
         # percentage of the way to the end, to get the same physical size for 
         # both axes, we have to scale based on the size of the axes
         h_extent = (self.bbox.height / self.bbox.width) * extent
         for y in y_data:
-            self.axhline(y, xmin=0, xmax=h_extent, color=color)
+            self.axhline(y, xmin=0, xmax=h_extent, *args, **kwargs)
         
 
 

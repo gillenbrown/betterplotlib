@@ -1,5 +1,3 @@
-.. _api_ref:
-
 .. currentmodule:: betterplotlib
 
 .. _styles_api:
@@ -34,9 +32,9 @@ Font Options
 +--------------------+------------+---------------+-------+
 | `axes.titleweight` | bold                               |
 +--------------------+------------+---------------+-------+
-| `axes.titlesize`   | 16         | 20                    |
+| `axes.titlesize`   | 16         | 22                    |
 +--------------------+------------+---------------+-------+
-| `font.size`        | 14         | 18                    |
+| `font.size`        | 14         | 20                    |
 +--------------------+            |                       +
 | `axes.labelsize`   |            |                       |
 +--------------------+------------+---------------+-------+
@@ -44,7 +42,7 @@ Font Options
 +--------------------+            |                       +
 | `ytick.labelsize`  |            |                       |
 +--------------------+------------+---------------+-------+
-| `legend.fontsize`  | 13         | 17                    |
+| `legend.fontsize`  | 13         | 18                    |
 +--------------------+------------+---------------+-------+
 | `text.color`       | bpl.almost_black           | white |
 +--------------------+------------+---------------+-------+
@@ -99,3 +97,10 @@ The following show the ways to set each style.
 .. autofunction:: presentation_style
 
 .. autofunction:: white_style
+
+Colors
+------
+
+Betterplotlib has some additional colors that have been defined. The color cycles comes from the [Pallettable](https://jiffyclub.github.io/palettable/tableau/) library. I used the Tableau 10 color cycle with the order modified. Some other colors are ones I have found and liked. `parks_canada_heritage_green` is the color of the road signs in the Candaian National Parks, which I really liked. `steel_blue` is a nice dark blue color. `light_gray` is what it sounds like, and it used for the dark axes. `almost_black` is just what it sounds like, and is used as the default black throughout the plots to make them slightly easier on the eyes. Here are all those defined colors.
+
+.. image:: images/colors.png
