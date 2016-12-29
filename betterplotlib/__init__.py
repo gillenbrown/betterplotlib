@@ -15,7 +15,7 @@ def subplots(*args, **kwargs):
     betterplotlib functionality.
 
     This is exactly the same as the `plt.subplots()` function, only that it
-    creates betterplotlib axes and figure objects rather than matplotlib ones.
+    creates betterplotlib axes objects rather than matplotlib ones.
     The betterplotlib objects are where all the magic happens.
     """
 
