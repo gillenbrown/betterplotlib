@@ -13,7 +13,8 @@ def _common_style():
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['savefig.format'] = 'pdf'
     mpl.rcParams['axes.formatter.useoffset'] = False
-    # mpl.rcParams['figure.dpi'] = 200
+    mpl.rcParams['figure.dpi'] = 200
+    # mpl.rcParams['savefig.dpi'] = 400
     mpl.rcParams['figure.figsize'] = [10, 7]
 
     # Font options
@@ -90,12 +91,12 @@ def presentation_style():
 
     _common_style()
 
-    mpl.rcParams['axes.titlesize'] = 20
-    mpl.rcParams['font.size'] = 18
-    mpl.rcParams['axes.labelsize'] = 18
+    mpl.rcParams['axes.titlesize'] = 22
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 20
     mpl.rcParams['xtick.labelsize'] = 16
     mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 17
+    mpl.rcParams['legend.fontsize'] = 18
 
     # colors
     mpl.rcParams['patch.edgecolor'] = colors.almost_black
@@ -119,12 +120,12 @@ def white_style():
     """
     _common_style()
 
-    mpl.rcParams['axes.titlesize'] = 20
-    mpl.rcParams['font.size'] = 18
-    mpl.rcParams['axes.labelsize'] = 18
+    mpl.rcParams['axes.titlesize'] = 22
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 20
     mpl.rcParams['xtick.labelsize'] = 16
     mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 17
+    mpl.rcParams['legend.fontsize'] = 20
 
     # colors
     mpl.rcParams['patch.edgecolor'] = "w"

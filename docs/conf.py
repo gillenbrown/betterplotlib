@@ -36,7 +36,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'plot_directive', 
-    'nbsphinx'
+    'nbsphinx',
+    'IPython.sphinxext.ipython_console_highlighting'
 ]
 
 nbsphinx_timeout = -1  # Time in seconds; use -1 for no timeout
@@ -70,7 +71,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'betterplotlib'
-copyright = u'2015, Gillen Brown'
+copyright = u'2015-2016, Gillen Brown'
 author = u'Gillen Brown'
 
 # The version info for the project you're documenting, acts as replacement for
