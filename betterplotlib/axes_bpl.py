@@ -1296,7 +1296,6 @@ class Axes_bpl(Axes):
 
         return contours
 
-    def data_ticks(self, x_data, y_data, extent=0.02, 
     def data_ticks(self, x_data, y_data, extent=0.015, *args, **kwargs):
         """
         Puts tiny ticks on the axis borders making the location of each point.
