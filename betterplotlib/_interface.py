@@ -87,3 +87,13 @@ def plot(*args, **kwargs):
     ax = plt.gca(projection='bpl')
     return ax.plot(*args, **kwargs)
 
+@_autogen_docstring(bpl.Axes_bpl.axvline)
+def axvline(x=0, *args, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.axvline(x, *args, **kwargs)
+
+@_autogen_docstring(bpl.Axes_bpl.axhline)
+def axhline(y=0, *args, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.axhline(y, *args, **kwargs)
+

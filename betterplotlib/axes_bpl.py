@@ -1383,11 +1383,90 @@ class Axes_bpl(Axes):
         """
         # set the linewidth to a thicker value. There are two keys here, though,
         # so we have to be careful.
-        if not ("lw" in kwargs and "linewidth" in kwargs):
+        if not ("lw" in kwargs or "linewidth" in kwargs):
             kwargs.setdefault("lw", 3)
 
-        super(Axes_bpl, self).plot(*args, **kwargs)
+        return super(Axes_bpl, self).plot(*args, **kwargs)
+
+    def axvline(self, x=0, *args, **kwargs):
+        """ Place a vertical line at some point on the axes.
+
+        :param x: Data value on the x-axis to place the line.
+        :type x: float
+        :param args: Additional parameters that will be passed on the the 
+                     regular `plt.axvline` function. See it's documentation 
+                     for details.
+        :param kwargs: Similarly, additional keyword arguments that will be 
+                       passed on to the regular `plt.axvline` function.
+
+        .. plot::
+            :include-source:
+
+            import numpy as np
+            import betterplotlib as bpl
+            bpl.default_style()
+
+            left_xs = np.arange(-20, 1, 0.01)
+            right_xs = np.arange(1.001, 20, 0.01)
+            left_ys = left_xs / (left_xs - 1)
+            right_ys = right_xs / (right_xs - 1)
+
+            fig, ax = bpl.subplots()
+            ax.make_ax_dark()
+            ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+            ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+            ax.axvline(1.0, linestyle="--")
+            ax.axhline(1.0, linestyle="--")
+            ax.set_limits(-10, 10, -10, 10)
+
+        """
+
+        # set the color to be almost black. Matplotlib has two keywords for 
+        # color, so we need to check both here.
+        if not ("c" in kwargs or "color" in kwargs):
+            kwargs.setdefault("c", colors.almost_black)
+
+        return super(Axes_bpl, self).axvline(x, *args, **kwargs)
+
+    def axhline(self, y=0, *args, **kwargs):
+        """ Place a horizontal line at some point on the axes.
+
+        :param y: Data value on the y-axis to place the line.
+        :type y: float
+        :param args: Additional parameters that will be passed on the the 
+                     regular `plt.axhline` function. See it's documentation 
+                     for details.
+        :param kwargs: Similarly, additional keyword arguments that will be 
+                       passed on to the regular `plt.axhline` function.
         
+        .. plot::
+            :include-source:
+
+            import numpy as np
+            import betterplotlib as bpl
+            bpl.default_style()
+
+            left_xs = np.arange(-20, 1, 0.01)
+            right_xs = np.arange(1.001, 20, 0.01)
+            left_ys = left_xs / (left_xs - 1)
+            right_ys = right_xs / (right_xs - 1)
+
+            fig, ax = bpl.subplots()
+            ax.make_ax_dark()
+            ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+            ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+            ax.axvline(1.0, linestyle="--")
+            ax.axhline(1.0, linestyle="--")
+            ax.set_limits(-10, 10, -10, 10)
+            
+        """
+
+        # set the color to be almost black. Matplotlib has two keywords for 
+        # color, so we need to check both here.
+        if not ("c" in kwargs or "color" in kwargs):
+            kwargs.setdefault("c", colors.almost_black)
+
+        return super(Axes_bpl, self).axhline(y, *args, **kwargs)
 
 
 
