@@ -1351,6 +1351,42 @@ class Axes_bpl(Axes):
         h_extent = (self.bbox.height / self.bbox.width) * extent
         for y in y_data:
             self.axhline(y, xmin=0, xmax=h_extent, *args, **kwargs)
+
+    def plot(self, *args, **kwargs):
+        """A slightly improved plot function.
+
+        This is best used for plotting lines, while the `scatter()` function
+        is best used for plotting points.
+
+        Currently all this does is make the lines thicker, which looks better.
+        There isn't any added functionality.
+
+        The parameters here are the exact same as they are for the regular
+        `plt.plot()` or `ax.plot()` functions, so I don't think any 
+        documentation would be helpful.
+
+        .. plot::
+            :include-source:
+
+            import numpy as np
+            import betterplotlib as bpl
+            bpl.default_style()
+
+            xs = np.arange(0, 1, 0.01)
+            ys_1 = xs
+            ys_2 = xs**2
+
+            fig, ax = bpl.subplots()
+            ax.plot(xs, ys_1) 
+            ax.plot(xs, ys_2) 
+
+        """
+        # set the linewidth to a thicker value. There are two keys here, though,
+        # so we have to be careful.
+        if not ("lw" in kwargs and "linewidth" in kwargs):
+            kwargs.setdefault("lw", 3)
+
+        super(Axes_bpl, self).plot(*args, **kwargs)
         
 
 

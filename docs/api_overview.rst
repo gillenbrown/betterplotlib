@@ -34,6 +34,7 @@ Plotting
 These methods replace or supplement the default matplotlib commands for the main plotting functionality.
 
 .. autosummary::
+    Axes_bpl.plot
     Axes_bpl.scatter
     Axes_bpl.hist
     Axes_bpl.contour_scatter

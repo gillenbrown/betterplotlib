@@ -82,3 +82,8 @@ def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
     ax = plt.gca(projection='bpl')
     return ax.data_ticks(x_data, y_data, extent, *args, **kwargs)
 
+@_autogen_docstring(bpl.Axes_bpl.plot)
+def plot(*args, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.plot(*args, **kwargs)
+
