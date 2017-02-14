@@ -228,7 +228,10 @@ class Axes_bpl(Axes):
         # already exist, but won't overwrite anything.
         kwargs.setdefault('linewidth', 0.25)
         # use the function we defined above to get the proper alpha value.
-        kwargs.setdefault('alpha', _tools._alpha(len(args[0])))
+        try:
+            kwargs.setdefault('alpha', _tools._alpha(len(args[0])))
+        except TypeError:
+            kwargs.setdefault("alpha", 1.0)
 
         # edgecolor is a weird case, since it shouldn't be set if the user
         # specifies 'color', since that refers to the whole point, not just the
@@ -236,6 +239,29 @@ class Axes_bpl(Axes):
         if 'color' not in kwargs:
             kwargs.setdefault('edgecolor', colors.almost_black)
 
+        # we want to make the points in the legend opaque always. To do this 
+        # we plot nans with all the same parameters, but with alpha of one.
+        if "label" in kwargs:
+            # we don't want to plot any data here, so exclude the data if 
+            # it exists. We'll exclude the "x" and "y" kwargs below, too
+            if len(args) >= 2:
+                label_args = args[2:]
+            # we need to process the kwargs a little before plotting the fake
+            # data, so make a copy of them
+            label_kwargs = kwargs.copy()
+            # exclude any plotted data, if it is in a kwarg
+            label_kwargs.pop("x", None)
+            label_kwargs.pop("y", None)
+            # set the alpha to one, which is the whole point
+            label_kwargs["alpha"] = 1.0
+            # we can then plot the fake data. Due to weirdness in matplotlib, we
+            # have to plot a two element NaN list.
+            super(Axes_bpl, self).scatter([np.nan, np.nan], [np.nan, np.nan], 
+                                          *label_args, **label_kwargs)
+            # in the main plotting we don't want to have a label, so we pop it.
+            kwargs.pop("label")
+            
+        # we then plot the main data
         return super(Axes_bpl, self).scatter(*args, **kwargs)
 
     def hist(self, *args, **kwargs):
