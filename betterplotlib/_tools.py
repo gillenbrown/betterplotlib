@@ -30,7 +30,7 @@ def _get_ax(**kwargs):
     return ax, kwargs
 
 
-def _alpha(n, scale=2000):
+def _alpha(n, threshold=30, scale=2000):
     """
     Calculate a rough guess for the best alpha value for a default scatterplot.
 
@@ -45,6 +45,8 @@ def _alpha(n, scale=2000):
 
     :param n: Length of the dataset that will be plotted in the scatterplot.
     :type n: int
+    :param threshold: For the size of the dataset below this, the points will
+                      be 100% opaque.
     :param scale: Parameter in the function that determines the alpha value.
                   Defaults to 2000. The larger the value, the more opaque 
                   points will be for a given n.
@@ -53,7 +55,8 @@ def _alpha(n, scale=2000):
     :rtype: float
 
     """
-
+    if n < threshold:
+        return 1.0
     return 0.99 / (1.0 + (n / float(scale)))  # turn scale into a float to make
                                               # sure it still works in Python 2
 
