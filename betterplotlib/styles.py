@@ -47,6 +47,10 @@ def _common_style():
                   "You can also change the font to something you'd prefer. To "
                   "do this, change line 25 of {}".format(font, url, this_file))
 
+    # change math font too
+    mpl.rcParams['mathtext.fontset'] = 'custom'
+    mpl.rcParams['mathtext.default'] = 'regular'
+
     # set the rest of the default parameters
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
