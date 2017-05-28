@@ -283,8 +283,7 @@ class Axes_bpl(Axes):
 
         Everything is the same as the default matplotlib implementation, with 
         the exception a few keyword parameters. `rel_freq` makes the histogram a
-        relative frequency plot, `hatch` controls the hatching of the
-        bars, and `bin_size` controls the width of each bin.
+        relative frequency plot and `bin_size` controls the width of each bin.
 
         :param args: non-keyword arguments that will be passed on to the
                      plt.hist() function. These will typically be the list of
@@ -296,14 +295,6 @@ class Axes_bpl(Axes):
                            it will still be included in the relative frequency
                            calculation.
         :type rel_freq: bool
-        :keyword hatch: Controls the hatch style of the bars. Must be one of the
-                        following: '-', '|', '+', '/', '\\', 'x', '.', 'o', 'O',
-                        '*'. You can also repeat a symbol as many times as you
-                        want to get a denser pattern. The backslashes need twice
-                        as many, since Python uses those as escapes. If you
-                        don't include this keyword, the bars will not have
-                        hatching.
-        :type hatch: str
         :keyword bin_size: The width of the bins in the histogram. The bin
                            boundaries will start at zero, and will be integer
                            multiples of bin_size from there. Specify either 
@@ -357,45 +348,6 @@ class Axes_bpl(Axes):
 
             bpl.add_labels(y_label="Relative Frequency")
 
-        Here is a demo of all the hatch styles. Repeat each symbol more for a
-        denser pattern. I would only use hatching when using `histtype` as 
-        either `step` or `stepfilled`, since the bar borders on the regular 
-        histogram mess with the hatching.
-
-        .. plot::
-            :include-source:
-
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
-            import numpy as np
-
-            bpl.default_style()
-
-            data = np.random.uniform(0, 0.9, 10000)
-
-            for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-                bins = [min(data), max(data)]
-                bpl.hist(data, histtype="stepfilled", hatch=hatch, bins=bins)
-                data += 1
-
-        If you specify histtype="step", the hatching is the same color as the
-        rest of the bar.
-
-        .. plot::
-            :include-source:
-
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
-            import numpy as np
-
-            bpl.default_style()
-
-            data = np.random.uniform(0, 0.9, 10000)
-
-            for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-                bins = [min(data), max(data)]
-                bpl.hist(data, histtype="step", hatch=hatch, bins=bins)
-                data += 1
         """
         # TODO: Add documentatino for examples of bin_size
 
@@ -419,9 +371,6 @@ class Axes_bpl(Axes):
             # we weight each item by 1/total items.
             kwargs["weights"] = [1.0 / len(data)] * len(data)
 
-        # get the hatch before passing the kwargs on
-        hatch = kwargs.pop("hatch", None)
-
         # if they didn't specify the binning, use our binning
         if "bin_size" in kwargs and "bins" in kwargs:
             raise ValueError("The `bins` and `bin_size` keywords cannot be "
@@ -433,15 +382,7 @@ class Axes_bpl(Axes):
                                                   kwargs.pop("bin_size")))
 
         # plot the histogram, and keep the results
-        hist_results = super(Axes_bpl, self).hist(*args, **kwargs)
-
-        # set the hatch on the patch objects, which are the last thing in the
-        # output of plt.hist()
-        if hatch is not None:
-            for patch in hist_results[2]:
-                patch.set_hatch(hatch)
-
-        return hist_results
+        return super(Axes_bpl, self).hist(*args, **kwargs)
 
     def add_labels(self, x_label=None, y_label=None, title=None, 
                    *args, **kwargs):
