@@ -1412,5 +1412,21 @@ class Axes_bpl(Axes):
 
         return super(Axes_bpl, self).axhline(y, *args, **kwargs)
 
+    def errorbar(self, *args, **kwargs):
+        """Wrapper for the plt.errorbar() function.
+        
+        Style changes: capsize is automatically zero, and the format is 
+        automatically a scatter plot, rather than the connected lines that
+        are used by default otherwise. It also adds a black marker edge to
+        distinguish the markers when there are lots of data poitns. Otherwise
+        everything blends together. """
+
+        kwargs.setdefault("capsize", 0)
+        kwargs.setdefault("fmt", "o")
+        kwargs.setdefault('markeredgewidth', 0.25)
+        kwargs.setdefault('markeredgecolor', colors.almost_black)
+
+        return super(Axes_bpl, self).errorbar(*args, **kwargs)
+
 
 
