@@ -10,11 +10,14 @@ def _common_style():
     Set some of the style options used by all styles.
     """
 
+
     mpl.rcParams['legend.scatterpoints'] = 1
+    mpl.rcParams['legend.numpoints'] = 1
+    # ^ these two needed for matplotlib 1.x
     mpl.rcParams['savefig.format'] = 'pdf'
     mpl.rcParams['axes.formatter.useoffset'] = False
-    mpl.rcParams['figure.dpi'] = 200
-    # mpl.rcParams['savefig.dpi'] = 400
+    mpl.rcParams['figure.dpi'] = 100
+    mpl.rcParams['savefig.dpi'] = 300
     mpl.rcParams['figure.figsize'] = [10, 7]
 
     # Font options
@@ -44,15 +47,21 @@ def _common_style():
                   "You can also change the font to something you'd prefer. To "
                   "do this, change line 25 of {}".format(font, url, this_file))
 
+    # change math font too
+    mpl.rcParams['mathtext.fontset'] = 'custom'
+    mpl.rcParams['mathtext.default'] = 'regular'
+
     # set the rest of the default parameters
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
 
-    # I like my own color cycle based on one of the Tableu sets.
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
-    # change the colormap while I'm at it.
-    mpl.rcParams['image.cmap'] = 'viridis'
+    # the matplotlib 2.0 colors are fine, but the old ones aren't.
+    if mpl.__version__[0] == "1":
+        # I like my own color cycle based on one of the Tableu sets.
+        mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+        # change the colormap while I'm at it.
+        mpl.rcParams['image.cmap'] = 'viridis'
 
 def default_style():
     """

@@ -3,9 +3,12 @@ from matplotlib import colors as mpl_colors
 from matplotlib import path
 import numpy as np
 import sys
+from matplotlib import __version__
 
 from . import colors
 from . import _tools
+
+mpl_2 = __version__[0] == "2"
 
 class Axes_bpl(Axes):
     
@@ -41,7 +44,10 @@ class Axes_bpl(Axes):
 
 
         """
-        self.set_axis_bgcolor(colors.light_gray)
+        if mpl_2:
+            self.set_facecolor(colors.light_gray)
+        else:
+            self.set_axis_bgcolor(colors.light_gray)
         self.grid(which="major", color="w", linestyle="-", linewidth=0.5)
         if minor_ticks:
             self.minorticks_on()
@@ -215,7 +221,9 @@ class Axes_bpl(Axes):
             bpl.scatter(x3, y3)
         """
 
-        # get the color, if it hasn't already been set.
+        # get the color, if it hasn't already been set. I don't need to do this
+        # in mpl 2.0 technically, but I do it anyway so I can use this color
+        # for the invisible label below.
         if 'color' not in kwargs and 'c' not in kwargs:
             # get the default color cycle, and get the next color.
             if sys.version_info.major == 2:
@@ -226,23 +234,27 @@ class Axes_bpl(Axes):
         # set other parameters, if they haven't been set already
         # I use setdefault to do that, which puts the values in if they don't
         # already exist, but won't overwrite anything.
-        kwargs.setdefault('linewidth', 0.25)
-        # use the function we defined above to get the proper alpha value.
+        # first set the edge color for the points
+        # only do this for large datasets in mpl 1.x
+        if not mpl_2 and len(args[0]) > 30:
+            kwargs.setdefault('linewidth', 0.25)
+            # we also need to set the edge color of the markers
+            # edgecolor is a weird case, since it shouldn't be set if the user
+            # specifies 'color', since that refers to the whole point, not just
+            # the color of the point. It includes the edge color.
+            if 'color' not in kwargs:
+                kwargs.setdefault('edgecolor', kwargs["c"])
+
+        # use the function we defined to get the proper alpha value.
         try:
             kwargs.setdefault('alpha', _tools._alpha(len(args[0])))
         except TypeError:
             kwargs.setdefault("alpha", 1.0)
 
-        # edgecolor is a weird case, since it shouldn't be set if the user
-        # specifies 'color', since that refers to the whole point, not just the
-        # color of the point. It includes the edge color.
-        if 'color' not in kwargs:
-            kwargs.setdefault('edgecolor', colors.almost_black)
-
-        # we want to make the points in the legend opaque always. To do this 
+        # we want to make the points in the legend opaque always. To do this
         # we plot nans with all the same parameters, but with alpha of one.
         if "label" in kwargs:
-            # we don't want to plot any data here, so exclude the data if 
+            # we don't want to plot any data here, so exclude the data if
             # it exists. We'll exclude the "x" and "y" kwargs below, too
             if len(args) >= 2:
                 label_args = args[2:]
@@ -256,11 +268,11 @@ class Axes_bpl(Axes):
             label_kwargs["alpha"] = 1.0
             # we can then plot the fake data. Due to weirdness in matplotlib, we
             # have to plot a two element NaN list.
-            super(Axes_bpl, self).scatter([np.nan, np.nan], [np.nan, np.nan], 
+            super(Axes_bpl, self).scatter([np.nan, np.nan], [np.nan, np.nan],
                                           *label_args, **label_kwargs)
             # in the main plotting we don't want to have a label, so we pop it.
             kwargs.pop("label")
-            
+
         # we then plot the main data
         return super(Axes_bpl, self).scatter(*args, **kwargs)
 
@@ -271,8 +283,7 @@ class Axes_bpl(Axes):
 
         Everything is the same as the default matplotlib implementation, with 
         the exception a few keyword parameters. `rel_freq` makes the histogram a
-        relative frequency plot, `hatch` controls the hatching of the
-        bars, and `bin_size` controls the width of each bin.
+        relative frequency plot and `bin_size` controls the width of each bin.
 
         :param args: non-keyword arguments that will be passed on to the
                      plt.hist() function. These will typically be the list of
@@ -284,14 +295,6 @@ class Axes_bpl(Axes):
                            it will still be included in the relative frequency
                            calculation.
         :type rel_freq: bool
-        :keyword hatch: Controls the hatch style of the bars. Must be one of the
-                        following: '-', '|', '+', '/', '\\', 'x', '.', 'o', 'O',
-                        '*'. You can also repeat a symbol as many times as you
-                        want to get a denser pattern. The backslashes need twice
-                        as many, since Python uses those as escapes. If you
-                        don't include this keyword, the bars will not have
-                        hatching.
-        :type hatch: str
         :keyword bin_size: The width of the bins in the histogram. The bin
                            boundaries will start at zero, and will be integer
                            multiples of bin_size from there. Specify either 
@@ -345,45 +348,6 @@ class Axes_bpl(Axes):
 
             bpl.add_labels(y_label="Relative Frequency")
 
-        Here is a demo of all the hatch styles. Repeat each symbol more for a
-        denser pattern. I would only use hatching when using `histtype` as 
-        either `step` or `stepfilled`, since the bar borders on the regular 
-        histogram mess with the hatching.
-
-        .. plot::
-            :include-source:
-
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
-            import numpy as np
-
-            bpl.default_style()
-
-            data = np.random.uniform(0, 0.9, 10000)
-
-            for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-                bins = [min(data), max(data)]
-                bpl.hist(data, histtype="stepfilled", hatch=hatch, bins=bins)
-                data += 1
-
-        If you specify histtype="step", the hatching is the same color as the
-        rest of the bar.
-
-        .. plot::
-            :include-source:
-
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
-            import numpy as np
-
-            bpl.default_style()
-
-            data = np.random.uniform(0, 0.9, 10000)
-
-            for hatch in ['-', '|', '+', '/', '\\\\', 'x', '.', 'o', 'O', '*']:
-                bins = [min(data), max(data)]
-                bpl.hist(data, histtype="step", hatch=hatch, bins=bins)
-                data += 1
         """
         # TODO: Add documentatino for examples of bin_size
 
@@ -407,9 +371,6 @@ class Axes_bpl(Axes):
             # we weight each item by 1/total items.
             kwargs["weights"] = [1.0 / len(data)] * len(data)
 
-        # get the hatch before passing the kwargs on
-        hatch = kwargs.pop("hatch", None)
-
         # if they didn't specify the binning, use our binning
         if "bin_size" in kwargs and "bins" in kwargs:
             raise ValueError("The `bins` and `bin_size` keywords cannot be "
@@ -421,15 +382,7 @@ class Axes_bpl(Axes):
                                                   kwargs.pop("bin_size")))
 
         # plot the histogram, and keep the results
-        hist_results = super(Axes_bpl, self).hist(*args, **kwargs)
-
-        # set the hatch on the patch objects, which are the last thing in the
-        # output of plt.hist()
-        if hatch is not None:
-            for patch in hist_results[2]:
-                patch.set_hatch(hatch)
-
-        return hist_results
+        return super(Axes_bpl, self).hist(*args, **kwargs)
 
     def add_labels(self, x_label=None, y_label=None, title=None, 
                    *args, **kwargs):
@@ -644,20 +597,15 @@ class Axes_bpl(Axes):
                          left=False, right=False, labelbottom=False, 
                          labeltop=False, labelleft=False, labelright=False)
 
-    def legend(self, facecolor="None", *args, **kwargs):
+    def legend(self, linewidth=0, *args, **kwargs):
         """Create a nice looking legend.
 
         Works by calling the ax.legend() function with the given args and 
         kwargs. If some are not specified, they will be filled with values that 
         make the legend look nice.
 
-        :param facecolor: color of the background of the legend. There are two
-                          default options: "light" and "dark". Light will be 
-                          white, and dark will be the same color as the dark ax. 
-                          If any other color is passed in, then that color will 
-                          be the one used. If nothing is passed in, the legend 
-                          will be transparent.
-        :type facecolor: str
+        :param linewidth: linewidth of the border of the legend. Defaults to
+                          zero. 
         :param args: non-keyword arguments passed on to the ax.legend() fuction.
         :param kwargs: keyword arguments that will be passed on to the 
                        ax.legend() function. This will be things like loc, 
@@ -684,28 +632,6 @@ class Axes_bpl(Axes):
             ax.plot(x, 3*x, label="3x")
             ax.legend()
 
-        The dark legend is designed for the dark axes in mind.
-
-        .. plot::
-            :include-source:
-
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
-            import numpy as np
-
-            bpl.default_style()
-
-            x = np.arange(0, 5, 0.1)
-
-            fig, ax = bpl.subplots()
-
-            ax.plot(x, x, label="x")
-            ax.plot(x, 2*x, label="2x")
-            ax.plot(x, 3*x, label="3x")
-            ax.make_ax_dark()
-            ax.legend("dark")
-
-
         You can still pass in any kwargs to the legend function you want.
 
         .. plot::
@@ -727,15 +653,6 @@ class Axes_bpl(Axes):
             ax.legend(fontsize=20, loc=6, title="Title")
         """
 
-        kwargs.setdefault('loc', 0)
-        if facecolor == "light":
-            facecolor = "#FFFFFF"
-        elif facecolor == "dark":
-            facecolor = '#E5E5E5'
-        # otherwise, make facecolor transparent
-        else:
-            facecolor = "None"
-
         # push the legend a little farther away from the edge.
         kwargs.setdefault('borderaxespad', 0.75)
 
@@ -750,8 +667,9 @@ class Axes_bpl(Axes):
 
         # turn the background into whatever color it needs to be
         frame = leg.get_frame()
-        frame.set_facecolor(facecolor)
-        frame.set_linewidth(0)
+        frame.set_linewidth(linewidth)
+        if not mpl_2:
+            frame.set_alpha(0.6)
 
         return leg
 

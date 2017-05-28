@@ -2,6 +2,7 @@ from palettable.tableau import Tableau_10
 
 almost_black = '#262626'
 light_gray = '#E5E5E5'
+light_grey = light_gray
 steel_blue = '#3F5D7D'
 # I saw the national park road signs and loved the color, so I found it. Here
 # is the source if you want (PDF):
