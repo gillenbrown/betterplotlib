@@ -184,7 +184,8 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
                  tuple of two lists or numbers is passed in, the first will be 
                  used for x, the second for y.
     :param bin_size: Size of the bins that will be used to make the 2D 
-                     histogram. 
+                     histogram. Can be either a number or a two element list, 
+                     with bin sizes for x and y. 
     :type bin_size: float
     :return: list of x center, list of y centers, and the 2d histogram values.
              These can be passed on to the contour functions.
@@ -201,9 +202,19 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
         if bin_size is None:
             x_bin_size = _freedman_diaconis(xs)
             y_bin_size = _freedman_diaconis(ys)
-        else:
-            x_bin_size = bin_size
-            y_bin_size = bin_size
+        else:  # use the bin_size the user provided.
+            # if we have a multiple element bin_size, then we can use that for
+            # x and y
+            try:
+                x_bin_size = bin_size[0]
+                if len(bin_size) != 2:
+                    raise ValueError("bin_size needs to be either a scalar\n"
+                                     "or a two element list.")
+                y_bin_size = bin_size[1]
+            except TypeError:
+                # we only have a scalar, so use that for both x and y
+                x_bin_size = bin_size
+                y_bin_size = bin_size
         # then use that bin size to make the actual bins
         x_bins = _binning(xs, x_bin_size)
         y_bins = _binning(ys, y_bin_size)

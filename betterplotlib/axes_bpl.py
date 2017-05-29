@@ -926,8 +926,11 @@ class Axes_bpl(Axes):
                          contours. A value that is too large will lead to 
                          "chunky" contours. Adjust this until your contours 
                          look good to your eye. That's the best
-                         way to pick a value for this parameter.
-        :type bin_size: float
+                         way to pick a value for this parameter. It can be
+                         either a scalar, in which case that will be used for 
+                         both x and y. It could also be a two element list, in
+                         which case it will be the bin size for x and y. 
+        :type bin_size: float or list
         :param min_level: This is another arbitrary parameter that determines 
                           how high the density of points needs to be before 
                           the outer contour is drawn. The higher the value, 
