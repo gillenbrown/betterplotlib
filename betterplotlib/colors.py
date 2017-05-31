@@ -12,13 +12,4 @@ steel_blue = '#3F5D7D'
 # online that can convert that to the hex color.
 parks_canada_heritage_green = '#284734'
 
-color_cycle = [Tableau_10.hex_colors[3],
-               Tableau_10.hex_colors[0],
-               Tableau_10.hex_colors[2],
-               Tableau_10.hex_colors[4],
-               Tableau_10.hex_colors[1],
-               Tableau_10.hex_colors[6],
-               Tableau_10.hex_colors[7],
-               Tableau_10.hex_colors[9],
-               Tableau_10.hex_colors[8],
-               Tableau_10.hex_colors[5]]
+color_cycle = Tableau_10.hex_colors
