@@ -1448,6 +1448,3 @@ class Axes_bpl(Axes):
         kwargs.setdefault('markeredgecolor', colors.almost_black)
 
         return super(Axes_bpl, self).errorbar(*args, **kwargs)
-
-
-

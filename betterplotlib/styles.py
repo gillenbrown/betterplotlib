@@ -27,6 +27,7 @@ def _common_style():
     # use has the font we want.
     # If you want to change the font, change the line below!
     font = 'Helvetica Neue'
+    backup_font = "Arial"
 
     # Matplotlib will issue a warning if it can't find the font, so we will
     # try to find the font, and see if the warning was issued
@@ -39,6 +40,7 @@ def _common_style():
         if len(w) == 0:  # if no warnings
             mpl.rcParams['font.sans-serif'] = font
         else:  # there were warnings, so the font wasn't found
+            mpl.rcParams['font.sans-serif'] = backup_font
             url = "http://blog.olgabotvinnik.com/blog/2012/11/15/2012-11-15-how-to-set-helvetica-as-the-default-sans-serif-font-in/"
             this_file = os.path.abspath(__file__)
             print("Betterplotlib could not find it's default font {}.\n"
