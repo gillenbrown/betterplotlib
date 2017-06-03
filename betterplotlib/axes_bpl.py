@@ -629,7 +629,7 @@ class Axes_bpl(Axes):
                 ax.plot(x, x, label="x")
                 ax.plot(x, 2*x, label="2x")
                 ax.plot(x, 3*x, label="3x")
-                ax.legend(loc=2))
+                ax.legend(loc=2)
             
             ax1.set_title("matplotlib")
             ax2.set_title("betterplotlib")
