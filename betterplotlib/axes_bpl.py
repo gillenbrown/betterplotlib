@@ -634,7 +634,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             bpl.default_style()
 
-            xs = np.arange(0, 1, 0.01)
+            x = np.arange(0, 5, 0.1)
 
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
