@@ -209,16 +209,21 @@ class Axes_bpl(Axes):
 
             bpl.default_style()
 
-            x1 = np.random.normal(0, scale=0.5, size=500)
-            y1 = np.random.normal(0, scale=0.5, size=500)
-            x2 = np.random.normal(0.5, scale=0.5, size=500)
-            y2 = np.random.normal(0.5, scale=0.5, size=500)
-            x3 = np.random.normal(1, scale=0.5, size=500)
-            y3 = np.random.normal(1, scale=0.5, size=500)
+            x = np.random.normal(0, scale=0.5, size=500)
+            y = np.random.normal(0, scale=0.5, size=500)
+            
+            fig = plt.figure(figsize=[15, 7])
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122, projection="bpl")
+            
+            for ax in [ax1, ax2]:
+                ax.scatter(x,     y)
+                ax.scatter(x+0.5, y+0.5)
+                ax.scatter(x+1,   y+1)
+            
+            ax1.set_title("matplotlib")
+            ax2.add_labels(title="betterplotlib")
 
-            bpl.scatter(x1, y1)
-            bpl.scatter(x2, y2)
-            bpl.scatter(x3, y3)
         """
 
         # get the color, if it hasn't already been set. I don't need to do this
@@ -319,7 +324,15 @@ class Axes_bpl(Axes):
 
             data = np.random.normal(0, 2, 10000)
 
-            bpl.hist(data)
+            fig = plt.figure(figsize=[15, 7])
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122, projection="bpl")
+            
+            ax1.hist(data)
+            ax2.hist(data)
+            
+            ax1.set_title("matplotlib")
+            ax2.add_labels(title="betterplotlib")
 
         There are also plenty of options that make other histograms look nice 
         too.
@@ -611,26 +624,30 @@ class Axes_bpl(Axes):
                        ax.legend() function. This will be things like loc, 
                        and title, etc.
         :return: legend object returned by the ax.legend() function.
-
+        
         The default legend is a transparent background with no border, like so.
 
         .. plot::
             :include-source:
 
-            import betterplotlib as bpl
-            import matplotlib.pyplot as plt
             import numpy as np
-
+            import betterplotlib as bpl
             bpl.default_style()
 
-            x = np.arange(0, 5, 0.1)
+            xs = np.arange(0, 1, 0.01)
 
-            fig, ax = bpl.subplots()
-
-            ax.plot(x, x, label="x")
-            ax.plot(x, 2*x, label="2x")
-            ax.plot(x, 3*x, label="3x")
-            ax.legend()
+            fig = plt.figure(figsize=[15, 7])
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
+            
+            for ax in [ax1, ax2]:
+                ax.plot(x, x, label="x")
+                ax.plot(x, 2*x, label="2x")
+                ax.plot(x, 3*x, label="3x")
+                ax.legend()
+            
+            ax1.set_title("matplotlib")
+            ax2.set_title("betterplotlib")
 
         You can still pass in any kwargs to the legend function you want.
 
@@ -1323,9 +1340,18 @@ class Axes_bpl(Axes):
             ys_1 = xs
             ys_2 = xs**2
 
-            fig, ax = bpl.subplots()
-            ax.plot(xs, ys_1) 
-            ax.plot(xs, ys_2) 
+            fig = plt.figure(figsize=[15, 7])
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
+            
+            ax1.plot(xs, ys_1) 
+            ax1.plot(xs, ys_2) 
+            
+            ax2.plot(xs, ys_1) 
+            ax2.plot(xs, ys_2) 
+            
+            ax1.set_title("matplotlib")
+            ax2.set_title("betterplotlib")
 
         """
         # set the linewidth to a thicker value. There are two keys here, though,
@@ -1422,7 +1448,32 @@ class Axes_bpl(Axes):
         automatically a scatter plot, rather than the connected lines that
         are used by default otherwise. It also adds a black marker edge to
         distinguish the markers when there are lots of data poitns. Otherwise
-        everything blends together. """
+        everything blends together.
+        
+        .. plot::
+            :include-source:
+
+            import numpy as np
+            import betterplotlib as bpl
+            bpl.default_style()
+            
+            xs = np.random.normal(0, 1, 100)
+            ys = np.random.normal(0, 1, 100)
+            yerr = np.random.uniform(0.3, 0.8, 100)
+            xerr = np.random.uniform(0.3, 0.8, 100)
+            
+            fig = plt.figure(figsize=[15, 7])
+            ax1 = fig.add_subplot(121)
+            ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
+            
+            for ax in [ax1, ax2]:
+                ax.errorbar(xs,   ys,   xerr=xerr, yerr=yerr, label="set 1")
+                ax.errorbar(xs+1, ys+1, xerr=xerr, yerr=yerr, label="set 2")
+                ax.legend()
+            ax1.set_title("matplotlib")
+            ax2.set_title("betterplotlib")
+            
+            """
 
         kwargs.setdefault("capsize", 0)
         kwargs.setdefault("fmt", "o")
