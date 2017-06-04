@@ -1448,3 +1448,64 @@ class Axes_bpl(Axes):
         kwargs.setdefault('markeredgecolor', colors.almost_black)
 
         return super(Axes_bpl, self).errorbar(*args, **kwargs)
+
+    def simple_twin_axis(self, axis, lower_lim, upper_lim, label="", log=False):
+        """Creates a differently scaled axis on either the top or the left.
+    
+        This can be used to put multiple scales on one plot for easier 
+        comparison. Some examples might be distance/time, redshift/age, or
+        any two related quantities.
+        
+        Note that this only does simple scalings of the new axes, which will 
+        still only be linear or log scaled axes. If you want a function that
+        smartly places labels based on a function that takes one set of axes
+        values to another (in a potentially nonlinear way), the other function 
+        I haven't made will do that. 
+    
+        :param axis: Where the new scaled axis will be placed. Must
+                     either be "x" or "y". 
+        :param lower_lim: Value to be put on the left/bottom of the newly
+                          created axis.
+        :param upper_lim: Value to be put on the right/top of the newly 
+                          created axis. 
+        :param label: The label to put on this new axis. 
+        :param log: Whether or not to log scale this axis.
+        :returns: the new axes
+        
+        .. plot::
+            :include-source:
+            
+            import betterplotlib as bpl
+            bpl.presentation_style()
+            
+            fig, ax = bpl.subplots(figsize=[5, 5])
+            ax.set_limits(0, 10, 0, 5)
+            ax.add_labels("x", "y")
+            ax.simple_twin_axis("x", 0, 100, r"$10 x$")
+            ax.simple_twin_axis("y", 1, 10**5, r"$10^y$", log=True)
+            
+        Note that for a slightly more complicated version of this plot, say if
+        we wanted the top x axis to be x^2 rather than 10x, the limits would
+        still be the same, but since the new axis will always be a linear or log
+        scale the new axis won't represent the true relationship between the
+        variables on the twin axes. See the other function for that. 
+            
+            
+        """
+
+        if axis == "x":
+            new_ax = super(Axes_bpl, self).twiny()
+            new_ax.set_xlim(lower_lim, upper_lim)
+            if log:
+                new_ax.set_xscale("log")
+            new_ax.set_xlabel(label)
+        elif axis == "y":
+            new_ax = super(Axes_bpl, self).twinx()
+            new_ax.set_ylim(lower_lim, upper_lim)
+            if log:
+                new_ax.set_yscale("log")
+            new_ax.set_ylabel(label)
+        else:
+            raise ValueError("Axis must be either 'x' or 'y'. ")
+
+        return new_ax
