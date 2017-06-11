@@ -1479,7 +1479,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             bpl.presentation_style()
             
-            fig, ax = bpl.subplots()
+            fig, ax = bpl.subplots(tight_layout=True)
             ax.set_limits(0, 10, 0, 5)
             ax.add_labels("x", "y")
             ax.twin_axis_simple("x", 0, 100, r"$10 x$")
@@ -1536,7 +1536,7 @@ class Axes_bpl(Axes):
             def cubed(x):
                 return x**3
 
-            fig, ax = bpl.subplots(figsize=[5, 5])
+            fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
             ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
             ax.add_labels("x", "y")
             ax.twin_axis(square, "y", [0, 10, 30, 60, 100], r"$y^2$")
@@ -1560,7 +1560,7 @@ class Axes_bpl(Axes):
 
             xs = np.logspace(0, 3, 100)
 
-            fig, ax = bpl.subplots(figsize=[5, 5])
+            fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
             ax.plot(xs, xs)
             ax.set_xscale("log")
             ax.set_yscale("log")
