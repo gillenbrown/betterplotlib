@@ -1,6 +1,7 @@
 from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path
+from scipy import optimize
 import numpy as np
 import sys
 from matplotlib import __version__
@@ -1449,7 +1450,7 @@ class Axes_bpl(Axes):
 
         return super(Axes_bpl, self).errorbar(*args, **kwargs)
 
-    def simple_twin_axis(self, axis, lower_lim, upper_lim, label="", log=False):
+    def twin_axis_simple(self, axis, lower_lim, upper_lim, label="", log=False):
         """Creates a differently scaled axis on either the top or the left.
     
         This can be used to put multiple scales on one plot for easier 
@@ -1478,7 +1479,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             bpl.presentation_style()
             
-            fig, ax = bpl.subplots(figsize=[5, 5])
+            fig, ax = bpl.subplots()
             ax.set_limits(0, 10, 0, 5)
             ax.add_labels("x", "y")
             ax.simple_twin_axis("x", 0, 100, r"$10 x$")
@@ -1507,5 +1508,150 @@ class Axes_bpl(Axes):
             new_ax.set_ylabel(label)
         else:
             raise ValueError("Axis must be either 'x' or 'y'. ")
+
+        return new_ax
+
+    def twin_axis(ax, func, axis, new_ticks, label=None):
+        """
+        Create a twin axis, where the new axis values are an arbitrary function
+        of the old values.
+
+        This is used when you want to put two related quantities on the axis,
+        for example distance/redshift in astronomy, where one isn't a simple
+        scaling of the other. If you want a simple linear or log scale, use the
+        `twin_axis_simple` function. This one will create a new axis that is
+        an arbitrary scale.
+
+        Here is a way this can be used.
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            bpl.presentation_style()
+
+            def square(x):
+                return x**2
+
+            def cubed(x):
+                return x**3
+
+            fig, ax = bpl.subplots(figsize=[5, 5])
+            ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
+            ax.add_labels("x", "y")
+            ax.twin_axis(square, "y", [0, 10, 30, 60, 100], r"$y^2$")
+            ax.twin_axis(cubed,"x", [0, 10, 100, 400, 1000], r"$x^3$")
+
+        Note that we had to be careful with floating point errors when one of
+        the markers we want is exactly on the edge. Make the borders slightly
+        larger to ensure that all labels fit on the plot.
+
+        This function will ignore values for the ticks that are outside the
+        limits of the plot. The following plot isn't the most useful, since
+        it could be done with the `axis_twin_simple`, but it gets the idea
+        across.
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.presentation_style()
+
+            xs = np.logspace(0, 3, 100)
+
+            fig, ax = bpl.subplots(figsize=[5, 5])
+            ax.plot(xs, xs)
+            ax.set_xscale("log")
+            ax.set_yscale("log")
+            ax.add_labels("x", "y")
+            # extraneous values are ignored.
+            ax.twin_axis(np.log10, "x", [-1, 0, 1, 2, 3, 4, 5], "log(x)")
+            ax.twin_axis(np.log10, "y", [-1, 0, 1, 2, 3, 4, 5], "log(y)")
+
+        :param func: Function that transforms values from the original axis
+                     into values that will be marked on the axis that will
+                     be created here.
+        :param axis: Whether the new axis labels will be on the "x" or "y" axis.
+                     If "x" is chosen this will place the markers on the top
+                     botder of the plot, while "y" will place the values on the
+                     left border of the plot. "x" and "y" are the only
+                     allowed values.
+        :param new_ticks: List of of locations (in the new data values) to place
+                          ticks. Any values outside the range of the plot
+                          will be ignored.
+        :return: New axis object that was created, containing the newly
+                 created labels.
+        """
+
+        # support for automatically adding new ticks is not yet supported. You
+        # have to pass your own in.
+        #     if new_ticks is None:
+        #         if axis == "x":
+        #             new_ticks = create_new_bins(func, ax.get_xticks())
+        #         elif axis == "y":
+        #             new_ticks = create_new_bins(func, ax.get_yticks())
+
+
+        # implementation details: The data values for the old axes will be used
+        # as the data values for the new scaled axis. This ensures that they
+        # will line up with each other. However, we will set the label text
+        # to be the values of func(x). The user will pass in the values of
+        # func(x), so we have to invert this to find the values of x where we
+        # will set the labels. This can be done with scipy.
+
+        # depending on which axis the user wants to use, we have to get
+        # different things.
+        if axis == "y":
+            new_ax = ax.twinx()  # shares y axis
+            old_min, old_max = ax.get_ylim()
+            lim_func = new_ax.set_ylim  # function to set limits
+            new_axis = new_ax.yaxis
+            new_ax.set_ylabel(label)
+            # the new axis needs to share the same scaling as the old
+            if ax.get_yscale() == "log":
+                new_ax.set_yscale("log")
+                # if we have log in old, we don't want minor ticks on the new
+                new_axis.set_tick_params(which="minor", length=0)
+            new_ax.set_ylabel(label)
+        elif axis == "x":
+            new_ax = ax.twiny()  # shares x axis
+            old_min, old_max = ax.get_xlim()
+            lim_func = new_ax.set_xlim  # function to set limits
+            new_axis = new_ax.xaxis
+            new_ax.set_xlabel(label)
+            # the new axis needs to share the same scaling as the old
+            if ax.get_xscale() == "log":
+                new_ax.set_xscale("log")
+                # if we have log in old, we don't want minor ticks on the new
+                new_axis.set_tick_params(which="minor", length=0)
+        else:
+            raise ValueError("`axis` must either be 'x' or 'y'. ")
+
+        # set the limits using the function we got earlier. We use the values
+        # of the old axies for the underlying data
+        lim_func(old_min, old_max)
+
+        # then determine the locations to put the new ticks, in terms of the
+        # old values
+        tick_locs_in_old = []
+        new_ticks_good = []
+        for new_value in new_ticks:
+            # define a function to minimize so scipy can work.
+            def minimize(x):
+                return abs(func(x) - new_value)
+
+            # ignore numpy warnings here, everything is fine.
+            with np.errstate(all='ignore'):
+                old_data_loc = optimize.minimize_scalar(minimize).x
+                # then check if it's within the correct values
+                if old_min <= old_data_loc <= old_max:
+                    tick_locs_in_old.append(old_data_loc)
+                    new_ticks_good.append(new_value)
+
+        # then put the ticks at the locations of the old data, but label them
+        # with the value of the transformed data.
+        new_axis.set_ticks(tick_locs_in_old)
+        new_axis.set_ticklabels(new_ticks_good)
 
         return new_ax

@@ -64,7 +64,8 @@ These methods control the format of the axes itself.
 .. autosummary::
     Axes_bpl.make_ax_dark
     Axes_bpl.equal_scale
-    Axes_bpl.simple_twin_axis
+    Axes_bpl.twin_axis_simple
+    Axes_bpl.twin_axis
 
 
 Non Object-Oriented Interface
