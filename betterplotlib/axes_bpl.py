@@ -667,11 +667,12 @@ class Axes_bpl(Axes):
         # title = legend.get_title()
         # title.set_fontsize(kwargs['fontsize'])
 
-        # turn the background into whatever color it needs to be
-        frame = leg.get_frame()
-        frame.set_linewidth(linewidth)
-        if not mpl_2:
-            frame.set_alpha(0.6)
+        if leg is not None:
+            # turn the background into whatever color it needs to be
+            frame = leg.get_frame()
+            frame.set_linewidth(linewidth)
+            if not mpl_2:
+                frame.set_alpha(0.6)
 
         return leg
 
