@@ -2,6 +2,7 @@ from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 from scipy import optimize
+from scipy import ndimage
 import numpy as np
 import sys
 from matplotlib import __version__
@@ -876,7 +877,8 @@ class Axes_bpl(Axes):
 
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=dict(), 
-                        contour_kwargs=dict()):
+                        contour_kwargs=dict(), smoothing=None,
+                        percent_levels=None):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1155,7 +1157,7 @@ class Axes_bpl(Axes):
         """
         
         # first get the density info we need to make contours
-        x_centers, y_centers, hist = _tools._make_density_contours(xs, ys, 
+        x_centers, y_centers, pre_hist = _tools._make_density_contours(xs, ys,
                                                                    bin_size)
         
         # then determine what our colormap for the fill will be
@@ -1177,15 +1179,27 @@ class Axes_bpl(Axes):
         if "colors" not in contour_kwargs:
             contour_kwargs.setdefault("cmap", "viridis")
 
-        # We then want to find the correct heights for the levels of the contours
-        max_hist = int(np.ceil(max(hist.flatten())))
-        if max_hist < min_level:
-            raise ValueError("Min_level needs to be lower. This will be fixed.")
-            #TODO: actually fix this!
+        # smooth if desired:
+        if smoothing is not None:
+            hist = ndimage.gaussian_filter(pre_hist, smoothing / bin_size)
+        else:
+            hist = pre_hist
 
-        levels = np.linspace(min_level, max_hist, num_contours + 1)
-        # we add one to the number of contours because we have the highest one at 
-        # the highest point, so it won't be shown.
+        # We then want to find the correct heights for the levels of the contours
+        max_hist = max(hist.flatten())
+        max_hist *= 1.0000001  # to get just above the current highest point.
+        print(max_hist, num_contours)
+        if percent_levels is None:
+            if max_hist < min_level:
+                raise ValueError(
+                    "Min_level needs to be lower. This will be fixed.")
+                # TODO: actually fix this!
+            levels = np.linspace(min_level, max_hist, num_contours + 1)
+            # we add one to the number of contours because we have the highest
+            # one at the highest point, so it won't be shown.
+        else:
+            levels = _tools.interval_level_2d(hist.flatten(), percent_levels)
+        print(levels)
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
@@ -1193,6 +1207,15 @@ class Axes_bpl(Axes):
                                        cmap=fill_cmap, zorder=2)
         contours = super(Axes_bpl, self).contour(x_centers, y_centers, hist, 
                                                  **contour_kwargs)
+
+        # label the levels if desired
+        if percent_levels is not None:
+            label_percents = percent_levels + [0]  # needed since there is
+            # one hidden coutour at the very center.
+            label_dict = {l:"{:.2f}%".format(percent*100) for l, percent
+                          in zip(levels, label_percents)}
+
+            contours.clabel(fmt=label_dict, fontsize=16, inline_spacing=10)
 
         # we saved the output from the contour, since it has information about the
         # shape of the contours we can use to figure out which points are outside

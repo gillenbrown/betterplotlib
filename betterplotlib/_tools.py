@@ -285,4 +285,24 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
 #     return ax.contour(x_centers, y_centers, hist, **kwargs)
 
 # ==============================================================================
-    
+
+def interval_level_2d(densities, percentages):
+    # assumes that all cells are the same size.
+    total = np.nansum(densities)
+    best_levels = []
+
+    for percent in percentages:
+        best_levels.append(0)
+        closest_diff = 10 ** 99
+        for l_level in np.linspace(0, max(densities), 1000):
+            idxs = densities > l_level
+            this_total = np.nansum(densities[idxs])
+
+            this_percentage = this_total / total
+            this_diff = abs(percent - this_percentage)
+            if this_diff <= closest_diff:
+                closest_diff = this_diff
+                best_levels[-1] = l_level
+
+    best_levels.append(1.0001 * max(densities))  # to get the central point
+    return best_levels
