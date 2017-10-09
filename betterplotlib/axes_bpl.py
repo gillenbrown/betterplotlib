@@ -1188,7 +1188,6 @@ class Axes_bpl(Axes):
         # We then want to find the correct heights for the levels of the contours
         max_hist = max(hist.flatten())
         max_hist *= 1.0000001  # to get just above the current highest point.
-        print(max_hist, num_contours)
         if percent_levels is None:
             if max_hist < min_level:
                 raise ValueError(
@@ -1199,7 +1198,6 @@ class Axes_bpl(Axes):
             # one at the highest point, so it won't be shown.
         else:
             levels = _tools.interval_level_2d(hist.flatten(), percent_levels)
-        print(levels)
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
