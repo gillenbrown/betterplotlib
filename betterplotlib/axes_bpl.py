@@ -878,7 +878,7 @@ class Axes_bpl(Axes):
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=dict(), 
                         contour_kwargs=dict(), smoothing=None,
-                        percent_levels=None, weights=None):
+                        percent_levels=None, weights=None, labels=None):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1215,10 +1215,10 @@ class Axes_bpl(Axes):
                                                  **contour_kwargs)
 
         # label the levels if desired
-        if percent_levels is not None:
+        if labels is not None:
             label_percents = percent_levels + [0]  # needed since there is
             # one hidden coutour at the very center.
-            label_dict = {l:"{}\%".format(percent*100) for l, percent
+            label_dict = {l:"{:d}\%".format(percent*100) for l, percent
                           in zip(levels, label_percents)}
 
             contours.clabel(fmt=label_dict, fontsize=16, use_clabeltext=True)
