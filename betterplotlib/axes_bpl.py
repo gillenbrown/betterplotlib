@@ -878,7 +878,7 @@ class Axes_bpl(Axes):
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=dict(), 
                         contour_kwargs=dict(), smoothing=None,
-                        percent_levels=None):
+                        percent_levels=None, weights=None):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1161,10 +1161,12 @@ class Axes_bpl(Axes):
             x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
                                                                    bin_size,
                                                                    padding_x=4*smoothing,
-                                                                   padding_y=4*smoothing)
+                                                                   padding_y=4*smoothing,
+                                                                   weights=weights)
         else:
             x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
-                                                                   bin_size)
+                                                                   bin_size,
+                                                                   weights=weights)
         
         # then determine what our colormap for the fill will be
         if fill_cmap == "white":
@@ -1227,7 +1229,7 @@ class Axes_bpl(Axes):
         # especially if the shape is complicated, so we test to see how many 
         # each point is inside. We only do this if the user actually wants to
         # plot these points
-        if scatter_kwargs.get("s", default=None) != 0:
+        if scatter_kwargs.get("s") != 0:
             shapes_in = np.zeros(len(xs))
             for line in contours.collections[0].get_segments():
                 # make a closed shape with the line

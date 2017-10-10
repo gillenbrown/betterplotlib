@@ -164,7 +164,7 @@ def _centers(edges):
 
 
 def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
-                           padding_y=0):
+                           padding_y=0, weights=None):
     """
     This is the underlying function that is used by the contour plots.
 
@@ -199,6 +199,9 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
     :type padding_y: float
     :param padding_y: Same as padding_x, but in the y axis.
     :type padding_y: float
+    :param weights: List of weights to go into the underlying histogram
+                    function. Should be the same length as xs and ys.
+    :type weights: list
     :return: list of x center, list of y centers, and the 2d histogram values.
              These can be passed on to the contour functions.
     :rtype: tuple of list, list, np.array
@@ -232,11 +235,8 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
         y_bins = _binning(ys, y_bin_size, padding_y)
         bins = [x_bins, y_bins]
 
-        # we can use this directly in the 2D histogram function.
-        hist, x_edges, y_edges = np.histogram2d(xs, ys, bins) 
-    elif bins is not None:
-        # the user gave us bins, so let numpy figure it out
-        hist, x_edges, y_edges = np.histogram2d(xs, ys, bins)
+    # we either have our own bins or the user gave us bins, so we can use that
+    hist, x_edges, y_edges = np.histogram2d(xs, ys, bins, weights=weights)
 
     # turn the bin edges into bin centers, since that's what matters
     x_centers = _centers(x_edges)
