@@ -1157,7 +1157,13 @@ class Axes_bpl(Axes):
         """
         
         # first get the density info we need to make contours
-        x_centers, y_centers, pre_hist = _tools._make_density_contours(xs, ys,
+        if smoothing is not None:
+            x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
+                                                                   bin_size,
+                                                                   padding_x=4*smoothing,
+                                                                   padding_y=4*smoothing)
+        else:
+            x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
                                                                    bin_size)
         
         # then determine what our colormap for the fill will be
@@ -1201,9 +1207,9 @@ class Axes_bpl(Axes):
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
-        super(Axes_bpl, self).contourf(x_centers, y_centers, hist, levels=levels, 
+        super(Axes_bpl, self).contourf(x_cen, y_cen, hist, levels=levels,
                                        cmap=fill_cmap, zorder=2)
-        contours = super(Axes_bpl, self).contour(x_centers, y_centers, hist, 
+        contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
                                                  **contour_kwargs)
 
         # label the levels if desired
@@ -1219,33 +1225,35 @@ class Axes_bpl(Axes):
         # shape of the contours we can use to figure out which points are outside
         # and therefore need to be plotted. There may be multiple outside contours,
         # especially if the shape is complicated, so we test to see how many 
-        # each point is inside
-        shapes_in = np.zeros(len(xs))
-        for line in contours.collections[0].get_segments():
-            # make a closed shape with the line
-            polygon = path.Path(line, closed=True)
-            # then figure out which points are inside it
-            shapes_in += polygon.contains_points(list(zip(xs, ys)))
+        # each point is inside. We only do this if the user actually wants to
+        # plot these points
+        if scatter_kwargs.get("s", default=None) != 0:
+            shapes_in = np.zeros(len(xs))
+            for line in contours.collections[0].get_segments():
+                # make a closed shape with the line
+                polygon = path.Path(line, closed=True)
+                # then figure out which points are inside it
+                shapes_in += polygon.contains_points(list(zip(xs, ys)))
 
-        # the ones that need to be hidden are inside an odd number of shapes. This
-        # shounds weird, but actually works. If we have a ring of points, the 
-        # outliers in the middle will be inside the outermost and innermost 
-        # contours, so they are inside two shapes. We want to plot these. So we 
-        # plot the ones that are divisible by two.
-        plot_idx = np.where(shapes_in % 2 == 0)
+            # the ones that need to be hidden are inside an odd number of
+            # shapes. This shounds weird, but actually works. If we have a ring
+            # of points, the outliers in the middle will be inside the outermost
+            # and innermost contours, so they are inside two shapes. We want to
+            # plot these. So we plot the ones that are divisible by two.
+            plot_idx = np.where(shapes_in % 2 == 0)
 
-        # We then get these elements. The multiple indexing is only supported for
-        # numpy arrays, not Python lists, so convert our values to that first.
-        outside_xs = np.array(xs)[plot_idx]
-        outside_ys = np.array(ys)[plot_idx]
+            # We then get these elements. The multiple indexing is only supported for
+            # numpy arrays, not Python lists, so convert our values to that first.
+            outside_xs = np.array(xs)[plot_idx]
+            outside_ys = np.array(ys)[plot_idx]
 
-        # now we can do our scatterplot.
-        scatter_kwargs.setdefault("alpha", 1.0)
-        scatter_kwargs.setdefault("s", 10)
-        if "c" not in scatter_kwargs:
-            scatter_kwargs.setdefault("color", colors.almost_black)
-        scatter_kwargs["zorder"] = 1
-        self.scatter(outside_xs, outside_ys, **scatter_kwargs)
+            # now we can do our scatterplot.
+            scatter_kwargs.setdefault("alpha", 1.0)
+            scatter_kwargs.setdefault("s", 10)
+            if "c" not in scatter_kwargs:
+                scatter_kwargs.setdefault("color", colors.almost_black)
+            scatter_kwargs["zorder"] = 1
+            self.scatter(outside_xs, outside_ys, **scatter_kwargs)
 
         return contours
 

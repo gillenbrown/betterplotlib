@@ -112,7 +112,7 @@ def _rounded_bin_width(data):
     return possible_bins[best_idx]
 
 
-def _binning(data, bin_size):
+def _binning(data, bin_size, padding=0):
     """
     Creates smarter bins for the histogram function.
 
@@ -126,11 +126,15 @@ def _binning(data, bin_size):
 
     :param data: List of data that will be placed in the histogram.
     :param bin_size: Width of bins along the x-axis.
+    :param padding: How much padding in will be done around the edges
+                    of the min and max values. This is not normally needed, but
+                    can be useful in smoothed contour plots when the contours
+                    should extend past the maximal range of the data.
     :return: numpy array, where each value in the array is a bin boundary.
     """
 
-    lower_multiples = min(data) // bin_size
-    upper_multiples = max(data) // bin_size
+    lower_multiples = (min(data) - padding) // bin_size
+    upper_multiples = (max(data) + padding) // bin_size
 
     upper_multiples += 1  # to round up, rather than down
 
@@ -159,7 +163,8 @@ def _centers(edges):
     return centers
 
 
-def _make_density_contours(xs, ys, bin_size=None, bins=None):
+def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
+                           padding_y=0):
     """
     This is the underlying function that is used by the contour plots.
 
@@ -187,6 +192,13 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
                      histogram. Can be either a number or a two element list, 
                      with bin sizes for x and y. 
     :type bin_size: float
+    :param padding_x: How much extra space to extend the contours past the min
+                      and max values on the x axis. This is useful for smoothed
+                      contour plots, when the contours should extend past the
+                      minimum and maximum data values.
+    :type padding_y: float
+    :param padding_y: Same as padding_x, but in the y axis.
+    :type padding_y: float
     :return: list of x center, list of y centers, and the 2d histogram values.
              These can be passed on to the contour functions.
     :rtype: tuple of list, list, np.array
@@ -216,8 +228,8 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None):
                 x_bin_size = bin_size
                 y_bin_size = bin_size
         # then use that bin size to make the actual bins
-        x_bins = _binning(xs, x_bin_size)
-        y_bins = _binning(ys, y_bin_size)
+        x_bins = _binning(xs, x_bin_size, padding_x)
+        y_bins = _binning(ys, y_bin_size, padding_y)
         bins = [x_bins, y_bins]
 
         # we can use this directly in the 2D histogram function.
