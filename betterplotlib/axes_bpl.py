@@ -1218,10 +1218,10 @@ class Axes_bpl(Axes):
         if percent_levels is not None:
             label_percents = percent_levels + [0]  # needed since there is
             # one hidden coutour at the very center.
-            label_dict = {l:"{:.2f}%".format(percent*100) for l, percent
+            label_dict = {l:"{}\%".format(percent*100) for l, percent
                           in zip(levels, label_percents)}
 
-            contours.clabel(fmt=label_dict, fontsize=16, inline_spacing=10)
+            contours.clabel(fmt=label_dict, fontsize=16, use_clabeltext=True)
 
         # we saved the output from the contour, since it has information about the
         # shape of the contours we can use to figure out which points are outside
