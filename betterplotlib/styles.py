@@ -20,7 +20,19 @@ def _common_style():
     mpl.rcParams['savefig.dpi'] = 300
     mpl.rcParams['figure.figsize'] = [10, 7]
 
-    # Font options
+    # the matplotlib 2.0 colors are fine, but the old ones aren't.
+    if mpl.__version__[0] == "1":
+        # I like my own color cycle based on one of the Tableu sets.
+        mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+        # change the colormap while I'm at it.
+        mpl.rcParams['image.cmap'] = 'viridis'
+
+def _most_common_font():
+    """
+    Sets the Helvetica Neue font settings, used by most styles.
+
+    :return: None
+    """
     mpl.rcParams['font.family'] = 'sans-serif'
 
     # We have to be more suble when setting the font. We want to check that the
@@ -58,13 +70,6 @@ def _common_style():
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
 
-    # the matplotlib 2.0 colors are fine, but the old ones aren't.
-    if mpl.__version__[0] == "1":
-        # I like my own color cycle based on one of the Tableu sets.
-        mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
-        # change the colormap while I'm at it.
-        mpl.rcParams['image.cmap'] = 'viridis'
-
 def default_style():
     """
     Sets matplotlib parameters to make default plots prettier without effort.
@@ -72,6 +77,7 @@ def default_style():
     :return: None
     """
     _common_style()
+    _most_common_font()
     
     # Font options
     mpl.rcParams['axes.titlesize'] = 16
@@ -101,6 +107,7 @@ def presentation_style():
     """
 
     _common_style()
+    _most_common_font()
 
     mpl.rcParams['axes.titlesize'] = 22
     mpl.rcParams['font.size'] = 20
@@ -130,6 +137,7 @@ def white_style():
     :return: None
     """
     _common_style()
+    _most_common_font()
 
     mpl.rcParams['axes.titlesize'] = 22
     mpl.rcParams['font.size'] = 20
@@ -150,3 +158,24 @@ def white_style():
     # added colors in front that look better on dark backgrounds
     mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
                                              colors.color_cycle)
+
+def latex_style():
+    """
+    Uses LaTeX font rendering to make plots look good in publications where
+    LaTeX is used.
+
+    :return: None
+    """
+    _common_style()
+    # change everything to LaTeX
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rcParams['font.sans-serif'] = 'Computer Modern Roman'
+    mpl.rcParams['text.usetex'] = True
+
+    # font sizes
+    mpl.rcParams['axes.titlesize'] = 22
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16
+    mpl.rcParams['legend.fontsize'] = 18
