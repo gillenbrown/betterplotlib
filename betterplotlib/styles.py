@@ -20,6 +20,12 @@ def _common_style():
     mpl.rcParams['savefig.dpi'] = 300
     mpl.rcParams['figure.figsize'] = [10, 7]
 
+    mpl.rcParams['xtick.major.size'] = 5.0
+    mpl.rcParams['xtick.minor.size'] = 2.5
+    mpl.rcParams['ytick.major.size'] = 5.0
+    mpl.rcParams['ytick.minor.size'] = 2.5
+
+
     # the matplotlib 2.0 colors are fine, but the old ones aren't.
     if mpl.__version__[0] == "1":
         # I like my own color cycle based on one of the Tableu sets.
