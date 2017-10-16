@@ -1218,7 +1218,7 @@ class Axes_bpl(Axes):
         if labels is not None:
             label_percents = percent_levels + [0]  # needed since there is
             # one hidden coutour at the very center.
-            label_dict = {l:"{:d}\%".format(percent*100) for l, percent
+            label_dict = {l:"{:.2f}\%".format(percent) for l, percent
                           in zip(levels, label_percents)}
 
             contours.clabel(fmt=label_dict, fontsize=16, use_clabeltext=True)

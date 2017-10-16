@@ -27,7 +27,7 @@ def _common_style():
         # change the colormap while I'm at it.
         mpl.rcParams['image.cmap'] = 'viridis'
 
-def _most_common_font():
+def _set_font_settings(font="Helvetica Neue"):
     """
     Sets the Helvetica Neue font settings, used by most styles.
 
@@ -37,8 +37,6 @@ def _most_common_font():
 
     # We have to be more suble when setting the font. We want to check that the
     # use has the font we want.
-    # If you want to change the font, change the line below!
-    font = 'Helvetica Neue'
     backup_font = "Arial"
 
     # Matplotlib will issue a warning if it can't find the font, so we will
@@ -53,13 +51,13 @@ def _most_common_font():
             mpl.rcParams['font.sans-serif'] = font
         else:  # there were warnings, so the font wasn't found
             mpl.rcParams['font.sans-serif'] = backup_font
-            url = "http://blog.olgabotvinnik.com/blog/2012/11/15/2012-11-15-how-to-set-helvetica-as-the-default-sans-serif-font-in/"
+            url = "https://github.com/olgabot/sciencemeetproductivity.tumblr.com/blob/master/posts/2012/11/how-to-set-helvetica-as-the-default-sans-serif-font-in.md"
             this_file = os.path.abspath(__file__)
-            print("Betterplotlib could not find it's default font {}.\n"
+            print("Betterplotlib could not find the font {}.\n"
                   "For directions on how to install it, check {}\n"
                   "You don't need to do step 4 on that page.\n\n"
-                  "You can also change the font to something you'd prefer. To "
-                  "do this, change line 25 of {}".format(font, url, this_file))
+                  "You can also change the font to something you'd prefer."
+                  "".format(font, url))
 
     # change math font too
     mpl.rcParams['mathtext.fontset'] = 'custom'
@@ -70,14 +68,14 @@ def _most_common_font():
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
 
-def default_style():
+def default_style(font="Helvetica Neue"):
     """
     Sets matplotlib parameters to make default plots prettier without effort.
 
     :return: None
     """
     _common_style()
-    _most_common_font()
+    _set_font_settings(font)
     
     # Font options
     mpl.rcParams['axes.titlesize'] = 16
@@ -97,7 +95,7 @@ def default_style():
     mpl.rcParams['grid.color'] = colors.almost_black
     
 
-def presentation_style():
+def presentation_style(font="Helvetica Neue"):
     """
     Same as default_style, but with larger text.
 
@@ -107,7 +105,7 @@ def presentation_style():
     """
 
     _common_style()
-    _most_common_font()
+    _set_font_settings(font)
 
     mpl.rcParams['axes.titlesize'] = 22
     mpl.rcParams['font.size'] = 20
@@ -126,7 +124,7 @@ def presentation_style():
     mpl.rcParams['grid.color'] = colors.almost_black
 
 
-def white_style():
+def white_style(font="Helvetica Neue"):
     """
     Sets a style good for presenting on dark backgrounds.
 
@@ -137,7 +135,7 @@ def white_style():
     :return: None
     """
     _common_style()
-    _most_common_font()
+    _set_font_settings(font)
 
     mpl.rcParams['axes.titlesize'] = 22
     mpl.rcParams['font.size'] = 20
