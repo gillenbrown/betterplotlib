@@ -1687,3 +1687,29 @@ class Axes_bpl(Axes):
         new_axis.set_ticklabels(new_ticks_good)
 
         return new_ax
+
+    def shaded_density(self, xs, ys, bin_size=None, smoothing=None,
+                       cmap="Greys"):
+        """
+        Fill in later
+        :param xs:
+        :param ys:
+        :param bin_size:
+        :param smoothing:
+        :param cmap:
+        :return:
+        """
+        # TODO: take pcolormesh kwargs
+        # TODO: fix for tiny datasets
+
+        x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size)
+
+        if smoothing is not None:
+            if bin_size is None:
+                bin_size = x_bin[1] - x_bin[0]
+            # the smoothing kernel must be in pixels. Smoothing and bin_size are
+            # both in real data units, so we have to convert.
+            kernel_size = smoothing / bin_size
+            hist = ndimage.gaussian_filter(hist, kernel_size)
+
+        return super(Axes_bpl, self).pcolormesh(x_bin, y_bin, hist, cmap=cmap)
