@@ -1689,7 +1689,7 @@ class Axes_bpl(Axes):
         return new_ax
 
     def shaded_density(self, xs, ys, bin_size=None, smoothing=None,
-                       cmap="Greys"):
+                       cmap="Greys", weights=None):
         """
         Fill in later
         :param xs:
@@ -1702,10 +1702,19 @@ class Axes_bpl(Axes):
         # TODO: take pcolormesh kwargs
         # TODO: fix for tiny datasets
 
-        x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size)
-
+        # first get the underlying density histogram
         if smoothing is not None:
-            if bin_size is None:
+            x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size,
+                                                               padding_x=4*smoothing,
+                                                               padding_y=4*smoothing,
+                                                               weights=weights)
+        else:
+            x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size,
+                                                               weights=weights)
+
+        # then smooth if desired
+        if smoothing is not None:
+            if bin_size is None:  # may have been automatically determined
                 bin_size = x_bin[1] - x_bin[0]
             # the smoothing kernel must be in pixels. Smoothing and bin_size are
             # both in real data units, so we have to convert.
