@@ -1209,8 +1209,9 @@ class Axes_bpl(Axes):
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
-        super(Axes_bpl, self).contourf(x_cen, y_cen, hist, levels=levels,
-                                       cmap=fill_cmap, zorder=2)
+        if fill_cmap is not None:
+            super(Axes_bpl, self).contourf(x_cen, y_cen, hist, levels=levels,
+                                           cmap=fill_cmap, zorder=2)
         contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
                                                  **contour_kwargs)
 
