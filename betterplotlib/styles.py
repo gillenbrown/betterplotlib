@@ -33,7 +33,7 @@ def _common_style():
         # change the colormap while I'm at it.
         mpl.rcParams['image.cmap'] = 'viridis'
 
-def _set_font_settings(font="Helvetica Neue"):
+def _set_font_settings(font="Avenir"):
     """
     Sets the Helvetica Neue font settings, used by most styles.
 
@@ -74,7 +74,7 @@ def _set_font_settings(font="Helvetica Neue"):
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
 
-def default_style(font="Helvetica Neue"):
+def default_style(font="Avenir"):
     """
     Sets matplotlib parameters to make default plots prettier without effort.
 
@@ -101,7 +101,7 @@ def default_style(font="Helvetica Neue"):
     mpl.rcParams['grid.color'] = colors.almost_black
     
 
-def presentation_style(font="Helvetica Neue"):
+def presentation_style(font="Avenir"):
     """
     Same as default_style, but with larger text.
 
@@ -130,7 +130,7 @@ def presentation_style(font="Helvetica Neue"):
     mpl.rcParams['grid.color'] = colors.almost_black
 
 
-def white_style(font="Helvetica Neue"):
+def white_style(font="Avenir"):
     """
     Sets a style good for presenting on dark backgrounds.
 

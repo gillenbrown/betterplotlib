@@ -1692,16 +1692,42 @@ class Axes_bpl(Axes):
     def shaded_density(self, xs, ys, bin_size=None, smoothing=None,
                        cmap="Greys", weights=None):
         """
-        Fill in later
-        :param xs:
-        :param ys:
-        :param bin_size:
-        :param smoothing:
-        :param cmap:
-        :return:
+        Creates shaded regions showing the density.
+
+        Is essentially a 2D histogram, but supports smoothing. Under the hood,
+        this uses the pcolormesh function in matplotlib.
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.presentation_style()
+
+            xs = np.random.uniform(0, 10, 100)
+            ys = np.random.uniform(0, 10, 100)
+
+            fig, ax = bpl.subplots()
+            ax.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
+                              cmap="inferno")
+            ax.set_limits(0, 10, 0, 10)
+            ax.equal_scale()
+
+        :param xs: list of x values
+        :param ys: list of y values
+        :param bin_size: bin size for the 2D histogram. If not passed in, an
+                         appropriate bin size will be automatically found.
+                         If you are using smoothing, a smaller bin size is
+                         often useful as it can make for a better looking plot.
+        :param smoothing: The size of the Gaussian smoothing kernel for the
+                          data. Currently is the same in both dimensions.
+                          Pass None for no smoothing.
+        :param cmap: colormap used for the density.
+        :return: output of the pcolormesh function call.
         """
         # TODO: take pcolormesh kwargs
         # TODO: fix for tiny datasets
+        # TODO: make smoothing kernel have different size in each dimension
 
         # first get the underlying density histogram
         if smoothing is not None:
