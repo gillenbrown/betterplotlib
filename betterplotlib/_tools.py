@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
-
-from . import colors
+from scipy import stats
 
 #TODO: I need to remake the plt.gca() function to find my Axes_bpl
 
@@ -60,24 +58,47 @@ def _alpha(n, threshold=30, scale=2000):
     return 0.99 / (1.0 + (n / float(scale)))  # turn scale into a float to make
                                               # sure it still works in Python 2
 
-
 def _freedman_diaconis(data):
-    """
-    This stats by using the Freedman Diaconis Algorithm, which is defined by
+    """This uses the Freedman Diaconis Algorithm, which is defined by
 
     .. math:
         h = 2 * IQR * n^{-1/3}
 
-    where IQR is the interquartile range, n is the number of data poings, and
+    where IQR is the interquartile range, n is the number of data points, and
     h is the bin size.
     """
-    # To use the Freedman Diaconis rule, we need to calculate the inter 
-    # quartile range, which is the distance between the 25th and 75th 
-    # percentiles.
-    iqr = np.percentile(data, 75) - np.percentile(data, 25)
-    # then we can use the rule.
-    return 2 * iqr * len(data) **(-1.0/3.0)
+    return _freedman_diaconis_core(stats.iqr(data), len(data))
 
+def _freedman_diaconis_core(iqr, n):
+    """
+    This uses the Freedman Diaconis Algorithm, which is defined by
+
+    .. math:
+        h = 2 * IQR * n^{-1/3}
+
+    where IQR is the interquartile range, n is the number of data points, and
+    h is the bin size.
+    """
+
+    try:
+        return 2 * iqr * n **(-1.0/3.0)
+    except ZeroDivisionError:
+        raise ValueError("Binning won't work for data with zero length.")
+
+def _round_to_nice_width(num):
+    # we then want to have it choose among the best of certain bins. We first
+    # define the bins we want it to be able to choose. We make them all
+    # multiples of 10^n, where n is the rounded log of the bin width. This
+    # makes them be in the same order of magnitude as the original bin size.
+    exponent = np.floor(np.log10(num))
+    possible_bins = [x * 10 ** exponent for x in [1, 2, 5, 10]]
+
+    # we then figure out which one is closest to the original
+    bin_diffs = [abs(num - pos_width) for pos_width in possible_bins]
+    best_idx = bin_diffs.index(min(bin_diffs))
+    # the indices are the same between the diffs and originals, so we know
+    # which index to get.
+    return possible_bins[best_idx]
 
 def _rounded_bin_width(data):
     """
@@ -85,7 +106,7 @@ def _rounded_bin_width(data):
 
     This starts by getting the bin size recommended by the Freedman Diaconis 
     algorithm. This bin size is then rounded to the one closest to it among the 
-    possibilites, which are of the format [1, 2, 4, 5, 10] * 10^n, where n 
+    possibilites, which are of the format [1, 2, 5, 10] * 10^n, where n
     is some integer. This has the effect of making the bin edges line up with
     the ticks that are automatically added to matplotlib plots. This makes 
     the resulting histograms looks nicer, and still have reasonable bin sizes.
@@ -95,22 +116,7 @@ def _rounded_bin_width(data):
     :return: Appproximately correct bin size.
     :rtype: float
     """
-    fd_bin_width = _freedman_diaconis(data)
-
-    # we then want to have it choose among the best of certain bins. We first
-    # define the bins we want it to be able to choose. We make them all 
-    # multiples of 10^n, where n is the rounded log of the bin width. This 
-    # makes them be in the same order of magnitude as the original bin size.
-    exponent = np.floor(np.log10(fd_bin_width))
-    possible_bins = [x * 10**exponent for x in [1, 2, 4, 5, 10]]
-
-    # we then figure out which one is closest to the original
-    bin_diffs = [abs(fd_bin_width - pos_width) for pos_width in possible_bins]
-    best_idx = bin_diffs.index(min(bin_diffs))
-    # the indices are the same between the diffs and originals, so we know 
-    # which index to get.
-    return possible_bins[best_idx]
-
+    return _round_to_nice_width(_freedman_diaconis(data))
 
 def _binning(data, bin_size, padding=0):
     """
