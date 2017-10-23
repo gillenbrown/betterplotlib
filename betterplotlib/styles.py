@@ -25,13 +25,13 @@ def _common_style():
     mpl.rcParams['ytick.major.size'] = 5.0
     mpl.rcParams['ytick.minor.size'] = 2.5
 
-
     # the matplotlib 2.0 colors are fine, but the old ones aren't.
     if mpl.__version__[0] == "1":
         # I like my own color cycle based on one of the Tableu sets.
         mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
         # change the colormap while I'm at it.
         mpl.rcParams['image.cmap'] = 'viridis'
+
 
 def _set_font_settings(font="Avenir"):
     """
@@ -58,7 +58,7 @@ def _set_font_settings(font="Avenir"):
         else:  # there were warnings, so the font wasn't found
             mpl.rcParams['font.sans-serif'] = backup_font
             url = "https://github.com/olgabot/sciencemeetproductivity.tumblr.com/blob/master/posts/2012/11/how-to-set-helvetica-as-the-default-sans-serif-font-in.md"
-            this_file = os.path.abspath(__file__)
+            # this_file = os.path.abspath(__file__)
             print("Betterplotlib could not find the font {}.\n"
                   "For directions on how to install it, check {}\n"
                   "You don't need to do step 4 on that page.\n\n"
@@ -73,6 +73,7 @@ def _set_font_settings(font="Avenir"):
     mpl.rcParams['font.weight'] = 'bold'
     mpl.rcParams['axes.labelweight'] = 'bold'
     mpl.rcParams['axes.titleweight'] = 'bold'
+
 
 def default_style(font="Avenir"):
     """
@@ -163,6 +164,7 @@ def white_style(font="Avenir"):
     mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
                                              colors.color_cycle)
 
+
 def latex_style():
     """
     Uses LaTeX font rendering to make plots look good in publications where
@@ -177,9 +179,9 @@ def latex_style():
     mpl.rcParams['text.usetex'] = True
 
     # font sizes
-    mpl.rcParams['axes.titlesize'] = 24
-    mpl.rcParams['font.size'] = 22
-    mpl.rcParams['axes.labelsize'] = 22
-    mpl.rcParams['xtick.labelsize'] = 18
-    mpl.rcParams['ytick.labelsize'] = 18
+    mpl.rcParams['axes.titlesize'] = 26
+    mpl.rcParams['font.size'] = 28
+    mpl.rcParams['axes.labelsize'] = 28
+    mpl.rcParams['xtick.labelsize'] = 24
+    mpl.rcParams['ytick.labelsize'] = 24
     mpl.rcParams['legend.fontsize'] = 18

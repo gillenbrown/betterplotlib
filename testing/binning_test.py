@@ -215,3 +215,17 @@ def test_min_equal_max():
     assert np.allclose(_tools._binning(1, 1, 0.5),
                        [0.5, 1, 1.5])
 
+
+def test_centers_simple_equal_spacing():
+    assert np.allclose(_tools._centers([1, 2, 3, 4]),
+                       [1.5, 2.5, 3.5])
+
+
+def test_centers_not_equal_spacing():
+    assert np.allclose(_tools._centers([1, 2, 3, 4, 6, 8, 10]),
+                       [1.5, 2.5, 3.5, 5, 7, 9])
+
+
+def test_centers_length():
+    xs = np.arange(np.random.randint(10, 100, 1))
+    assert len(xs) == len(_tools._centers(xs)) + 1
