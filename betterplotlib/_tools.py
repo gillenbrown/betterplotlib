@@ -118,7 +118,7 @@ def _rounded_bin_width(data):
     """
     return _round_to_nice_width(_freedman_diaconis(data))
 
-def _binning(data, bin_size, padding=0):
+def _binning(min, max, bin_size, padding=0):
     """
     Creates smarter bins for the histogram function.
 
@@ -138,16 +138,41 @@ def _binning(data, bin_size, padding=0):
                     should extend past the maximal range of the data.
     :return: numpy array, where each value in the array is a bin boundary.
     """
+    try:
+        if bin_size <= 0:
+            raise ValueError("Bin size must be positive.")
+    except TypeError:
+        raise TypeError("Bin size must be a numerical value.")
+    try:
+        if padding < 0:
+            raise ValueError("Padding must be non-negative.")
+    except TypeError:
+        raise TypeError("Padding must be a numerical value.")
+    try:
+        _ = min > 0  # just for checking if both are not numerical
+        if min > max:
+            raise ValueError("Min must be smaller than max.")
+    except TypeError:
+        raise TypeError("Min and max must be numerical values.")
 
-    lower_multiples = (min(data) - padding) // bin_size
-    upper_multiples = (max(data) + padding) // bin_size
 
-    upper_multiples += 1  # to round up, rather than down
+    # first get a rough estimate of the number of bins needed to get to the
+    # min and max
+    lower_multiples = (min - padding) // bin_size
+    upper_multiples = (max + padding) // bin_size + 1
+    # we add one to go the next bin (since it's floor divide).
 
+    # we need to move the lower bin down one if the min value lands exactly on
+    # a bin edge. We do this to avoid floating point errors that might move
+    # our point outside the bin.
+    if np.isclose(np.mod((min - padding), bin_size), 0):
+        lower_multiples -= 1
+
+    # then turn these bin numbers into actual data limits for the lower and
+    # upper edges of the bins
     lower_lim = lower_multiples * bin_size
     upper_lim = upper_multiples * bin_size + (bin_size / 2.0)
-    # to account for open interval
-
+    # extra term to account for open interval in arange (next line)
     return np.arange(lower_lim, upper_lim, bin_size)
 
 
