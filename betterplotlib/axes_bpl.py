@@ -385,7 +385,7 @@ class Axes_bpl(Axes):
                              "pass your own bins, or use `bin_size` to "
                              "have the code determine its own bins. ")
         kwargs.setdefault("bin_size", _tools._rounded_bin_width(args[0]))
-        kwargs.setdefault("bins", _tools._binning(args[0], 
+        kwargs.setdefault("bins", _tools._binning(min(args[0]), max(args[0]),
                                                   kwargs.pop("bin_size")))
 
         # plot the histogram, and keep the results

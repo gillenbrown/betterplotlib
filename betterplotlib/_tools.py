@@ -262,8 +262,8 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
                 x_bin_size = bin_size
                 y_bin_size = bin_size
         # then use that bin size to make the actual bins
-        x_bins = _binning(xs, x_bin_size, padding_x)
-        y_bins = _binning(ys, y_bin_size, padding_y)
+        x_bins = _binning(min(xs), max(xs), x_bin_size, padding_x)
+        y_bins = _binning(min(ys), max(ys), y_bin_size, padding_y)
         bins = [x_bins, y_bins]
 
     # we either have our own bins or the user gave us bins, so we can use that

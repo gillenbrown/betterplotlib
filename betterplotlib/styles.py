@@ -177,9 +177,9 @@ def latex_style():
     mpl.rcParams['text.usetex'] = True
 
     # font sizes
-    mpl.rcParams['axes.titlesize'] = 22
-    mpl.rcParams['font.size'] = 20
-    mpl.rcParams['axes.labelsize'] = 20
-    mpl.rcParams['xtick.labelsize'] = 16
-    mpl.rcParams['ytick.labelsize'] = 16
+    mpl.rcParams['axes.titlesize'] = 24
+    mpl.rcParams['font.size'] = 22
+    mpl.rcParams['axes.labelsize'] = 22
+    mpl.rcParams['xtick.labelsize'] = 18
+    mpl.rcParams['ytick.labelsize'] = 18
     mpl.rcParams['legend.fontsize'] = 18
