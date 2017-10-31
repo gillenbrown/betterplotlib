@@ -229,3 +229,101 @@ def test_centers_not_equal_spacing():
 def test_centers_length():
     xs = np.arange(np.random.randint(10, 100, 1))
     assert len(xs) == len(_tools._centers(xs)) + 1
+
+#-------------------------------------------------------------------------------
+
+# Testing the parsing of the binning.
+# We don't need to od a whole lot here, since most if it is taken care of by
+# the binning function, which has been thoroughly tested above.
+
+#-------------------------------------------------------------------------------
+
+def test_parse_bin_size_scalar():
+    assert _tools._parse_bin_size(0.1) == [0.1, 0.1]
+
+def test_parse_bin_size_two_elt_array():
+    assert _tools._parse_bin_size([0.1, 0.3]) == [0.1, 0.3]
+
+def test_parse_bin_size_one_elt_array():
+    assert _tools._parse_bin_size([0.4]) == [0.4, 0.4]
+
+def test_parse_bin_size_more_elt_array():
+    with pytest.raises(ValueError):
+        _tools._parse_bin_size([0.4, 0.3, 0.1])
+
+def test_parse_bin_size_zero_elt_array():
+    with pytest.raises(ValueError):
+        _tools._parse_bin_size([])
+
+def test_parse_binning_options_core_all_specified():
+    data = [1, 2]
+    assert np.allclose(_tools._parse_binning_options(data, 0.5, 0),
+                       [0.5, 1.0, 1.5, 2.0, 2.5])
+
+def test_parse_binning_options_core_no_padding_specified():
+    data = [1, 2]
+    assert np.allclose(_tools._parse_binning_options(data, 0.5),
+                       [0.5, 1.0, 1.5, 2.0, 2.5])
+
+def test_parse_binning_options_core_no_bins_centering():
+    data = [-2, -1, 0, 1, 2]
+    bins = _tools._parse_binning_options(data)
+    assert 0 in bins  # shows that we did indeed use the binning that centers
+                      # around zero
+
+def test_parse_binning_options_core_no_bins_rounding():
+    data = [-2, -1, 0, 1, 2]
+    bins = _tools._parse_binning_options(data)
+    # make sure the bin size is rounded like we want.
+    assert bins[1] - bins[0] in [0.1, 0.2, 0.5, 1.0, 2.0]
+
+#-------------------------------------------------------------------------------
+
+# Testing the level that contains certain percentages
+
+#-------------------------------------------------------------------------------
+
+def test_percentile_level_core_simple_a():
+    densities = [1, 1, 2]
+    assert 1 < _tools._percentile_level_core(densities, 0.5) < 2
+
+def test_percentile_level_core_simple_b():
+    densities = [1, 1, 2, 4]
+    assert 2 < _tools._percentile_level_core(densities, 0.5) < 4
+
+def test_percentile_level_core_simple_c():
+    densities = [1, 1, 3, 3]
+    assert 1 < _tools._percentile_level_core(densities, 0.75) < 3
+
+def test_percentile_level_core_simple_d():
+    densities = [1, 2, 3, 4, 5, 10]
+    assert 1 < _tools._percentile_level_core(densities, 24.0/25.0) < 2
+    assert 2 < _tools._percentile_level_core(densities, 22.0/25.0) < 3
+    assert 3 < _tools._percentile_level_core(densities, 19.0/25.0) < 4
+    assert 4 < _tools._percentile_level_core(densities, 15.0/25.0) < 5
+    assert 5 < _tools._percentile_level_core(densities, 10.0/25.0) < 10
+
+def test_percentile_level_values():
+    densities = [1, 2, 3, 4, 5, 10]
+    percentiles = [24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0]
+    for _ in range(10):
+        np.random.shuffle(percentiles)  # order of percentiles won't matter
+        levels = _tools._percentile_level(densities, percentiles)
+        assert 1 < levels[0] < 2
+        assert 2 < levels[1] < 3
+        assert 3 < levels[2] < 4
+        assert 4 < levels[3] < 5
+        assert 5 < levels[4] < 10
+        assert 10 < levels[5]
+
+def test_percentile_level_big_data():
+    # get a ton of data
+    densities = np.linspace(0, 1, 1000)
+    percentages = np.arange(0.90, -0.01, -0.1) # 0 to 90 percent
+    # the levels can be computed analytically, since this is a uniform
+    # distribution. The level should be computer such that the integral of x
+    # from l to 1 is some percentage of the total. This gives P = 1 - l^2
+    levels = sorted(np.sqrt(1 - percentages))
+    assert np.allclose(_tools._percentile_level(densities, percentages),
+                       np.concatenate([levels, [1.0]]), atol=0.02)
+    # need larger tolerance for random, need to add extra for center point

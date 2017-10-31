@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+from scipy import ndimage
 
 #TODO: I need to remake the plt.gca() function to find my Axes_bpl
 
@@ -193,9 +194,47 @@ def _centers(edges):
         centers.append((edges[left_edge_idx] + edges[left_edge_idx + 1]) / 2.0)
     return centers
 
+def _parse_binning_options(data, bin_size=None, padding=0):
+    """
+    Takes the user options and creates bins out of them.
 
-def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
-                           padding_y=0, weights=None):
+    :param data: List of data values that will be binned.
+    :param bin_size: Size of bins. If not passed in one will be choses. We will
+                     use the Freedman-Diaconis bin width, but round it so that
+                     the edges line up with ticks
+    :param padding: How much space to give on each side of the min and max. See
+                    the `_binning()` function for more info.
+    :return: List of bin edges.
+    """
+    if bin_size is None:  # need to choose our own
+        bin_size = _rounded_bin_width(data)
+
+    return _binning(min(data), max(data), bin_size, padding)
+
+def _parse_bin_size(bin_size):
+    """
+    Parses bin size into an x and y value.
+
+    :param bin_size: Either a scalar to be used for both x and y, or a two
+                     element list, where the first is for x, and the second
+                     is y.
+    :return: Bin size in x and y directions.
+    """
+    try:
+        if len(bin_size) > 2:
+            raise ValueError("Only two dimensions can be passed to bin_size.")
+        elif len(bin_size) == 2:
+            return bin_size
+        elif len(bin_size) == 1:
+            return [bin_size[0], bin_size[0]]
+        else:  # length of zero
+            raise ValueError("Bin size cannot be zero element list.")
+    except TypeError:  # will happen if scalar
+        return [bin_size, bin_size]
+
+def _make_density_contours(xs, ys, bin_size,
+                           padding_x=0, padding_y=0, weights=None,
+                           smoothing=0):
     """
     This is the underlying function that is used by the contour plots.
 
@@ -212,17 +251,10 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
     :type xs: list
     :param ys: list of y values
     :type ys: list
-    :param bins: Same as for `np.histogram2d()`. Can either be a number, a 
-                 tuple of two numbers, a single list, or a tuple with two lists.
-                 If it one or two numbers, this will be the number of bins.
-                 Lists of numbers will be the bin edges. If only one number
-                 or list is passed in, it will be used for both x and y. If a 
-                 tuple of two lists or numbers is passed in, the first will be 
-                 used for x, the second for y.
-    :param bin_size: Size of the bins that will be used to make the 2D 
-                     histogram. Can be either a number or a two element list, 
-                     with bin sizes for x and y. 
-    :type bin_size: float
+    :param bin_size: Size of the bins that will be used to make the 2D
+                     histogram. Can either be a scalar, in which case the x and
+                     y bin sizes will be the same, or a two element array,
+                     where the first is x bin size, and the second is y bin size
     :param padding_x: How much extra space to extend the contours past the min
                       and max values on the x axis. This is useful for smoothed
                       contour plots, when the contours should extend past the
@@ -233,119 +265,99 @@ def _make_density_contours(xs, ys, bin_size=None, bins=None, padding_x=0,
     :param weights: List of weights to go into the underlying histogram
                     function. Should be the same length as xs and ys.
     :type weights: list
+    :param smoothing: Optional parameter that will allow the contours to be
+                      smoothed. Pass in a nonzero value, which will be the
+                      standard deviation of the Gaussian kernel use to smooth
+                      the histogram. When using this, often choosing smaller
+                      bin sizes is advantageous to make a less grainy plot.
+    :type smoothing: float
     :return: list of x center, list of y centers, and the 2d histogram values.
              These can be passed on to the contour functions.
     :rtype: tuple of list, list, np.array
     """
-    if bins is not None and bin_size is not None:
-        raise ValueError("The `bins` and `bin_size` keywords cannot be "
-                         "used together. Use `bins` if you want to "
-                         "pass your own bins, or use `bin_size` to "
-                         "have the code determine its own bins. ")
-    elif (bin_size is not None) or (bin_size is None and bins is None):
-        # if we got here, we need to make our own bins. If we don't know the 
-        # bin size, find an "optimal" one.
-        if bin_size is None:
-            x_bin_size = _freedman_diaconis(xs)
-            y_bin_size = _freedman_diaconis(ys)
-        else:  # use the bin_size the user provided.
-            # if we have a multiple element bin_size, then we can use that for
-            # x and y
-            try:
-                x_bin_size = bin_size[0]
-                if len(bin_size) != 2:
-                    raise ValueError("bin_size needs to be either a scalar\n"
-                                     "or a two element list.")
-                y_bin_size = bin_size[1]
-            except TypeError:
-                # we only have a scalar, so use that for both x and y
-                x_bin_size = bin_size
-                y_bin_size = bin_size
-        # then use that bin size to make the actual bins
-        x_bins = _binning(min(xs), max(xs), x_bin_size, padding_x)
-        y_bins = _binning(min(ys), max(ys), y_bin_size, padding_y)
-        bins = [x_bins, y_bins]
+    # First get the bins we need. If the user did not specify any bins
+    # this will take care of it.
+    bin_size_x, bin_size_y = _parse_bin_size(bin_size)
+    bins = [_parse_binning_options(xs, bin_size_x, padding_x),
+            _parse_binning_options(ys, bin_size_y, padding_y)]
 
-    # we either have our own bins or the user gave us bins, so we can use that
+    # We can then use the bins to create the histogram
     hist, x_edges, y_edges = np.histogram2d(xs, ys, bins, weights=weights)
 
     # turn the bin edges into bin centers, since that's what matters
     x_centers = _centers(x_edges)
     y_centers = _centers(y_edges)
-    
-    return x_centers, y_centers, hist.transpose()
 
-# ==============================================================================
+    # we need to transpose the histogram to get it to line up with the x, y
+    hist = hist.transpose()
 
-# Density Contour removed for now, but I didn't want to delete it.
+    if smoothing > 0:
+        # TODO: fix this, both the bin size thing and the fact that its the
+        # same in both dimensions.
+        hist = ndimage.gaussian_filter(hist, smoothing / bin_size_x)
 
+    return x_centers, y_centers, hist
 
-# def density_contour(xs, ys, bin_size=None, ax=None, **kwargs):
-#     """
-#     Make a contour plot where the levels are based on the density of the points.
+def _percentile_level_core(densities, percentage):
+    """
+    Calculates the level of density that encloses X percent of the data.
 
-#     When a dataset is large, plotting a scatterplot often doesn't look good. 
-#     This function makes a contour plot of the density of points, rather than
-#     plotting the points themselves. 
+    More specifically, this calculates the value of density at which X
+    percent of the "mass" is held in cells with a density of this level or
+    higher. More simply, this is used to find the levels that enclose 50% of
+    the data points when they are put into a density plot.
 
-#     Under the hood, this uses the `np.histogram2d()` function to create a 2D
-#     histogram, which is then used to create the contours. 
-
-#     You may be interested in the `contour_scatter()` function, too.
-
-#     :param xs: list of x values
-#     :type xs: list
-#     :param ys: list of y values
-#     :type ys: list
-#     :param bin_size: Size of the bins used in the 2D histogram. This is kind
-#                      of an arbitrary parameter. The code will guess a value for
-#                      this if none is passed in, but this value isn't always 
-#                      good. A smaller value gives noisier contours. A value that
-#                      is too large will lead to "chunky" contours. Adjust this
-#                      until your contours look good to your eye. That's the best
-#                      way to pick a value for this parameter.
-#     :type bin_size: float
-#     :param ax: Axes object to plot on.
-#     :param kwargs: Additional keyword arguments that will be passed on to the
-#                    contour function.
-#     :return: output of the `plt.contour()` function.
-
-#     Future: ADD EXAMPLES!!!
-#     """
-
-#     if ax is None:
-#         ax, _ = _get_ax()
-    
-#     # the other function does the hard work
-#     x_centers, y_centers, hist = _make_density_contours(xs, ys, bin_size)
-    
-#     # then set some default parameters
-#     kwargs.setdefault("linewidths", 2)
-#     if "colors" not in kwargs:
-#         kwargs.setdefault("cmap", "viridis")
-    
-#     # then we can plot
-#     return ax.contour(x_centers, y_centers, hist, **kwargs)
-
-# ==============================================================================
-
-def interval_level_2d(densities, percentages):
-    # assumes that all cells are the same size.
+    :param densities: List of densities. This can be each cell in a 2D
+                      histogram (most typically) or each bin in a 1D histogram.
+                      This needs to be flattened, though, so it's just one
+                      dimension.
+    :param percentage: The percentiles to calculate levels for. If 0.5 is used,
+                       one of the values returned will be the level that
+                       encloses 50% of the data.
+    :return: The level that encloses `percentage` of the data.
+    """
+    densities = np.array(densities)
     total = np.nansum(densities)
+    closest_diff = 10 ** 99
+    for l_level in np.linspace(0, max(densities), 1000):
+        idxs = densities > l_level
+        this_total = np.nansum(densities[idxs])
+
+        this_percentage = this_total / total
+        this_diff = abs(percentage - this_percentage)
+        if this_diff <= closest_diff:
+            closest_diff = this_diff
+            best_level = l_level
+
+    return best_level
+
+def _percentile_level(densities, percentages):
+    """
+    Calculate the levels that enclose the given percentile of the data.
+
+    This is the main function to use, as it does this for many values of
+    percentiles, not just one.
+
+    This works by iterating through the each value of density given, and seeing
+    how much of the total mass is in cells with this density or higher. Then
+    the levels that most closely match the percentiles given are returned. This
+    output will probably be passed to a contour function.
+
+    Note that this does assume all cells are the same size.
+
+    :param densities: List of densities. This can be each cell in a 2D
+                      histogram (most typically) or each bin in a 1D histogram.
+                      This needs to be flattened, though, so it's just one
+                      dimension.
+    :param percentages: The percentiles to calculate levels for. If 0.5 is used,
+                        one of the values returned will be the level that
+                        encloses 50% of the data.
+    :return: Levels that enclose `percentages` of the data.
+    """
+    # Error checking on percentile levels. Must go from high to low
     best_levels = []
-
-    for percent in percentages:
-        best_levels.append(0)
-        closest_diff = 10 ** 99
-        for l_level in np.linspace(0, max(densities), 1000):
-            idxs = densities > l_level
-            this_total = np.nansum(densities[idxs])
-
-            this_percentage = this_total / total
-            this_diff = abs(percent - this_percentage)
-            if this_diff <= closest_diff:
-                closest_diff = this_diff
-                best_levels[-1] = l_level
+    for percent in reversed(sorted(percentages)):
+        best_levels.append(_percentile_level_core(densities, percent))
 
     best_levels.append(1.0001 * max(densities))  # to get the central point
     return best_levels

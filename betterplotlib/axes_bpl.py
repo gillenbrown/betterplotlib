@@ -875,6 +875,73 @@ class Axes_bpl(Axes):
         # then add the text.
         return self.add_text(x_value, y_value, text, coords="axes", **kwargs)
 
+    def density_contour(self, xs, ys, bin_size=None, percent_levels=None,
+                        smoothing=0, weights=None, labels=False, **kwargs):
+        """
+
+        :param xs:
+        :param ys:
+        :param bin_size:
+        :param percent_levels:
+        :param smoothing:
+        :param weights:
+        :return:
+        """
+        # error checking:
+        # levels is set by this function, so it can't be in there
+        if "levels" in kwargs:
+            raise ValueError("The levels parameter is set by this function.")
+        x_c, y_c, hist = _tools._make_density_contours(xs, ys, bin_size,
+                                                       padding_x=4 * smoothing,
+                                                       padding_y=4 * smoothing,
+                                                       weights=weights,
+                                                       smoothing=smoothing)
+
+        # then get the levels of the contours
+        if percent_levels is None:
+            percent_levels = [0.25, 0.5, 0.75, 0.95]
+
+        levels = _tools._percentile_level(hist.flatten(), percent_levels)
+        kwargs["levels"] = levels
+        # then set some parameters
+        kwargs.setdefault("linewidths", 2)
+        kwargs["zorder"] = 3
+
+        contours = super(Axes_bpl, self).contour(x_c, y_c, hist,
+                                                 **kwargs)
+
+        if labels:
+            # need to order the percent_levels properly (from high to low)
+            percent_levels = sorted(percent_levels)[::-1]
+            label_percents = percent_levels + [0]  # needed since there is
+            # one hidden coutour at the very center.
+            label_dict = {l: "{:.2f}".format(percent) for l, percent
+                          in zip(levels, label_percents)}
+
+            self.clabel(contours, fmt=label_dict, fontsize=16)
+
+        return contours
+
+    def density_contourf(self, xs, ys, bin_size=None, percent_levels=None,
+                        smoothing=0, weights=None, **kwargs):
+
+        if "levels" in kwargs:
+            raise ValueError("The levels parameter is set by this function.")
+        x_c, y_c, hist = _tools._make_density_contours(xs, ys, bin_size,
+                                                       padding_x=4 * smoothing,
+                                                       padding_y=4 * smoothing,
+                                                       weights=weights,
+                                                       smoothing=smoothing)
+
+        # then get the levels of the contours
+        if percent_levels is None:
+            percent_levels = [0.25, 0.5, 0.75, 0.95]
+
+        levels = _tools._percentile_level(hist.flatten(), percent_levels)
+        kwargs["levels"] = levels
+
+        return super(Axes_bpl, self).contourf(x_c, y_c, hist, **kwargs)
+
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=dict(), 
                         contour_kwargs=dict(), smoothing=None,
