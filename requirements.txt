@@ -3,4 +3,3 @@ matplotlib
 nbsphinx
 ipykernel
 scipy
-cmocean
