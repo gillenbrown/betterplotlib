@@ -165,7 +165,7 @@ def white_style(font="Avenir"):
                                              colors.color_cycle)
 
 
-def latex_style():
+def paper_style():
     """
     Uses LaTeX font rendering to make plots look good in publications where
     LaTeX is used.
@@ -173,6 +173,8 @@ def latex_style():
     :return: None
     """
     _common_style()
+
+    mpl.rcParams['figure.figsize'] = [10, 8]
     # change everything to LaTeX
     mpl.rcParams['font.family'] = 'serif'
     mpl.rcParams['font.sans-serif'] = 'Computer Modern Roman'
