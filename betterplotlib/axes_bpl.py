@@ -8,7 +8,7 @@ import sys
 from matplotlib import __version__
 
 from . import colors
-from . import _tools
+from . import tools
 
 mpl_2 = __version__[0] == "2"
 
@@ -248,7 +248,7 @@ class Axes_bpl(Axes):
 
         # use the function we defined to get the proper alpha value.
         try:
-            kwargs.setdefault('alpha', _tools._alpha(len(args[0])))
+            kwargs.setdefault('alpha', tools._alpha(len(args[0])))
         except TypeError:
             kwargs.setdefault("alpha", 1.0)
 
@@ -384,9 +384,9 @@ class Axes_bpl(Axes):
                              "used together. Use `bins` if you want to "
                              "pass your own bins, or use `bin_size` to "
                              "have the code determine its own bins. ")
-        kwargs.setdefault("bin_size", _tools.rounded_bin_width(args[0]))
-        kwargs.setdefault("bins", _tools._binning(min(args[0]), max(args[0]),
-                                                  kwargs.pop("bin_size")))
+        kwargs.setdefault("bin_size", tools.rounded_bin_width(args[0]))
+        kwargs.setdefault("bins", tools._binning(min(args[0]), max(args[0]),
+                                                 kwargs.pop("bin_size")))
 
         # plot the histogram, and keep the results
         return super(Axes_bpl, self).hist(*args, **kwargs)
@@ -891,17 +891,17 @@ class Axes_bpl(Axes):
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = _tools._make_density_contours(xs, ys, bin_size,
-                                                       padding_x=4 * smoothing,
-                                                       padding_y=4 * smoothing,
-                                                       weights=weights,
-                                                       smoothing=smoothing)
+        x_c, y_c, hist = tools._make_density_contours(xs, ys, bin_size,
+                                                      padding_x=4 * smoothing,
+                                                      padding_y=4 * smoothing,
+                                                      weights=weights,
+                                                      smoothing=smoothing)
 
         # then get the levels of the contours
         if percent_levels is None:
             percent_levels = [0.25, 0.5, 0.75, 0.95]
 
-        levels = _tools._percentile_level(hist.flatten(), percent_levels)
+        levels = tools._percentile_level(hist.flatten(), percent_levels)
         kwargs["levels"] = levels
         # then set some parameters
         kwargs.setdefault("linewidths", 2)
@@ -927,17 +927,17 @@ class Axes_bpl(Axes):
 
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = _tools._make_density_contours(xs, ys, bin_size,
-                                                       padding_x=4 * smoothing,
-                                                       padding_y=4 * smoothing,
-                                                       weights=weights,
-                                                       smoothing=smoothing)
+        x_c, y_c, hist = tools._make_density_contours(xs, ys, bin_size,
+                                                      padding_x=4 * smoothing,
+                                                      padding_y=4 * smoothing,
+                                                      weights=weights,
+                                                      smoothing=smoothing)
 
         # then get the levels of the contours
         if percent_levels is None:
             percent_levels = [0.25, 0.5, 0.75, 0.95]
 
-        levels = _tools._percentile_level(hist.flatten(), percent_levels)
+        levels = tools._percentile_level(hist.flatten(), percent_levels)
         kwargs["levels"] = levels
 
         return super(Axes_bpl, self).contourf(x_c, y_c, hist, **kwargs)
@@ -1225,15 +1225,15 @@ class Axes_bpl(Axes):
         
         # first get the density info we need to make contours
         if smoothing is not None:
-            x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
-                                                                   bin_size,
-                                                                   padding_x=4*smoothing,
-                                                                   padding_y=4*smoothing,
-                                                                   weights=weights)
+            x_cen, y_cen, pre_hist = tools._make_density_contours(xs, ys,
+                                                                  bin_size,
+                                                                  padding_x=4*smoothing,
+                                                                  padding_y=4*smoothing,
+                                                                  weights=weights)
         else:
-            x_cen, y_cen, pre_hist = _tools._make_density_contours(xs, ys,
-                                                                   bin_size,
-                                                                   weights=weights)
+            x_cen, y_cen, pre_hist = tools._make_density_contours(xs, ys,
+                                                                  bin_size,
+                                                                  weights=weights)
         
         # then determine what our colormap for the fill will be
         if fill_cmap == "white":
@@ -1272,7 +1272,7 @@ class Axes_bpl(Axes):
             # we add one to the number of contours because we have the highest
             # one at the highest point, so it won't be shown.
         else:
-            levels = _tools.interval_level_2d(hist.flatten(), percent_levels)
+            levels = tools.interval_level_2d(hist.flatten(), percent_levels)
         contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
@@ -1798,13 +1798,13 @@ class Axes_bpl(Axes):
 
         # first get the underlying density histogram
         if smoothing is not None:
-            x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size,
-                                                               padding_x=4*smoothing,
-                                                               padding_y=4*smoothing,
-                                                               weights=weights)
+            x_bin, y_bin, hist = tools._make_density_contours(xs, ys, bin_size,
+                                                              padding_x=4*smoothing,
+                                                              padding_y=4*smoothing,
+                                                              weights=weights)
         else:
-            x_bin, y_bin, hist = _tools._make_density_contours(xs, ys, bin_size,
-                                                               weights=weights)
+            x_bin, y_bin, hist = tools._make_density_contours(xs, ys, bin_size,
+                                                              weights=weights)
 
         # then smooth if desired
         if smoothing is not None:
