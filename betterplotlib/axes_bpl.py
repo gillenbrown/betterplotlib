@@ -384,7 +384,7 @@ class Axes_bpl(Axes):
                              "used together. Use `bins` if you want to "
                              "pass your own bins, or use `bin_size` to "
                              "have the code determine its own bins. ")
-        kwargs.setdefault("bin_size", _tools._rounded_bin_width(args[0]))
+        kwargs.setdefault("bin_size", _tools.rounded_bin_width(args[0]))
         kwargs.setdefault("bins", _tools._binning(min(args[0]), max(args[0]),
                                                   kwargs.pop("bin_size")))
 

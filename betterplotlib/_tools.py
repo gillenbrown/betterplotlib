@@ -3,7 +3,8 @@ import numpy as np
 from scipy import stats
 from scipy import ndimage
 
-#TODO: I need to remake the plt.gca() function to find my Axes_bpl
+# TODO: I need to remake the plt.gca() function to find my Axes_bpl
+
 
 def _get_ax(**kwargs):
     """
@@ -56,8 +57,15 @@ def _alpha(n, threshold=30, scale=2000):
     """
     if n < threshold:
         return 1.0
-    return 0.99 / (1.0 + (n / float(scale)))  # turn scale into a float to make
-                                              # sure it still works in Python 2
+    # turn scale into a float to make sure it still works in Python 2
+    return 0.99 / (1.0 + (n / float(scale)))
+
+# ------------------------------------------------------------------------------
+#
+# Bin sizing things
+#
+# ------------------------------------------------------------------------------
+
 
 def _freedman_diaconis(data):
     """This uses the Freedman Diaconis Algorithm, which is defined by
@@ -70,6 +78,7 @@ def _freedman_diaconis(data):
     """
     return _freedman_diaconis_core(stats.iqr(data), len(data))
 
+
 def _freedman_diaconis_core(iqr, n):
     """
     This uses the Freedman Diaconis Algorithm, which is defined by
@@ -80,28 +89,69 @@ def _freedman_diaconis_core(iqr, n):
     where IQR is the interquartile range, n is the number of data points, and
     h is the bin size.
     """
-
+    if n <= 0:
+        raise ValueError("The number of data points must be positive in "
+                         "Freedman Diaconis binning.")
+    if iqr <= 0.0:
+        raise ValueError("The Freeman-Diaconis binning relies on interquartile"
+                         "range, and your data has zero. \nTry passing your"
+                         "own bin size.")
     try:
-        return 2 * iqr * n **(-1.0/3.0)
-    except ZeroDivisionError:
-        raise ValueError("Binning won't work for data with zero length.")
+        return 2 * iqr * n ** (-1.0 / 3.0)
+    except TypeError:
+        raise TypeError("Binning only works for float-like data types.")
 
-def _round_to_nice_width(num):
-    # we then want to have it choose among the best of certain bins. We first
+
+def _round_to_nice_width(bin_width):
+    """
+    Take a bin width and round it to something nice.
+
+    This will round a bin width to be a factor of 10 times one of the following:
+    1, 2, 5, or 10. These are roughly a factor of two apart from each other,
+    and will result in the bins lining up evenly on the ticks marks of typical
+    axes, since they divide evenly into ticks that a power of 10.
+
+    Some examples:
+    10 -> 10
+    9 -> 10
+    11 -> 10
+    0.004 -> 0.005
+    0.8 -> 1.0
+
+    :param bin_width: Width of bin that will be rounded.
+    :type bin_width: float
+    :return: Rounded bin width, as described above.
+    :rtype: float
+    """
+    # we want to have it choose among the best of certain bins. We first
     # define the bins we want it to be able to choose. We make them all
     # multiples of 10^n, where n is the rounded log of the bin width. This
     # makes them be in the same order of magnitude as the original bin size.
-    exponent = np.floor(np.log10(num))
+    exponent = np.floor(np.log10(bin_width))
+    raise_later = False  # have weird error checking to handle here.
+    try:
+        if np.isnan(exponent) or np.isinf(exponent):
+            # This will raise a Value error if we try it on a list, but we want
+            # to raise a value error if these things are true, so we have to
+            # raise them outside of the try/except.
+            raise_later=True
+    except ValueError:
+        raise TypeError("Float-like types are needed in this function.")
+    if raise_later:
+        raise ValueError("Bin width must be positive.")
+
     possible_bins = [x * 10 ** exponent for x in [1, 2, 5, 10]]
+    # include 10 to give the full range from low to high that this bin can go to
 
     # we then figure out which one is closest to the original
-    bin_diffs = [abs(num - pos_width) for pos_width in possible_bins]
-    best_idx = bin_diffs.index(min(bin_diffs))
+    bin_diffs = [abs(bin_width - pos_width) for pos_width in possible_bins]
+    best_idx = np.argmin(bin_diffs)
     # the indices are the same between the diffs and originals, so we know
     # which index to get.
     return possible_bins[best_idx]
 
-def _rounded_bin_width(data):
+
+def rounded_bin_width(data):
     """
     Gets a reasonable bin size, rounded so that it lines up with plot ticks.
 
@@ -118,6 +168,7 @@ def _rounded_bin_width(data):
     :rtype: float
     """
     return _round_to_nice_width(_freedman_diaconis(data))
+
 
 def _binning(min, max, bin_size, padding=0):
     """
@@ -177,7 +228,7 @@ def _binning(min, max, bin_size, padding=0):
     return np.arange(lower_lim, upper_lim, bin_size)
 
 
-def _centers(edges):
+def bin_centers(edges):
     """
     This takes histogram edges and calculates the centers of each bin.
 
@@ -188,49 +239,63 @@ def _centers(edges):
     :return: list of bin centers
     :rtype: list of float
     """
+    if isinstance(edges, dict):
+        raise TypeError("Edges have to be list-like.")
+    if len(edges) < 2:
+        raise ValueError("Need at least two edges to calculate centers.")
+
     centers = []
     for left_edge_idx in range(len(edges) - 1):
         # average the left and right edges
         centers.append((edges[left_edge_idx] + edges[left_edge_idx + 1]) / 2.0)
     return centers
 
-def _parse_binning_options(data, bin_size=None, padding=0):
+
+def make_bins(data, bin_size=None, padding=0):
     """
     Takes the user options and creates bins out of them.
 
     :param data: List of data values that will be binned.
-    :param bin_size: Size of bins. If not passed in one will be choses. We will
+    :type data: list
+    :param bin_size: Size of bins. If not passed in one will be chosen. We will
                      use the Freedman-Diaconis bin width, but round it so that
                      the edges line up with ticks
+    :type bin_size: float
     :param padding: How much space to give on each side of the min and max. See
                     the `_binning()` function for more info.
+    :type padding: float
     :return: List of bin edges.
+    :rtype: np.ndarray
     """
     if bin_size is None:  # need to choose our own
-        bin_size = _rounded_bin_width(data)
+        bin_size = rounded_bin_width(data)
 
     return _binning(min(data), max(data), bin_size, padding)
 
-def _parse_bin_size(bin_size):
-    """
-    Parses bin size into an x and y value.
 
-    :param bin_size: Either a scalar to be used for both x and y, or a two
-                     element list, where the first is for x, and the second
-                     is y.
-    :return: Bin size in x and y directions.
+def _two_item_list(item):
+    """
+    Will return a two element list from either a scalar or two element list.
+
+    If a scalar is passed in, it will be duplicated, and both items of the
+    returned list will be this value. If an iterable is passed in, it must have
+    one or two elements. A one element list will be treated like a scalar, while
+    a two item list will be returned without modification.
+
+    :param item: Either a scalar or list, as described above.
+    :return: Two item list as described above.
+    :rtype: list
     """
     try:
-        if len(bin_size) > 2:
-            raise ValueError("Only two dimensions can be passed to bin_size.")
-        elif len(bin_size) == 2:
-            return bin_size
-        elif len(bin_size) == 1:
-            return [bin_size[0], bin_size[0]]
-        else:  # length of zero
-            raise ValueError("Bin size cannot be zero element list.")
+        if len(item) > 2 or len(item) == 0:
+            raise ValueError("A iterable must have length two.")
+        elif len(item) == 2:
+            return [item[0], item[1]]
+        elif len(item) == 1:
+            return [item[0], item[0]]
     except TypeError:  # will happen if scalar
-        return [bin_size, bin_size]
+        return [item, item]
+
 
 def _make_density_contours(xs, ys, bin_size,
                            padding_x=0, padding_y=0, weights=None,
@@ -277,16 +342,16 @@ def _make_density_contours(xs, ys, bin_size,
     """
     # First get the bins we need. If the user did not specify any bins
     # this will take care of it.
-    bin_size_x, bin_size_y = _parse_bin_size(bin_size)
-    bins = [_parse_binning_options(xs, bin_size_x, padding_x),
-            _parse_binning_options(ys, bin_size_y, padding_y)]
+    bin_size_x, bin_size_y = _two_item_list(bin_size)
+    bins = [make_bins(xs, bin_size_x, padding_x),
+            make_bins(ys, bin_size_y, padding_y)]
 
     # We can then use the bins to create the histogram
     hist, x_edges, y_edges = np.histogram2d(xs, ys, bins, weights=weights)
 
     # turn the bin edges into bin centers, since that's what matters
-    x_centers = _centers(x_edges)
-    y_centers = _centers(y_edges)
+    x_centers = bin_centers(x_edges)
+    y_centers = bin_centers(y_edges)
 
     # we need to transpose the histogram to get it to line up with the x, y
     hist = hist.transpose()
@@ -298,7 +363,8 @@ def _make_density_contours(xs, ys, bin_size,
 
     return x_centers, y_centers, hist
 
-def _percentile_level_core(densities, percentage):
+
+def percentile_level(densities, percentage):
     """
     Calculates the level of density that encloses X percent of the data.
 
@@ -306,6 +372,20 @@ def _percentile_level_core(densities, percentage):
     percent of the "mass" is held in cells with a density of this level or
     higher. More simply, this is used to find the levels that enclose 50% of
     the data points when they are put into a density plot.
+
+    This does not interpolate, so if you have a small number of points here
+    the results may be innacurate, in that the level returend may enclose
+    much more or less then the desired percentage (since adding/removing any
+    additional cells moves you farther away from the percentile you want).
+    This will always return the level that gives you closest to the percent
+    passed in.
+
+    Note that there will be a range of values that satisfy the condition
+    that the sum of the densities above this value is the given percentage of
+    the total. The allowable rangs is the range between the next value of
+    density on either side, since going past that range would enclose a
+    different set of cells and give a different enclosed density. Therefore
+    you can only trust these results to that level.
 
     :param densities: List of densities. This can be each cell in a 2D
                       histogram (most typically) or each bin in a 1D histogram.
@@ -331,7 +411,7 @@ def _percentile_level_core(densities, percentage):
 
     return best_level
 
-def _percentile_level(densities, percentages):
+def percentile_level_multiple(densities, percentages):
     """
     Calculate the levels that enclose the given percentile of the data.
 
@@ -357,7 +437,7 @@ def _percentile_level(densities, percentages):
     # Error checking on percentile levels. Must go from high to low
     best_levels = []
     for percent in reversed(sorted(percentages)):
-        best_levels.append(_percentile_level_core(densities, percent))
+        best_levels.append(percentile_level(densities, percent))
 
     best_levels.append(1.0001 * max(densities))  # to get the central point
     return best_levels
