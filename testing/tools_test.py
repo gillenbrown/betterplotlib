@@ -748,7 +748,6 @@ def test_unique_total_error_checking_types_string():
 def test_unique_total_error_checking_types_string_array():
     with pytest.raises(TypeError):
         tools._unique_total_sorted([1, 2, 3, "b"])
-# numpy will handle the type checking well enough, so I won't test too much
 
 
 def test_unique_total_no_duplicates():
@@ -772,13 +771,13 @@ def test_unique_total_multiple_dups():
 
 def test_unique_total_not_originally_sorted():
     data = [0.1, 0.2, 0.3, 0.3, 0.4, 0.4, 0.4, 0.5]
-    data = np.random.permutation(data)
+    data = np.random.permutation(data)  # randomizes the order
     new_data = tools._unique_total_sorted(data)
     assert approx(new_data) == [0.1, 0.2, 0.6, 1.2, 0.5]
 
 
 def test_unique_total_is_finally_sorted():
-    data = np.random.normal(0, 1, 1000)
+    data = np.random.normal(0, 1, 1000)  # unordered
     new_data = tools._unique_total_sorted(data)
     assert sorted(new_data) == approx(new_data)
 
@@ -811,6 +810,12 @@ def test_percentile_level_error_checking_non_iterable_density():
 def test_percentile_level_error_checking_empty_list():
     with pytest.raises(ValueError):
         tools.percentile_level([], 0.3)
+
+
+def test_percentile_level_error_checking_no_multi_dimension_density():
+    density = np.array([[1, 2], [3, 4]])
+    with pytest.raises(ValueError):
+        tools.percentile_level(density, 0.5)
 
 
 def test_percentile_level_list_vs_scalar_percentile():
@@ -1068,4 +1073,3 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
     tools.percentile_level(data, percentiles)
     assert len(recwarn) == 7  # four from imprecise level, two from duplicate
 
-    

@@ -366,12 +366,68 @@ def _make_density_contours(xs, ys, bin_size,
 
 def _unique_total_sorted(values):
     """
-    Scalars are allowed, empty lists are allowed. Only numerical lists otherwise.
-    :return:
+    Returns a list of the unique values in a list, weighted by the number of
+    times they appear in the original list. This is basically the "mass" held
+    at this value.
+
+    Some examples will be the best way to explain it. Each value in the return
+    list contains the sum of all the duplicates of that item. So if there are
+    3 7s in the array, one item will be 21. The list will be sorted in order
+    of the unique values.
+    [1] -> [1]
+    [1, 1] -> [2]  # two ones
+    [1, 2, 3] -> [1, 2, 3]
+    [1, 1, 2, 3] -> [2, 2, 3]  # two ones
+    [1, 1, 1, 2, 2, 3] -> [3, 4, 3]  # three ones, two twos, one three
+    [3, 2, 3, 1] -> [1, 2, 3]  # sorted, with two threes
+
+    :param values: List of values to sort and find uniques of. Scalars and
+                   empty lists are allowed, but only lists that contain
+                   numerical data otherwise.
+    :return: Sorted list of unique values in the list, weighted by the number
+             of time that it appears in the array.
+    :rtype: np.ndarray
     """
-    # TODO: finish writing this documentation and tests.
     unique_values, appearances = np.unique(values, return_counts=True)
     return unique_values * appearances
+
+
+def _percentile_level_warning_uncertain(percent):
+    """
+    Create the warning message for when the percentile level is uncertain.
+
+    This should be called whenever this message should be raised.
+
+    :param percent: The percent (from 0 to 1) that is uncertain
+    :type percent: float
+    :return: None, but raises the warning
+    """
+    warning_msg = "Location of {:.2f}% is uncertain by more than 1%. \n" \
+                  "Consider adding more data."
+    warnings.warn(warning_msg.format(percent * 100), RuntimeWarning)
+
+
+def _percentile_level_duplicate_checking(results_dict):
+    """
+    Check if there are any percentages that correspond to the same level.
+
+    :param results_dict: Dictionary from the percentile_level function,
+                         containing keys that are the percentages, and values
+                         that are the corresponding level.
+    :return: None, but raises warnings if there are duplicate levels.
+    """
+    unique_values = set(results_dict.values())
+    # see if any of these values have more than one key with them.
+    for val in unique_values:
+        duplicate_keys = []
+        for key in results_dict:
+            if results_dict[key] == val:
+                duplicate_keys.append(key)
+        # there will be always one key that matches a value, but we care when
+        # there are more than one.
+        warn_message = "The percentiles {} all have the same level."
+        if len(duplicate_keys) > 1:
+            warnings.warn(warn_message.format(duplicate_keys), RuntimeWarning)
 
 
 def percentile_level(densities, percentages):
@@ -383,19 +439,17 @@ def percentile_level(densities, percentages):
     higher. More simply, this is used to find the levels that enclose 50% of
     the data points when they are put into a density plot.
 
-    This does not interpolate, so if you have a small number of points here
-    the results may be innacurate, in that the level returend may enclose
-    much more or less then the desired percentage (since adding/removing any
-    additional cells moves you farther away from the percentile you want).
-    This will always return the level that gives you closest to the percent
-    passed in.
-
     Note that there will be a range of values that satisfy the condition
     that the sum of the densities above this value is the given percentage of
     the total. The allowable rangs is the range between the next value of
     density on either side, since going past that range would enclose a
     different set of cells and give a different enclosed density. Therefore
     you can only trust these results to that level.
+
+    This will raise warnings if this range is more than 1% of the "mass", or
+    if two or more of your percentages end up with the same levels. This can
+    happen if you have a small number of data points and closely spaced
+    percentages.
 
     :param densities: List of densities. This can be each cell in a 2D
                       histogram (most typically) or each bin in a 1D histogram.
@@ -408,6 +462,8 @@ def percentile_level(densities, percentages):
     """
     densities = np.array(densities)
     total_mass = np.sum(densities)
+    if len(densities.shape) > 1:
+        raise ValueError("Density must be one dimensional.")
     if any(densities < 0):
         raise ValueError("Density must be non-negative.")
     # turn percentages into a list
@@ -421,9 +477,6 @@ def percentile_level(densities, percentages):
     for p in percentages:
         if not 0.0 <= p <= 1.0:
             raise ValueError("percentages must be between 0 and 1.")
-
-    warning_msg = "Location of {:.2f}% is uncertain by more than 1%. \n" \
-                  "Consider adding more data."
 
     # the accumulated mass is the cumulative sum (starting from the highest
     # density point). We will get the array of values at each point first.
@@ -447,47 +500,46 @@ def percentile_level(densities, percentages):
         best_idx = np.argmax((mass_fractions - percent) >= 0)
         # this works because argmax will find the first value that has the
         # condition being true, which will be the first one over the threshold.
-        # min_idx = np.argmin(abs(mass_fractions - percent))
 
-        # then get that density, plus the value below it. We need this so we
-        # can check for large uncertainties and raise warnings if needed.
+        # see if we need to raise a warning for uncertain levels.
+        best_mass_frac = mass_fractions[best_idx]
+        # don't raise a warning if we found the level exactly
+        if not np.isclose(best_mass_frac, percent):
+            if best_idx == 0:  # the first value went past our defined density
+                # since the first value went past our threshold, we have no
+                # idea where along this it happened, so we are uncertain
+                _percentile_level_warning_uncertain(percent)
+            else:  # not the first value
+                # The criteris here will be that the gap between this level and
+                # the one before it (which did not pass the threshold) is more
+                # than 1%. This is a large region where the threshold could
+                # have been passes
+                next_mass_frac = mass_fractions[best_idx - 1]
+                if best_mass_frac - next_mass_frac > 0.01:
+                    _percentile_level_warning_uncertain(percent)
+
+        # Get the return value. This is a bit subjective. It only has to be
+        # higher then the level that encloses the correct percentage, since
+        # we want to make sure that level is included. It also has to be
+        # below the next density so we don't include too much. I'll take the
+        # mean of the best value and the next lowest density, which satisfies
+        # these conditions.
         value = densities_high_to_low[best_idx]
-        if best_idx != 0:
-            regular_mass_frac = mass_fractions[best_idx]
-            lower_mass_frac = mass_fractions[best_idx - 1]
-            if regular_mass_frac - lower_mass_frac > 0.01:
-                if not np.isclose(percent, regular_mass_frac):
-                    warnings.warn(warning_msg.format(percent * 100),
-                                  RuntimeWarning)
-        else:  # the first value went past our defined density
-            # we don't know where this happened, so we are uncertain
-            regular_mass_frac = mass_fractions[best_idx]
-            if not np.isclose(percent, regular_mass_frac):
-                warnings.warn(warning_msg.format(percent * 100), RuntimeWarning)
-
-        # then get the return value
-        # We want these
-        # two so our returned value can be inbetween them. That way the level
-        # can include the density value of interest. This only works if we are
-        # not at the edges
+        # have to be careful when we have the last value, since there is no
+        # next value to average with.
         if best_idx == len(densities_high_to_low) - 1:  # last value
-            return_values[percent] = value*0.99
+            return_values[percent] = value * 0.99
+            # just below the lowest density.
             continue
         next_value = densities_high_to_low[best_idx + 1]
-        # keep the mean of these two values.
         return_values[percent] = np.mean([value, next_value])
 
+    # if the user pased in a float, then return a float only.
     if len(return_values) == 1 and rtype is float:
-        return list(return_values.values())[0]  # just the float
+        return list(return_values.values())[0]  # complex, but just gets the val
+
     # check for duplicates
-    unique_values = set(return_values.values())
-    for val in unique_values:
-        keys = []
-        for key in return_values:
-            if return_values[key] == val:
-                keys.append(key)
-        if len(keys) > 1:
-            warnings.warn("The percentiles {} all have the same level.".format(keys),
-                          RuntimeWarning)
+    _percentile_level_duplicate_checking(return_values)
+
     # else, want them sorted from low to high for ease of plotting in contours
     return sorted(list(return_values.values()))
