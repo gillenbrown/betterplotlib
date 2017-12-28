@@ -18,18 +18,19 @@ def test_alpha_small_values():
     assert tools._alpha(29, threshold=30) == approx(1.0)
     assert tools._alpha(30, threshold=30) != approx(1.0)
 
+
 def test_alpha_large_values():
     """Test that alpha values never go to zero."""
     assert 0 < tools._alpha(10 ** 2) <= 1.0
     assert 0 < tools._alpha(10 ** 4) <= 1.0
     assert 0 < tools._alpha(10 ** 10) <= 1.0
 
+
 # ------------------------------------------------------------------------------
 #
 # Freedman Diaconis core bin size testing
 #
 # ------------------------------------------------------------------------------
-
 def test_freedman_diaconis_core_zero_data():
     """Length of zero or negative doesn't work in FD."""
     with pytest.raises(ValueError):
@@ -736,6 +737,54 @@ def test_make_bins_all_same_size(bin_size):
 
 #-------------------------------------------------------------------------------
 
+# Testing the unique_total
+
+#-------------------------------------------------------------------------------
+def test_unique_total_error_checking_types_string():
+    with pytest.raises(TypeError):
+        tools._unique_total_sorted("hello")
+
+
+def test_unique_total_error_checking_types_string_array():
+    with pytest.raises(TypeError):
+        tools._unique_total_sorted([1, 2, 3, "b"])
+# numpy will handle the type checking well enough, so I won't test too much
+
+
+def test_unique_total_no_duplicates():
+    """should return the original array"""
+    data = np.arange(0, 100, 0.5)
+    new_data = tools._unique_total_sorted(data)
+    assert approx(data) == new_data
+
+
+def test_unique_total_one_duplicate():
+    data = [1, 2, 2, 3, 4, 5, 6]
+    new_data = tools._unique_total_sorted(data)
+    assert approx(new_data) == [1, 4, 3, 4, 5, 6]
+
+
+def test_unique_total_multiple_dups():
+    data = [0.1, 0.2, 0.3, 0.3, 0.4, 0.4, 0.4, 0.5]
+    new_data = tools._unique_total_sorted(data)
+    assert approx(new_data) == [0.1, 0.2, 0.6, 1.2, 0.5]
+
+
+def test_unique_total_not_originally_sorted():
+    data = [0.1, 0.2, 0.3, 0.3, 0.4, 0.4, 0.4, 0.5]
+    data = np.random.permutation(data)
+    new_data = tools._unique_total_sorted(data)
+    assert approx(new_data) == [0.1, 0.2, 0.6, 1.2, 0.5]
+
+
+def test_unique_total_is_finally_sorted():
+    data = np.random.normal(0, 1, 1000)
+    new_data = tools._unique_total_sorted(data)
+    assert sorted(new_data) == approx(new_data)
+
+
+#-------------------------------------------------------------------------------
+
 # Testing the level that contains certain percentages
 
 #-------------------------------------------------------------------------------
@@ -825,9 +874,10 @@ def test_percentile_level_core_simple_d():
     assert 5 < tools.percentile_level(densities, 10.0 / 25.0) < 10
     assert 10 < tools.percentile_level(densities, 0)
 
+
 def test_percentile_level_values_multiple():
     densities = [1, 2, 3, 4, 5, 10]
-    percentiles = [0, 24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0, 1]
+    percentiles = [1, 24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0, 0]
     levels = tools.percentile_level(densities, percentiles)
     assert 0 < levels[0] < 1
     assert 1 < levels[1] < 2
@@ -840,7 +890,7 @@ def test_percentile_level_values_multiple():
 
 def test_percentile_level_values_order_not_matter():
     densities = [1, 2, 3, 4, 5, 10]
-    percentiles = [24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0]
+    percentiles = [24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0, 0]
     for _ in range(10):
         np.random.shuffle(percentiles)  # order of percentiles won't matter
         np.random.shuffle(densities)
@@ -856,9 +906,9 @@ def test_percentile_level_values_order_not_matter():
 def test_percentile_level_big_data():
     # get a ton of data
     densities = np.linspace(0, 1, 1000)
-    percentages = np.arange(0, 0.90, 0.01) # 0 to 90 percent
+    percentages = np.arange(0.1, 1.0, 0.01) # 1 to 99 percent
     # the levels can be computed analytically, since this is a uniform
-    # distribution. The level should be computer such that the integral of x
+    # distribution. The level should be computed such that the integral of x
     # from l to 1 is some percentage of the total. This gives P = 1 - l^2
     real_levels = sorted(np.sqrt(1 - percentages))
     test_levels = tools.percentile_level(densities, percentages)
@@ -866,9 +916,156 @@ def test_percentile_level_big_data():
     # need larger tolerance to account for the fact that our points are only
     # spaced 1E-3 apart.
 
+
+def test_percentile_level_big_data_warnings(recwarn):
+    # get a ton of data
+    densities = np.linspace(0, 1, 1000)
+    percentages = np.arange(0.1, 1.0, 0.01) # 1 to 99 percent
+    # there is enough data here that the levels should be well determined
+    tools.percentile_level(densities, percentages)
+    assert len(recwarn) == 0
+
+
 def test_percentile_level_points_very_close():
     """IF two points are very close together, make sure we get in between
     if needed."""
     data = [1, 1, 1, 2.0000, 2.0000001, 3]
     this_level = tools.percentile_level(data, 0.5)
     assert 2.0000 < this_level < 2.0000001
+
+
+def test_percentile_level_in_middle_of_constants_result():
+    """What happens when the correct level is hard to define, since there are
+    a bunch of ones like it. This won't matter in most cases since we will
+    have floating point errors. """
+    data = [1, 1, 1, 1, 1, 1, 1, 1, 1,  # 9 total
+            3, 3, 3,                    # 9 total
+            9]                          # 9 total
+    # here the 50th percentile (if cumulatively summing) is right in the middle
+    # of the 3s. To get past 50 we do have to go below the threes
+    assert 1.0 < tools.percentile_level(data, 0.5) < 3.0
+
+
+def test_percentile_level_in_middle_of_constants_warning():
+    """What happens when the correct level is hard to define, since there are
+    a bunch of ones like it. When there is a big gap between what we have
+    and what we want we raise an error also. """
+    data = [1, 1, 1, 1, 1, 1, 1, 1, 1,  # 9 total
+            3, 3, 3,                    # 9 total
+            9]                          # 9 total
+    with pytest.warns(RuntimeWarning):
+        tools.percentile_level(data, 0.5)
+
+
+def test_percentile_level_not_well_constrained_warnings_raise(recwarn):
+    """Raise warnings when the things are not well constrained"""
+    densities = [5, 4, 3, 2, 1]  # total 15
+    # give some percentiles that are not well constrained by the data. They all
+    # have to be on different sides of the different densities so that we don't
+    # get errors for having duplicate percentages
+    percentiles = [0.2, 0.5, 0.7, 0.9, 0.95]
+    tools.percentile_level(densities, percentiles)
+    assert len(recwarn) == len(percentiles)
+
+
+def test_percentile_level_not_well_constrained_order():
+    """Check results for when things aren't aligned with the data"""
+    densities = [5, 4, 1]
+    # give some percentiles that are not well constrained by the data
+    percentiles = [0.01, 0.2, 0.49, 0.51, 0.7, 0.89, 0.91, 0.95, 0.99]
+    results = tools.percentile_level(densities, percentiles)
+    assert 4 < results[8] < 5
+    assert 4 < results[7] < 5
+    assert 4 < results[6] < 5
+    assert 1 < results[5] < 4
+    assert 1 < results[4] < 4
+    assert 1 < results[3] < 4
+    assert results[2] < 1
+    assert results[1] < 1
+    assert results[0] < 1
+
+
+def test_percentile_level_order():
+    """Results should be from low to high levels."""
+    densities = np.random.uniform(0, 10, 1000)
+    percentages = np.random.uniform(0, 1, 100)  # random order
+    levels = tools.percentile_level(densities, percentages)
+    for idx in range(len(levels) - 1):
+        assert levels[idx] <= levels[idx + 1]
+
+
+def percentile_level_not_aligned():
+    """Test what happens when percentages are not aligned well with data."""
+    densities = [1, 2, 3]
+    assert 2 < tools.percentile_level(densities, 0.01) < 3
+    assert 2 < tools.percentile_level(densities, 0.45) < 3
+    assert 1 < tools.percentile_level(densities, 0.55) < 2
+    assert 1 < tools.percentile_level(densities, 0.75) < 2
+    assert tools.percentile_level(densities, 0.90) < 1
+    assert tools.percentile_level(densities, 0.99) < 1
+
+
+def test_percentile_level_warnings_no_raise_if_exact(recwarn):
+    """Check ones that are exactly aligned with data, should not warn"""
+    densities = [4, 3, 2, 1]
+    percentiles = [0.4, 0.7, 0.9]
+    tools.percentile_level(densities, percentiles)
+    assert len(recwarn) == 0
+
+
+def test_percentile_level_warnings_no_raise_if_zero(recwarn):
+    densities = np.random.uniform(2, 9, 100)
+    tools.percentile_level(densities, 0)
+    assert len(recwarn) == 0
+
+
+def test_percentile_level_warnings_no_raise_if_one(recwarn):
+    densities = np.random.uniform(2, 9, 100)
+    tools.percentile_level(densities, 1.0)
+    assert len(recwarn) == 0
+
+
+def test_percentile_level_warnings_no_raise_if_close(recwarn):
+    densities = [1, 1.00000001]
+    tools.percentile_level(densities, 0.5)
+    assert len(recwarn) == 0
+
+
+def test_percentile_level_duplicate_warning(recwarn):
+    densities = np.linspace(0, 100, 1000)
+    percentiles = [0.45000, 0.45000001]
+    tools.percentile_level(densities, percentiles)
+    assert len(recwarn) == 1
+
+
+def test_percentile_level_dup_warn_once_for_multiple_dup_one_level(recwarn):
+    densities = np.linspace(0, 100, 1000)
+    percentiles = [0.45000, 0.45000001, 0.45000002, 0.45000003]
+    tools.percentile_level(densities, percentiles)
+    assert len(recwarn) == 1
+
+
+def test_percentile_level_dup_warn_for_multiple_levels_with_dups(recwarn):
+    densities = np.linspace(0, 100, 1000)
+    percentiles = [0.45000, 0.45000001, 0.45000002, 0.45000003,
+                   0.86000, 0.86000001, 0.86000002, 0.86000003]
+    tools.percentile_level(densities, percentiles)
+    assert len(recwarn) == 2
+
+
+def test_percentile_level_duplicate_warning_with_imprecise(recwarn):
+    """If two percentages results in the same level, raise a warning."""
+    data = [1.0, 2.0]
+    percentiles = [0.7, 0.75]
+    tools.percentile_level(data, percentiles)
+    assert len(recwarn) == 3  # two from imprecise level, one from duplicate
+
+
+def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
+    """If two percentages results in the same level, raise a warning."""
+    data = [1.0, 2.0]
+    percentiles = [0.45, 0.5, 0.55, 0.7, 0.75]
+    tools.percentile_level(data, percentiles)
+    assert len(recwarn) == 7  # four from imprecise level, two from duplicate
+
+    

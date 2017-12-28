@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 from scipy import ndimage
+import warnings
 
 # TODO: I need to remake the plt.gca() function to find my Axes_bpl
 
@@ -363,8 +364,17 @@ def _make_density_contours(xs, ys, bin_size,
 
     return x_centers, y_centers, hist
 
+def _unique_total_sorted(values):
+    """
+    Scalars are allowed, empty lists are allowed. Only numerical lists otherwise.
+    :return:
+    """
+    # TODO: finish writing this documentation and tests.
+    unique_values, appearances = np.unique(values, return_counts=True)
+    return unique_values * appearances
 
-def percentile_level(densities, percentage):
+
+def percentile_level(densities, percentages):
     """
     Calculates the level of density that encloses X percent of the data.
 
@@ -391,53 +401,93 @@ def percentile_level(densities, percentage):
                       histogram (most typically) or each bin in a 1D histogram.
                       This needs to be flattened, though, so it's just one
                       dimension.
-    :param percentage: The percentiles to calculate levels for. If 0.5 is used,
+    :param percentages: The percentiles to calculate levels for. If 0.5 is used,
                        one of the values returned will be the level that
                        encloses 50% of the data.
     :return: The level that encloses `percentage` of the data.
     """
     densities = np.array(densities)
-    total = np.nansum(densities)
-    closest_diff = 10 ** 99
-    for l_level in np.linspace(0, max(densities), 1000):
-        idxs = densities > l_level
-        this_total = np.nansum(densities[idxs])
+    total_mass = np.sum(densities)
+    if any(densities < 0):
+        raise ValueError("Density must be non-negative.")
+    # turn percentages into a list
+    try:
+        rtype = list
+        percentages = list(percentages)
+    except TypeError:  # happens if a float
+        rtype = float
+        percentages = list([percentages])
+    # check tht percentages are in the right range.
+    for p in percentages:
+        if not 0.0 <= p <= 1.0:
+            raise ValueError("percentages must be between 0 and 1.")
 
-        this_percentage = this_total / total
-        this_diff = abs(percentage - this_percentage)
-        if this_diff <= closest_diff:
-            closest_diff = this_diff
-            best_level = l_level
+    warning_msg = "Location of {:.2f}% is uncertain by more than 1%. \n" \
+                  "Consider adding more data."
 
-    return best_level
+    # the accumulated mass is the cumulative sum (starting from the highest
+    # density point). We will get the array of values at each point first.
+    densities_high_to_low = np.unique(densities)[::-1]
+    densities_to_accumulate = _unique_total_sorted(densities)[::-1]
+    accumulated_mass = np.cumsum(densities_to_accumulate)
+    # then get the fraction of the mass that represents
+    mass_fractions = accumulated_mass / total_mass
 
-def percentile_level_multiple(densities, percentages):
-    """
-    Calculate the levels that enclose the given percentile of the data.
+    return_values = dict()
+    for percent in percentages:
+        # check for percent of 0 and 100, which needs to be handled specially
+        if percent == 0:
+            return_values[percent] = 1.02 * densities_high_to_low[0]
+            continue
+        elif percent == 1:
+            return_values[percent] = 0.98 * densities_high_to_low[-1]
+            continue
+        # find the index where we are closest to the desired percentage while
+        # getting at least to the desired value.
+        best_idx = np.argmax((mass_fractions - percent) >= 0)
+        # this works because argmax will find the first value that has the
+        # condition being true, which will be the first one over the threshold.
+        # min_idx = np.argmin(abs(mass_fractions - percent))
 
-    This is the main function to use, as it does this for many values of
-    percentiles, not just one.
+        # then get that density, plus the value below it. We need this so we
+        # can check for large uncertainties and raise warnings if needed.
+        value = densities_high_to_low[best_idx]
+        if best_idx != 0:
+            regular_mass_frac = mass_fractions[best_idx]
+            lower_mass_frac = mass_fractions[best_idx - 1]
+            if regular_mass_frac - lower_mass_frac > 0.01:
+                if not np.isclose(percent, regular_mass_frac):
+                    warnings.warn(warning_msg.format(percent * 100),
+                                  RuntimeWarning)
+        else:  # the first value went past our defined density
+            # we don't know where this happened, so we are uncertain
+            regular_mass_frac = mass_fractions[best_idx]
+            if not np.isclose(percent, regular_mass_frac):
+                warnings.warn(warning_msg.format(percent * 100), RuntimeWarning)
 
-    This works by iterating through the each value of density given, and seeing
-    how much of the total mass is in cells with this density or higher. Then
-    the levels that most closely match the percentiles given are returned. This
-    output will probably be passed to a contour function.
+        # then get the return value
+        # We want these
+        # two so our returned value can be inbetween them. That way the level
+        # can include the density value of interest. This only works if we are
+        # not at the edges
+        if best_idx == len(densities_high_to_low) - 1:  # last value
+            return_values[percent] = value*0.99
+            continue
+        next_value = densities_high_to_low[best_idx + 1]
+        # keep the mean of these two values.
+        return_values[percent] = np.mean([value, next_value])
 
-    Note that this does assume all cells are the same size.
-
-    :param densities: List of densities. This can be each cell in a 2D
-                      histogram (most typically) or each bin in a 1D histogram.
-                      This needs to be flattened, though, so it's just one
-                      dimension.
-    :param percentages: The percentiles to calculate levels for. If 0.5 is used,
-                        one of the values returned will be the level that
-                        encloses 50% of the data.
-    :return: Levels that enclose `percentages` of the data.
-    """
-    # Error checking on percentile levels. Must go from high to low
-    best_levels = []
-    for percent in reversed(sorted(percentages)):
-        best_levels.append(percentile_level(densities, percent))
-
-    best_levels.append(1.0001 * max(densities))  # to get the central point
-    return best_levels
+    if len(return_values) == 1 and rtype is float:
+        return list(return_values.values())[0]  # just the float
+    # check for duplicates
+    unique_values = set(return_values.values())
+    for val in unique_values:
+        keys = []
+        for key in return_values:
+            if return_values[key] == val:
+                keys.append(key)
+        if len(keys) > 1:
+            warnings.warn("The percentiles {} all have the same level.".format(keys),
+                          RuntimeWarning)
+    # else, want them sorted from low to high for ease of plotting in contours
+    return sorted(list(return_values.values()))
