@@ -3,6 +3,9 @@ import numpy as np
 from scipy import stats
 from scipy import ndimage
 import warnings
+import numbers
+
+from . import type_checking
 
 # TODO: I need to remake the plt.gca() function to find my Axes_bpl
 
@@ -56,6 +59,12 @@ def _alpha(n, threshold=30, scale=2000):
     :rtype: float
 
     """
+    # error checking
+    err_msg = "{} must be a numeric scalar."
+    n = type_checking.numeric_scalar(n, err_msg.format("n"))
+    threshold = type_checking.numeric_scalar(threshold,
+                                             err_msg.format("threshold"))
+    scale = type_checking.numeric_scalar(scale, err_msg.format("scale"))
     if n < threshold:
         return 1.0
     # turn scale into a float to make sure it still works in Python 2
@@ -90,6 +99,9 @@ def _freedman_diaconis_core(iqr, n):
     where IQR is the interquartile range, n is the number of data points, and
     h is the bin size.
     """
+    n = type_checking.numeric_scalar(n, "n must be a numeric scalar.")
+    iqr = type_checking.numeric_scalar(iqr, "iqr must be a numeric scalar.")
+
     if n <= 0:
         raise ValueError("The number of data points must be positive in "
                          "Freedman Diaconis binning.")
@@ -97,10 +109,7 @@ def _freedman_diaconis_core(iqr, n):
         raise ValueError("The Freeman-Diaconis binning relies on interquartile"
                          "range, and your data has zero. \nTry passing your"
                          "own bin size.")
-    try:
-        return 2 * iqr * n ** (-1.0 / 3.0)
-    except TypeError:
-        raise TypeError("Binning only works for float-like data types.")
+    return 2 * iqr * n ** (-1.0 / 3.0)
 
 
 def _round_to_nice_width(bin_width):
@@ -124,23 +133,15 @@ def _round_to_nice_width(bin_width):
     :return: Rounded bin width, as described above.
     :rtype: float
     """
+    bin_width = type_checking.numeric_scalar(bin_width, "Bin width must be a "
+                                                        "numeric scalar.")
+    if bin_width <= 0:
+        raise ValueError("Bin width must be positive.")
     # we want to have it choose among the best of certain bins. We first
     # define the bins we want it to be able to choose. We make them all
     # multiples of 10^n, where n is the rounded log of the bin width. This
     # makes them be in the same order of magnitude as the original bin size.
     exponent = np.floor(np.log10(bin_width))
-    raise_later = False  # have weird error checking to handle here.
-    try:
-        if np.isnan(exponent) or np.isinf(exponent):
-            # This will raise a Value error if we try it on a list, but we want
-            # to raise a value error if these things are true, so we have to
-            # raise them outside of the try/except.
-            raise_later=True
-    except ValueError:
-        raise TypeError("Float-like types are needed in this function.")
-    if raise_later:
-        raise ValueError("Bin width must be positive.")
-
     possible_bins = [x * 10 ** exponent for x in [1, 2, 5, 10]]
     # include 10 to give the full range from low to high that this bin can go to
 
@@ -168,6 +169,8 @@ def rounded_bin_width(data):
     :return: Appproximately correct bin size.
     :rtype: float
     """
+    data = type_checking.numeric_list_1D(data, "data must be a list of numeric"
+                                               "values in `rounded_bin_width`.")
     return _round_to_nice_width(_freedman_diaconis(data))
 
 
@@ -191,22 +194,17 @@ def _binning(min, max, bin_size, padding=0):
                     should extend past the maximal range of the data.
     :return: numpy array, where each value in the array is a bin boundary.
     """
-    try:
-        if bin_size <= 0:
-            raise ValueError("Bin size must be positive.")
-    except TypeError:
-        raise TypeError("Bin size must be a numerical value.")
-    try:
-        if padding < 0:
-            raise ValueError("Padding must be non-negative.")
-    except TypeError:
-        raise TypeError("Padding must be a numerical value.")
-    try:
-        _ = min > 0  # just for checking if both are not numerical
-        if min > max:
-            raise ValueError("Min must be smaller than max.")
-    except TypeError:
-        raise TypeError("Min and max must be numerical values.")
+    msg = "{} must be a numerical value in `_binning`."
+    min = type_checking.numeric_scalar(min, msg.format("min"))
+    max = type_checking.numeric_scalar(max, msg.format("max"))
+    bin_size = type_checking.numeric_scalar(bin_size, msg.format("bin_size"))
+    padding = type_checking.numeric_scalar(padding, msg.format("padding"))
+    if bin_size <= 0:
+        raise ValueError("Bin size must be positive.")
+    if padding < 0:
+        raise ValueError("Padding must be non-negative.")
+    if min > max:
+        raise ValueError("Min must be smaller than max.")
 
 
     # first get a rough estimate of the number of bins needed to get to the
@@ -240,8 +238,9 @@ def bin_centers(edges):
     :return: list of bin centers
     :rtype: list of float
     """
-    if isinstance(edges, dict):
+    if isinstance(edges, numbers.Real):
         raise TypeError("Edges have to be list-like.")
+    edges = type_checking.numeric_list_1D(edges, "Edges have to be list-like.")
     if len(edges) < 2:
         raise ValueError("Need at least two edges to calculate centers.")
 
@@ -268,13 +267,19 @@ def make_bins(data, bin_size=None, padding=0):
     :return: List of bin edges.
     :rtype: np.ndarray
     """
+    msg = "{} must be a {} in `make_bins`."
+    data = type_checking.numeric_list_1D(data, msg.format("data", "list"))
     if bin_size is None:  # need to choose our own
         bin_size = rounded_bin_width(data)
+    bin_size = type_checking.numeric_scalar(bin_size,
+                                            msg.format("bin_size", "scalar"))
+    padding = type_checking.numeric_scalar(padding,
+                                           msg.format("padding", "scalar"))
 
     return _binning(min(data), max(data), bin_size, padding)
 
 
-def _two_item_list(item):
+def _two_item_numeric_list(item, name=""):
     """
     Will return a two element list from either a scalar or two element list.
 
@@ -287,20 +292,28 @@ def _two_item_list(item):
     :return: Two item list as described above.
     :rtype: list
     """
+    if name == "":
+        name = "the array"
+    msg = "Each item in {} must be a numeric scalar"
+    # check for scalar strings
+    if isinstance(item, str):
+        item = [item]
     try:
         if len(item) > 2 or len(item) == 0:
-            raise ValueError("A iterable must have length two.")
+            raise ValueError("An iterable must have length two.")
         elif len(item) == 2:
-            return [item[0], item[1]]
+            return [type_checking.numeric_scalar(item[0], msg.format(name)),
+                    type_checking.numeric_scalar(item[1], msg.format(name))]
         elif len(item) == 1:
-            return [item[0], item[0]]
+            return [type_checking.numeric_scalar(item[0], msg.format(name)),
+                    type_checking.numeric_scalar(item[0], msg.format(name))]
     except TypeError:  # will happen if scalar
-        return [item, item]
+        return [type_checking.numeric_scalar(item, msg.format(name)),
+                type_checking.numeric_scalar(item, msg.format(name))]
 
 
-def _make_density_contours(xs, ys, bin_size,
-                           padding_x=0, padding_y=0, weights=None,
-                           smoothing=0):
+def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
+                  smoothing=0):
     """
     This is the underlying function that is used by the contour plots.
 
@@ -341,9 +354,18 @@ def _make_density_contours(xs, ys, bin_size,
              These can be passed on to the contour functions.
     :rtype: tuple of list, list, np.array
     """
+    msg = "{} must be an array in `smart_hist_2D`"
+    xs = type_checking.numeric_list_1D(xs, msg.format(xs))
+    ys = type_checking.numeric_list_1D(ys, msg.format(ys))
+    weights = type_checking.numeric_list_1D(weights, msg.format(weights))
+    if not all(weights >= 0):
+        raise ValueError("Weights must be non-negative.")
+
     # First get the bins we need. If the user did not specify any bins
-    # this will take care of it.
-    bin_size_x, bin_size_y = _two_item_list(bin_size)
+    # this will take care of it. This handles error checking, too
+    bin_size_x, bin_size_y = _two_item_numeric_list(bin_size, "bin_size")
+    padding_x, padding_y = _two_item_numeric_list(padding, "padding")
+
     bins = [make_bins(xs, bin_size_x, padding_x),
             make_bins(ys, bin_size_y, padding_y)]
 
@@ -460,10 +482,11 @@ def percentile_level(densities, percentages):
                        encloses 50% of the data.
     :return: The level that encloses `percentage` of the data.
     """
-    densities = np.array(densities)
+    msg = "{} in percentile_level must be array like."
+    densities = type_checking.numeric_list_1D(densities,
+                                              msg.format("densities"))
+
     total_mass = np.sum(densities)
-    if len(densities.shape) > 1:
-        raise ValueError("Density must be one dimensional.")
     if any(densities < 0):
         raise ValueError("Density must be non-negative.")
     # turn percentages into a list
@@ -472,7 +495,9 @@ def percentile_level(densities, percentages):
         percentages = list(percentages)
     except TypeError:  # happens if a float
         rtype = float
-        percentages = list([percentages])
+    percentages = type_checking.numeric_list_1D(percentages,
+                                                msg.format("percentages"))
+
     # check tht percentages are in the right range.
     for p in percentages:
         if not 0.0 <= p <= 1.0:

@@ -891,11 +891,11 @@ class Axes_bpl(Axes):
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = tools._make_density_contours(xs, ys, bin_size,
-                                                      padding_x=4 * smoothing,
-                                                      padding_y=4 * smoothing,
-                                                      weights=weights,
-                                                      smoothing=smoothing)
+        x_c, y_c, hist = tools.smart_hist_2d(xs, ys, bin_size,
+                                             padding_x=4 * smoothing,
+                                             padding_y=4 * smoothing,
+                                             weights=weights,
+                                             smoothing=smoothing)
 
         # then get the levels of the contours
         if percent_levels is None:
@@ -927,11 +927,11 @@ class Axes_bpl(Axes):
 
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = tools._make_density_contours(xs, ys, bin_size,
-                                                      padding_x=4 * smoothing,
-                                                      padding_y=4 * smoothing,
-                                                      weights=weights,
-                                                      smoothing=smoothing)
+        x_c, y_c, hist = tools.smart_hist_2d(xs, ys, bin_size,
+                                             padding_x=4 * smoothing,
+                                             padding_y=4 * smoothing,
+                                             weights=weights,
+                                             smoothing=smoothing)
 
         # then get the levels of the contours
         if percent_levels is None:
@@ -1225,15 +1225,15 @@ class Axes_bpl(Axes):
         
         # first get the density info we need to make contours
         if smoothing is not None:
-            x_cen, y_cen, pre_hist = tools._make_density_contours(xs, ys,
-                                                                  bin_size,
-                                                                  padding_x=4*smoothing,
-                                                                  padding_y=4*smoothing,
-                                                                  weights=weights)
+            x_cen, y_cen, pre_hist = tools.smart_hist_2d(xs, ys,
+                                                         bin_size,
+                                                         padding_x=4*smoothing,
+                                                         padding_y=4*smoothing,
+                                                         weights=weights)
         else:
-            x_cen, y_cen, pre_hist = tools._make_density_contours(xs, ys,
-                                                                  bin_size,
-                                                                  weights=weights)
+            x_cen, y_cen, pre_hist = tools.smart_hist_2d(xs, ys,
+                                                         bin_size,
+                                                         weights=weights)
         
         # then determine what our colormap for the fill will be
         if fill_cmap == "white":
@@ -1798,13 +1798,13 @@ class Axes_bpl(Axes):
 
         # first get the underlying density histogram
         if smoothing is not None:
-            x_bin, y_bin, hist = tools._make_density_contours(xs, ys, bin_size,
-                                                              padding_x=4*smoothing,
-                                                              padding_y=4*smoothing,
-                                                              weights=weights)
+            x_bin, y_bin, hist = tools.smart_hist_2d(xs, ys, bin_size,
+                                                     padding_x=4*smoothing,
+                                                     padding_y=4*smoothing,
+                                                     weights=weights)
         else:
-            x_bin, y_bin, hist = tools._make_density_contours(xs, ys, bin_size,
-                                                              weights=weights)
+            x_bin, y_bin, hist = tools.smart_hist_2d(xs, ys, bin_size,
+                                                     weights=weights)
 
         # then smooth if desired
         if smoothing is not None:

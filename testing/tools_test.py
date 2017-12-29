@@ -173,12 +173,6 @@ def test_round_to_nice_width_error_checking_positive():
         tools._round_to_nice_width(-1)
 
 
-def test_round_to_nice_width_error_checking_types_string():
-    """can't pass in anything other th"""
-    with pytest.raises(TypeError):
-        tools._round_to_nice_width("1.2")
-
-
 def test_round_to_nice_width_error_checking_types_list():
     """can't pass in a list"""
     with pytest.raises(TypeError):
@@ -467,46 +461,46 @@ def test_centers_length():
 #-------------------------------------------------------------------------------
 def test_two_element_list_more_elt_array():
     with pytest.raises(ValueError):
-        tools._two_item_list([0.4, 0.3, 0.1])
+        tools._two_item_numeric_list([0.4, 0.3, 0.1])
 
 
 def test_two_element_list_zero_elt_array():
     with pytest.raises(ValueError):
-        tools._two_item_list([])
+        tools._two_item_numeric_list([])
 
 
 def test_two_element_list_scalar():
-    assert tools._two_item_list(0.1) == [0.1, 0.1]
+    assert tools._two_item_numeric_list(0.1) == [0.1, 0.1]
 
 
 def test_two_element_list_two_elt_array():
-    assert tools._two_item_list([0.1, 0.3]) == [0.1, 0.3]
+    assert tools._two_item_numeric_list([0.1, 0.3]) == [0.1, 0.3]
 
 
 def test_two_element_list_one_elt_array():
-    assert tools._two_item_list([0.4]) == [0.4, 0.4]
+    assert tools._two_item_numeric_list([0.4]) == [0.4, 0.4]
 
 
 def test_two_element_list_strings_too_long():
-    with pytest.raises(ValueError):
-        tools._two_item_list("hello")
+    with pytest.raises(TypeError):
+        tools._two_item_numeric_list("hello")
 
 
 def test_two_element_list_strings_too_short():
-    with pytest.raises(ValueError):
-        tools._two_item_list("")
+    with pytest.raises(TypeError):
+        tools._two_item_numeric_list("")
 
 
-def test_two_element_list_two_item_string():
-    assert tools._two_item_list("ab") == ["a", "b"]
+def test_two_element_list_strings_list_numeric_multiple():
+    assert tools._two_item_numeric_list(["0.4", "0.5"]) == [0.4, 0.5]
+
+def test_two_element_list_strings_list_numeric_single():
+    assert tools._two_item_numeric_list(["0.4"]) == [0.4, 0.4]
 
 
-def test_two_element_list_one_item_string():
-    assert tools._two_item_list("a") == ["a", "a"]
+def test_two_element_list_strings_numeric_single():
+    assert tools._two_item_numeric_list("0.4") == [0.4, 0.4]
 
-
-def test_two_element_list_set():
-    assert tools._two_item_list("a") == ["a", "a"]
 
 #-------------------------------------------------------------------------------
 
@@ -527,11 +521,6 @@ def test_make_bins_error_checking_bin_size_type():
 def test_make_bins_error_checking_padding_type():
     with pytest.raises(TypeError):
         tools.make_bins([1, 2, 3], 1, "hello")
-
-
-def test_make_bins_error_checking_data_type_not_list():
-    with pytest.raises(TypeError):
-        tools.make_bins(1)
 
 
 def test_make_bins_error_checking_bin_size_type_list():
@@ -802,11 +791,6 @@ def test_percentile_level_error_checking_no_greater_percent_than_one():
         tools.percentile_level([1, 2, 3], [0, 0.35, 0.7, 1.002])
 
 
-def test_percentile_level_error_checking_non_iterable_density():
-    with pytest.raises(TypeError):
-        tools.percentile_level(1, 0.5)
-
-
 def test_percentile_level_error_checking_empty_list():
     with pytest.raises(ValueError):
         tools.percentile_level([], 0.3)
@@ -1073,3 +1057,175 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
     tools.percentile_level(data, percentiles)
     assert len(recwarn) == 7  # four from imprecise level, two from duplicate
 
+
+#-------------------------------------------------------------------------------
+
+# Testing the density contours function
+
+#-------------------------------------------------------------------------------
+# def test_hist_2d_error_checking_types_no_list():
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d(0, [1, 2])
+#
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1, 2], 0)
+#
+#
+# def test_hist_2d_error_checking_types_no_strings():
+#     """Proxy for non-numerical data of any kind."""
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d("0", [1, 2])
+#
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1, 2], "0")
+#
+#
+# def test_hist_2d_error_x_and_y_same_length():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [1, 2, 3])
+#
+#
+# def test_hist_2d_bin_size_typing_string():
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1], [2], bin_size="he")
+#
+#
+# def test_hist_2d_bin_size_typing_empty_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[])
+#
+#
+# def test_hist_2d_bin_size_typing_too_long():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
+#
+#
+# def test_hist_2d_bin_size_positive_scalar():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=0)
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=-4)
+#
+#
+# def test_hist_2d_bin_size_positive_single_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[0])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[-4])
+#
+#
+# def test_hist_2d_bin_size_positive_two_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[0, 2])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[2, 0])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1], [2], bin_size=[0, 0])
+#
+#
+# def test_hist_2d_padding_typing_string():
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1, 2], [2, 3], padding="he")
+#
+#
+# def test_hist_2d_padding_typing_empty_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[])
+#
+#
+# def test_hist_2d_padding_typing_too_long_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[1, 2, 3])
+#
+#
+# def test_hist_2d_padding_nonnegative_scalar():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=-4)
+#
+#
+# def test_hist_2d_padding_nonnegative_single_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-4])
+#
+#
+# def test_hist_2d_padding_nonnegative_two_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, 2])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[2, -2])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, -1])
+#
+#
+# def test_hist_2d_error_checking_types_no_list_weights():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [1, 2], weights=1)
+#
+#
+# def test_hist_2d_error_checking_types_no_strings_weights():
+#     """Proxy for non-numerical data of any kind."""
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1, 2], [1, 2], "ab")
+#
+#
+# def test_hist_2d_error_x_y_weights_same_length():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [1, 2], weights=[1, 2, 3])
+#
+#
+# def test_hist_2d_weights_positive():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, -2, 3])
+#     # zero is acceptable
+#     tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, 0, 3])  # no error
+#
+#
+# def test_hist_2d_smoothing_typing_string():
+#     with pytest.raises(TypeError):
+#         tools.smart_hist_2d([1, 3], [2, 3], smoothing="he")
+#
+#
+# def test_hist_2d_smoothing_typing_empty_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[])
+#
+#
+# def test_hist_2d_smoothing_typing_too_long_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[1, 2, 3])
+#
+#
+# def test_hist_2d_smoothing_nonnegative_scalar():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=-4)
+#
+#
+# def test_hist_2d_smoothing_nonnegative_single_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-4])
+#
+#
+# def test_hist_2d_smoothing_nonnegative_two_element_list():
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-1, 2])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[2, -2])
+#     with pytest.raises(ValueError):
+#         tools.smart_hist_2d([1, 3], [2, 3], smoothing=[-1, -1])
+#
+#
+# # done with error checking. Now test output
+# def test_hist_2d_length_of_output():
+#     output = tools.smart_hist_2d([1, 2], [2, 3])
+#     assert len(output) == 3
+#
+#
+# # check for bin size not specified, then specified in both single value
+# # and two component list form.
+#
+# # same with padding
+#
+# # test with and without weights
+#
+# # test with and without smoothing.
+# #TODO: see about checking error messages to verify which error was called.

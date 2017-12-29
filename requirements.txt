@@ -4,3 +4,4 @@ nbsphinx
 ipykernel
 scipy
 numpy
+pytest
