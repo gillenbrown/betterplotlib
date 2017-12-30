@@ -923,7 +923,7 @@ class Axes_bpl(Axes):
         return contours
 
     def density_contourf(self, xs, ys, bin_size=None, percent_levels=None,
-                        smoothing=0, weights=None, **kwargs):
+                         smoothing=0, weights=None, **kwargs):
 
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
@@ -943,8 +943,8 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).contourf(x_c, y_c, hist, **kwargs)
 
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
-                        min_level=5, num_contours=7, scatter_kwargs=dict(), 
-                        contour_kwargs=dict(), smoothing=None,
+                        min_level=5, num_contours=7, scatter_kwargs=None,
+                        contour_kwargs=None, smoothing=None,
                         percent_levels=None, weights=None, labels=None):
         """
         Create a contour plot with scatter points in the sparse regions.
@@ -1222,7 +1222,11 @@ class Axes_bpl(Axes):
             ax.contour_scatter(xs, ys)
             ax.equal_scale()
         """
-        
+
+        if scatter_kwargs is None:
+            scatter_kwargs = dict()
+        if contour_kwargs is None:
+            contour_kwargs = dict()
         # first get the density info we need to make contours
         if smoothing is not None:
             x_cen, y_cen, pre_hist = tools.smart_hist_2d(xs, ys,
@@ -1611,7 +1615,7 @@ class Axes_bpl(Axes):
 
         return new_ax
 
-    def twin_axis(ax, func, axis, new_ticks, label=None):
+    def twin_axis(self, func, axis, new_ticks, label=None):
         """
         Create a twin axis, where the new axis values are an arbitrary function
         of the old values.
@@ -1703,25 +1707,25 @@ class Axes_bpl(Axes):
         # depending on which axis the user wants to use, we have to get
         # different things.
         if axis == "y":
-            new_ax = ax.twinx()  # shares y axis
-            old_min, old_max = ax.get_ylim()
+            new_ax = self.twinx()  # shares y axis
+            old_min, old_max = self.get_ylim()
             lim_func = new_ax.set_ylim  # function to set limits
             new_axis = new_ax.yaxis
             new_ax.set_ylabel(label)
             # the new axis needs to share the same scaling as the old
-            if ax.get_yscale() == "log":
+            if self.get_yscale() == "log":
                 new_ax.set_yscale("log")
                 # if we have log in old, we don't want minor ticks on the new
                 new_axis.set_tick_params(which="minor", length=0)
             new_ax.set_ylabel(label)
         elif axis == "x":
-            new_ax = ax.twiny()  # shares x axis
-            old_min, old_max = ax.get_xlim()
+            new_ax = self.twiny()  # shares x axis
+            old_min, old_max = self.get_xlim()
             lim_func = new_ax.set_xlim  # function to set limits
             new_axis = new_ax.xaxis
             new_ax.set_xlabel(label)
             # the new axis needs to share the same scaling as the old
-            if ax.get_xscale() == "log":
+            if self.get_xscale() == "log":
                 new_ax.set_xscale("log")
                 # if we have log in old, we don't want minor ticks on the new
                 new_axis.set_tick_params(which="minor", length=0)

@@ -5,3 +5,4 @@ ipykernel
 scipy
 numpy
 pytest
+cycler

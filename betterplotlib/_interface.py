@@ -54,9 +54,9 @@ def remove_labels(labels_to_remove):
     return ax.remove_labels(labels_to_remove)
 
 @_autogen_docstring(bpl.Axes_bpl.legend)
-def legend(facecolor="None", *args, **kwargs):
+def legend(linewidth=0, *args, **kwargs):
     ax = plt.gca(projection='bpl')
-    return ax.legend(facecolor, *args, **kwargs)
+    return ax.legend(linewidth, *args, **kwargs)
 
 @_autogen_docstring(bpl.Axes_bpl.equal_scale)
 def equal_scale(self):
@@ -68,14 +68,30 @@ def easy_add_text(text, location, **kwargs):
     ax = plt.gca(projection='bpl')
     return ax.easy_add_text(text, location, **kwargs)
 
+@_autogen_docstring(bpl.Axes_bpl.density_contour)
+def density_contour(xs, ys, bin_size=None, percent_levels=None,
+                    smoothing=0, weights=None, labels=False, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.density_contour(xs, ys, bin_size, percent_levels,
+                              smoothing, weights, labels, **kwargs)
+
+@_autogen_docstring(bpl.Axes_bpl.density_contourf)
+def density_contourf(xs, ys, bin_size=None, percent_levels=None,
+                     smoothing=0, weights=None, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.density_contourf(xs, ys, bin_size, percent_levels,
+                               smoothing, weights, **kwargs)
+
 @_autogen_docstring(bpl.Axes_bpl.contour_scatter)
 def contour_scatter(xs, ys, fill_cmap="white", bin_size=None,
-                    min_level=5, num_contours=7, scatter_kwargs=dict(), 
-                    contour_kwargs=dict()):
+                    min_level=5, num_contours=7, scatter_kwargs=None,
+                    contour_kwargs=None, smoothing=None,
+                    percent_levels=None, weights=None, labels=None):
     ax = plt.gca(projection='bpl')
     return ax.contour_scatter(xs, ys, fill_cmap, bin_size,
-                              min_level, num_contours, scatter_kwargs, 
-                              contour_kwargs)
+                              min_level, num_contours, scatter_kwargs,
+                              contour_kwargs, smoothing,
+                              percent_levels, weights, labels)
 
 @_autogen_docstring(bpl.Axes_bpl.data_ticks)
 def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
@@ -96,4 +112,26 @@ def axvline(x=0, *args, **kwargs):
 def axhline(y=0, *args, **kwargs):
     ax = plt.gca(projection='bpl')
     return ax.axhline(y, *args, **kwargs)
+
+@_autogen_docstring(bpl.Axes_bpl.errorbar)
+def errorbar(*args, **kwargs):
+    ax = plt.gca(projection='bpl')
+    return ax.errorbar(*args, **kwargs)
+
+@_autogen_docstring(bpl.Axes_bpl.twin_axis_simple)
+def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
+    ax = plt.gca(projection='bpl')
+    return ax.twin_axis_simple(axis, lower_lim, upper_lim, label, log)
+
+@_autogen_docstring(bpl.Axes_bpl.twin_axis)
+def twin_axis(func, axis, new_ticks, label=None):
+    ax = plt.gca(projection='bpl')
+    return ax.twin_axis(func, axis, new_ticks, label)
+
+@_autogen_docstring(bpl.Axes_bpl.shaded_density)
+def shaded_density(xs, ys, bin_size=None, smoothing=None,
+                   cmap="Greys", weights=None):
+    ax = plt.gca(projection='bpl')
+    return ax.shaded_density(xs, ys, bin_size, smoothing,
+                             cmap, weights)
 

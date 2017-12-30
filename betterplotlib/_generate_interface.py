@@ -23,7 +23,7 @@ def get_functions(loc, definition):
             if in_axes == False and line.strip() == definition:
                 in_axes = True
                 continue
-            if in_axes and line.strip().startswith("def "):
+            if in_axes and line.startswith("    def "):
                 in_def = True
                 this_def = ""
             if in_def:

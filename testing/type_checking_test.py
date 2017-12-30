@@ -9,94 +9,94 @@ from betterplotlib.type_checking import *
 #
 # ------------------------------------------------------------------------------
 def test_numeric_list_scalar_value():
-    assert numeric_list_1D(3.4) == approx(3.4)
+    assert numeric_list_1d(3.4) == approx(3.4)
 
 
 def test_numeric_list_scalar_type():
-    assert type(numeric_list_1D(3.4)) == np.ndarray
+    assert type(numeric_list_1d(3.4)) == np.ndarray
 
 
 def test_numeric_list_scalar_length():
-    assert len(numeric_list_1D(3.4)) == 1
+    assert len(numeric_list_1d(3.4)) == 1
 
 
 def test_numeric_list_list():
     original_list = [1.0, 2.0, 3.0]
-    assert approx(numeric_list_1D(original_list)) == np.array(original_list)
+    assert approx(numeric_list_1d(original_list)) == np.array(original_list)
 
 
 def test_numeric_list_empty_list():
-    assert len(numeric_list_1D([])) == 0
+    assert len(numeric_list_1d([])) == 0
 
 
 def test_numeric_list_list_multiple_dimensions():
     original_list = [[1.0, 2.0, 3.0], [4, 5, 6]]
     with pytest.raises(ValueError):
-        numeric_list_1D(original_list)
+        numeric_list_1d(original_list)
 
 
 def test_numeric_list_string():
     with pytest.raises(TypeError):
-        numeric_list_1D("abc")
+        numeric_list_1d("abc")
 
 
 def test_numeric_list_empty_string():
     with pytest.raises(TypeError):
-        numeric_list_1D("")
+        numeric_list_1d("")
 
 
 def test_numeric_list_string_array():
     with pytest.raises(TypeError):
-        numeric_list_1D(["a", "b", "c"])
+        numeric_list_1d(["a", "b", "c"])
 
 
 def test_numeric_list_string_float_value():
-    assert numeric_list_1D("3.4") == approx(3.4)
+    assert numeric_list_1d("3.4") == approx(3.4)
 
 
 def test_numeric_list_string_float_type():
-    assert type(numeric_list_1D("3.4")) == np.ndarray
+    assert type(numeric_list_1d("3.4")) == np.ndarray
 
 
 def test_numeric_list_string_float_length():
-    assert len(numeric_list_1D("3.4")) == 1
+    assert len(numeric_list_1d("3.4")) == 1
 
 
 def test_numeric_list_string_array_float_value():
     data = ["3.4", "4.5", "7.6"]
-    assert approx(numeric_list_1D(data)) == [float(item) for item in data]
+    assert approx(numeric_list_1d(data)) == [float(item) for item in data]
 
 
 def test_numeric_list_string_array_float_type():
-    assert type(numeric_list_1D(["3.4", "4.5", "7.6"])) == np.ndarray
+    assert type(numeric_list_1d(["3.4", "4.5", "7.6"])) == np.ndarray
 
 
 def test_numeric_list_string_array_float_length():
-    assert len(numeric_list_1D(["3.4", "4.5", "7.6"])) == 3
+    assert len(numeric_list_1d(["3.4", "4.5", "7.6"])) == 3
 
 
 def test_numeric_list_float_string_array():
     with pytest.raises(TypeError):
-        numeric_list_1D(["a", "b", "c"])
+        numeric_list_1d(["a", "b", "c"])
 
 
 def test_numeric_list_dict_with_int_keys():
     """Integer keys can mess up some things, since they act like indices."""
     test_dict = {0: "a", 1: "b", 2: "c"}
     with pytest.raises(TypeError):
-        numeric_list_1D(test_dict)
+        numeric_list_1d(test_dict)
 
 
 def test_numeric_list_message_default():
     with pytest.raises(TypeError) as err_msg:
-        numeric_list_1D("a")  # default value
+        numeric_list_1d("a")  # default value
     assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_message_user():
     user_msg = "This is bad and you should feel bad."
     with pytest.raises(TypeError) as err_msg:
-        numeric_list_1D("a", user_msg)  # default value
+        numeric_list_1d("a", user_msg)  # default value
     assert str(err_msg.value) == user_msg
 
 

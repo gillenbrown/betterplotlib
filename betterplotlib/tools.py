@@ -166,7 +166,7 @@ def rounded_bin_width(data):
     :return: Appproximately correct bin size.
     :rtype: float
     """
-    data = type_checking.numeric_list_1D(data, "data must be a list of numeric"
+    data = type_checking.numeric_list_1d(data, "data must be a list of numeric"
                                                "values in `rounded_bin_width`.")
     return _round_to_nice_width(_freedman_diaconis(data))
 
@@ -242,7 +242,7 @@ def bin_centers(edges):
     """
     if isinstance(edges, numbers.Real):
         raise TypeError("Edges have to be list-like.")
-    edges = type_checking.numeric_list_1D(edges, "Edges have to be list-like.")
+    edges = type_checking.numeric_list_1d(edges, "Edges have to be list-like.")
     if len(edges) < 2:
         raise ValueError("Need at least two edges to calculate centers.")
 
@@ -270,7 +270,7 @@ def make_bins(data, bin_size=None, padding=0):
     :rtype: np.ndarray
     """
     msg = "{} must be a {} in `make_bins`."
-    data = type_checking.numeric_list_1D(data, msg.format("data", "list"))
+    data = type_checking.numeric_list_1d(data, msg.format("data", "list"))
     if bin_size is None:  # need to choose our own
         bin_size = rounded_bin_width(data)
     bin_size = type_checking.numeric_scalar(bin_size,
@@ -347,10 +347,10 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
     """
     # error checking and data wrangling.
     msg = "{} must be an array in `smart_hist_2D`"
-    xs = type_checking.numeric_list_1D(xs, msg.format(xs))
-    ys = type_checking.numeric_list_1D(ys, msg.format(ys))
+    xs = type_checking.numeric_list_1d(xs, msg.format(xs))
+    ys = type_checking.numeric_list_1d(ys, msg.format(ys))
     if weights is not None:
-        weights = type_checking.numeric_list_1D(weights, msg.format(weights))
+        weights = type_checking.numeric_list_1d(weights, msg.format(weights))
         if not all(weights >= 0):
             raise ValueError("Weights must be non-negative.")
 
@@ -491,7 +491,7 @@ def percentile_level(densities, percentages):
     :return: The level that encloses `percentage` of the data.
     """
     msg = "{} in percentile_level must be array like."
-    densities = type_checking.numeric_list_1D(densities,
+    densities = type_checking.numeric_list_1d(densities,
                                               msg.format("densities"))
 
     total_mass = np.sum(densities)
@@ -503,7 +503,7 @@ def percentile_level(densities, percentages):
         percentages = list(percentages)
     except TypeError:  # happens if a float
         rtype = float
-    percentages = type_checking.numeric_list_1D(percentages,
+    percentages = type_checking.numeric_list_1d(percentages,
                                                 msg.format("percentages"))
 
     # check tht percentages are in the right range.

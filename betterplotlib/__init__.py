@@ -1,13 +1,12 @@
 from matplotlib.projections import register_projection
-import matplotlib.pyplot as plt
 
 from .axes_bpl import Axes_bpl
-
 from .colors import *
 from .styles import *
 from ._interface import *
 
 register_projection(Axes_bpl)
+
 
 def subplots(*args, **kwargs):
     """
@@ -25,4 +24,3 @@ def subplots(*args, **kwargs):
     subplot_kwargs.setdefault("projection", "bpl")
 
     return plt.subplots(*args, **kwargs)
-    

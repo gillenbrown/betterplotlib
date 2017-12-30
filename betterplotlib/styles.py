@@ -1,16 +1,15 @@
 import matplotlib as mpl
+from matplotlib import font_manager
 from cycler import cycler
 import warnings
-import os
 
 from . import colors
+
 
 def _common_style():
     """
     Set some of the style options used by all styles.
     """
-
-
     mpl.rcParams['legend.scatterpoints'] = 1
     mpl.rcParams['legend.numpoints'] = 1
     # ^ these two needed for matplotlib 1.x
@@ -51,13 +50,15 @@ def _set_font_settings(font="Avenir"):
         warnings.simplefilter("always")
 
         # line that will throw a warning
-        mpl.font_manager.fontManager.findfont(font)
+        font_manager.fontManager.findfont(font)
 
         if len(w) == 0:  # if no warnings
             mpl.rcParams['font.sans-serif'] = font
         else:  # there were warnings, so the font wasn't found
             mpl.rcParams['font.sans-serif'] = backup_font
-            url = "https://github.com/olgabot/sciencemeetproductivity.tumblr.com/blob/master/posts/2012/11/how-to-set-helvetica-as-the-default-sans-serif-font-in.md"
+            url = "https://github.com/olgabot/sciencemeetproductivity.tumblr." \
+                  "com/blob/master/posts/2012/11/how-to-set-helvetica-as-" \
+                  "the-default-sans-serif-font-in.md"
             # this_file = os.path.abspath(__file__)
             print("Betterplotlib could not find the font {}.\n"
                   "For directions on how to install it, check {}\n"

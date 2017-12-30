@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def numeric_list_1D(item, message=""):
+def numeric_list_1d(item, message=""):
     """
     Return a numpy array of float values. Serves as error checking too.
 
@@ -43,6 +43,7 @@ def numeric_list_1D(item, message=""):
 
     return array
 
+
 def numeric_scalar(item, message=""):
     """
     Turn an item into a single float value. Performs error checking too.
@@ -72,4 +73,3 @@ def numeric_scalar(item, message=""):
         return float(item)
     except (ValueError, TypeError):  # bad conversion to float
         raise TypeError(message)
-
