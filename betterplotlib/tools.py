@@ -279,7 +279,7 @@ def make_bins(data, bin_size=None, padding=0):
     return _binning(min(data), max(data), bin_size, padding)
 
 
-def _two_item_numeric_list(item, name=""):
+def _two_item_list(item):
     """
     Will return a two element list from either a scalar or two element list.
 
@@ -292,99 +292,104 @@ def _two_item_numeric_list(item, name=""):
     :return: Two item list as described above.
     :rtype: list
     """
-    if name == "":
-        name = "the array"
-    msg = "Each item in {} must be a numeric scalar"
-    # check for scalar strings
-    if isinstance(item, str):
-        item = [item]
     try:
         if len(item) > 2 or len(item) == 0:
             raise ValueError("An iterable must have length two.")
         elif len(item) == 2:
-            return [type_checking.numeric_scalar(item[0], msg.format(name)),
-                    type_checking.numeric_scalar(item[1], msg.format(name))]
+            return [item[0], item[1]]
         elif len(item) == 1:
-            return [type_checking.numeric_scalar(item[0], msg.format(name)),
-                    type_checking.numeric_scalar(item[0], msg.format(name))]
+            return [item[0], item[0]]
     except TypeError:  # will happen if scalar
-        return [type_checking.numeric_scalar(item, msg.format(name)),
-                type_checking.numeric_scalar(item, msg.format(name))]
+        return [item, item]
 
 
 def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
                   smoothing=0):
     """
-    This is the underlying function that is used by the contour plots.
+    Makes a 2D histogram, with smart choices made if nothing is passed in.
 
-    This smartly makes a 2D histogram, which is what is passed on to the 
-    contour functions. The user can specify the number of bins, the specific
-    bin edges, or the bin_size. If either the number of bins or bin edges is 
-    passed in, the `numpy.histogram2d()` function will use those in the way
-    that it normally does. If `bin_size` is specified, then bins with that 
-    size will span the entire data range. If nothing is specified, the code
-    will use the Freedman Diaconis algorithm to find a roughly optimal bin
-    size.
+    Can also do smoothing of the underlying histogram data.
 
     :param xs: list of x values
-    :type xs: list
+    :type xs: list, ndarray
     :param ys: list of y values
-    :type ys: list
+    :type ys: list, ndarray
     :param bin_size: Size of the bins that will be used to make the 2D
                      histogram. Can either be a scalar, in which case the x and
                      y bin sizes will be the same, or a two element array,
                      where the first is x bin size, and the second is y bin size
-    :param padding_x: How much extra space to extend the contours past the min
-                      and max values on the x axis. This is useful for smoothed
-                      contour plots, when the contours should extend past the
-                      minimum and maximum data values.
-    :type padding_y: float
-    :param padding_y: Same as padding_x, but in the y axis.
-    :type padding_y: float
+    :type bin_size: int, float, list
+    :param padding: How much extra space to extend the contours past the min
+                    and max values on the x axis. This is useful for smoothed
+                    contour plots, when the contours should extend past the
+                    minimum and maximum data values. This has the same format
+                    as bin_size.
+    :type padding: int, float, list
     :param weights: List of weights to go into the underlying histogram
                     function. Should be the same length as xs and ys.
-    :type weights: list
+    :type weights: list, ndarray
     :param smoothing: Optional parameter that will allow the contours to be
                       smoothed. Pass in a nonzero value, which will be the
                       standard deviation of the Gaussian kernel use to smooth
                       the histogram. When using this, often choosing smaller
                       bin sizes is advantageous to make a less grainy plot.
-    :type smoothing: float
-    :return: list of x center, list of y centers, and the 2d histogram values.
-             These can be passed on to the contour functions.
-    :rtype: tuple of list, list, np.array
+                      Has the same format as padding and bin_size, so different
+                      smoothing kernels are possible in the x and y directions.
+    :type smoothing: int, float, list
+    :return: the 2d histogram values, list of x bin edges, list of y bin edges.
+             These can be passed on to the contour functions after turning bin
+             edges into bin centers. The first index into this array sets the
+             y value, then the second index sets the x value. So it is row then
+             column.
+    :rtype: tuple of np.array, list, list
     """
+    # error checking and data wrangling.
     msg = "{} must be an array in `smart_hist_2D`"
     xs = type_checking.numeric_list_1D(xs, msg.format(xs))
     ys = type_checking.numeric_list_1D(ys, msg.format(ys))
-    weights = type_checking.numeric_list_1D(weights, msg.format(weights))
-    if not all(weights >= 0):
-        raise ValueError("Weights must be non-negative.")
+    if weights is not None:
+        weights = type_checking.numeric_list_1D(weights, msg.format(weights))
+        if not all(weights >= 0):
+            raise ValueError("Weights must be non-negative.")
 
-    # First get the bins we need. If the user did not specify any bins
-    # this will take care of it. This handles error checking, too
-    bin_size_x, bin_size_y = _two_item_numeric_list(bin_size, "bin_size")
-    padding_x, padding_y = _two_item_numeric_list(padding, "padding")
+    # parse the bin size options, then error check them.
+    two_elt_msg = "{} must be either a scalar or two element numeric list"
+    bin_size_x, bin_size_y = _two_item_list(bin_size)
+    if bin_size is not None:
+        type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("bin_size"))
+        type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("bin_size"))
 
-    bins = [make_bins(xs, bin_size_x, padding_x),
-            make_bins(ys, bin_size_y, padding_y)]
+    # then do the same with the padding
+    padding_x, padding_y = _two_item_list(padding)
+    type_checking.numeric_scalar(padding_x, two_elt_msg.format("padding"))
+    type_checking.numeric_scalar(padding_y, two_elt_msg.format("padding"))
+
+    # and lastly with smoothing
+    smoothing_x, smoothing_y = _two_item_list(smoothing)
+    type_checking.numeric_scalar(smoothing_x, two_elt_msg.format("smoothing"))
+    type_checking.numeric_scalar(smoothing_y, two_elt_msg.format("smoothing"))
+    # smoothing must be positive, too
+    if smoothing_x < 0 or smoothing_y < 0:
+        raise ValueError("Smoothing must be nonnegative.")
+
+    # then we can go ahead and make the bin edges using this data
+    bin_edges = [make_bins(xs, bin_size_x, padding_x),
+                 make_bins(ys, bin_size_y, padding_y)]
 
     # We can then use the bins to create the histogram
-    hist, x_edges, y_edges = np.histogram2d(xs, ys, bins, weights=weights)
+    hist, x_edges, y_edges = np.histogram2d(xs, ys, bin_edges, weights=weights)
 
-    # turn the bin edges into bin centers, since that's what matters
-    x_centers = bin_centers(x_edges)
-    y_centers = bin_centers(y_edges)
+    # if the user wants to smooth, do that.
+    if smoothing_x > 0 or smoothing_y > 0:
+        kernel_x = smoothing_x / bin_size_x
+        kernel_y = smoothing_y / bin_size_y
+        hist = ndimage.gaussian_filter(hist, [kernel_x, kernel_y])
 
     # we need to transpose the histogram to get it to line up with the x, y
+    # used in other plotting functions.
     hist = hist.transpose()
 
-    if smoothing > 0:
-        # TODO: fix this, both the bin size thing and the fact that its the
-        # same in both dimensions.
-        hist = ndimage.gaussian_filter(hist, smoothing / bin_size_x)
-
-    return x_centers, y_centers, hist
+    return hist, x_edges, y_edges
 
 def _unique_total_sorted(values):
     """

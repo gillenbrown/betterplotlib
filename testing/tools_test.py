@@ -3,6 +3,7 @@ from pytest import approx
 import numpy as np
 from betterplotlib import tools
 
+np.random.seed(19680801)
 random_x = np.random.normal(0, 1, 1000)
 
 # ------------------------------------------------------------------------------
@@ -11,7 +12,6 @@ random_x = np.random.normal(0, 1, 1000)
 # aesthetics
 #
 # ------------------------------------------------------------------------------
-
 def test_alpha_small_values():
     """Test that small values are given totally opaque."""
     assert tools._alpha(10, threshold=30) == approx(1.0)
@@ -461,45 +461,49 @@ def test_centers_length():
 #-------------------------------------------------------------------------------
 def test_two_element_list_more_elt_array():
     with pytest.raises(ValueError):
-        tools._two_item_numeric_list([0.4, 0.3, 0.1])
+        tools._two_item_list([0.4, 0.3, 0.1])
 
 
 def test_two_element_list_zero_elt_array():
     with pytest.raises(ValueError):
-        tools._two_item_numeric_list([])
+        tools._two_item_list([])
 
 
 def test_two_element_list_scalar():
-    assert tools._two_item_numeric_list(0.1) == [0.1, 0.1]
+    assert tools._two_item_list(0.1) == [0.1, 0.1]
 
 
 def test_two_element_list_two_elt_array():
-    assert tools._two_item_numeric_list([0.1, 0.3]) == [0.1, 0.3]
+    assert tools._two_item_list([0.1, 0.3]) == [0.1, 0.3]
 
 
 def test_two_element_list_one_elt_array():
-    assert tools._two_item_numeric_list([0.4]) == [0.4, 0.4]
+    assert tools._two_item_list([0.4]) == [0.4, 0.4]
+
+
+def test_two_element_list_two_item_string():
+    assert tools._two_item_list("ab") == ["a", "b"]
+
+
+def test_two_element_list_one_item_string():
+    assert tools._two_item_list("a") == ["a", "a"]
 
 
 def test_two_element_list_strings_too_long():
-    with pytest.raises(TypeError):
-        tools._two_item_numeric_list("hello")
+    with pytest.raises(ValueError):
+        tools._two_item_list("hello")
 
 
 def test_two_element_list_strings_too_short():
-    with pytest.raises(TypeError):
-        tools._two_item_numeric_list("")
+    with pytest.raises(ValueError):
+        tools._two_item_list("")
 
 
 def test_two_element_list_strings_list_numeric_multiple():
-    assert tools._two_item_numeric_list(["0.4", "0.5"]) == [0.4, 0.5]
+    assert tools._two_item_list(["0.4", "0.5"]) == ["0.4", "0.5"]
 
 def test_two_element_list_strings_list_numeric_single():
-    assert tools._two_item_numeric_list(["0.4"]) == [0.4, 0.4]
-
-
-def test_two_element_list_strings_numeric_single():
-    assert tools._two_item_numeric_list("0.4") == [0.4, 0.4]
+    assert tools._two_item_list(["0.4"]) == ["0.4", "0.4"]
 
 
 #-------------------------------------------------------------------------------
@@ -1063,169 +1067,407 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
 # Testing the density contours function
 
 #-------------------------------------------------------------------------------
-# def test_hist_2d_error_checking_types_no_list():
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d(0, [1, 2])
-#
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1, 2], 0)
-#
-#
-# def test_hist_2d_error_checking_types_no_strings():
-#     """Proxy for non-numerical data of any kind."""
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d("0", [1, 2])
-#
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1, 2], "0")
-#
-#
-# def test_hist_2d_error_x_and_y_same_length():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [1, 2, 3])
-#
-#
-# def test_hist_2d_bin_size_typing_string():
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1], [2], bin_size="he")
-#
-#
-# def test_hist_2d_bin_size_typing_empty_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[])
-#
-#
-# def test_hist_2d_bin_size_typing_too_long():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
-#
-#
-# def test_hist_2d_bin_size_positive_scalar():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=0)
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=-4)
-#
-#
-# def test_hist_2d_bin_size_positive_single_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[0])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[-4])
-#
-#
-# def test_hist_2d_bin_size_positive_two_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[0, 2])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[2, 0])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1], [2], bin_size=[0, 0])
-#
-#
-# def test_hist_2d_padding_typing_string():
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1, 2], [2, 3], padding="he")
-#
-#
-# def test_hist_2d_padding_typing_empty_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[])
-#
-#
-# def test_hist_2d_padding_typing_too_long_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[1, 2, 3])
-#
-#
-# def test_hist_2d_padding_nonnegative_scalar():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=-4)
-#
-#
-# def test_hist_2d_padding_nonnegative_single_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-4])
-#
-#
-# def test_hist_2d_padding_nonnegative_two_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, 2])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[2, -2])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, -1])
-#
-#
-# def test_hist_2d_error_checking_types_no_list_weights():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [1, 2], weights=1)
-#
-#
-# def test_hist_2d_error_checking_types_no_strings_weights():
-#     """Proxy for non-numerical data of any kind."""
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1, 2], [1, 2], "ab")
-#
-#
-# def test_hist_2d_error_x_y_weights_same_length():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [1, 2], weights=[1, 2, 3])
-#
-#
-# def test_hist_2d_weights_positive():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, -2, 3])
-#     # zero is acceptable
-#     tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, 0, 3])  # no error
-#
-#
-# def test_hist_2d_smoothing_typing_string():
-#     with pytest.raises(TypeError):
-#         tools.smart_hist_2d([1, 3], [2, 3], smoothing="he")
-#
-#
-# def test_hist_2d_smoothing_typing_empty_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[])
-#
-#
-# def test_hist_2d_smoothing_typing_too_long_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[1, 2, 3])
-#
-#
-# def test_hist_2d_smoothing_nonnegative_scalar():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=-4)
-#
-#
-# def test_hist_2d_smoothing_nonnegative_single_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-4])
-#
-#
-# def test_hist_2d_smoothing_nonnegative_two_element_list():
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-1, 2])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[2, -2])
-#     with pytest.raises(ValueError):
-#         tools.smart_hist_2d([1, 3], [2, 3], smoothing=[-1, -1])
-#
-#
-# # done with error checking. Now test output
-# def test_hist_2d_length_of_output():
-#     output = tools.smart_hist_2d([1, 2], [2, 3])
-#     assert len(output) == 3
-#
-#
-# # check for bin size not specified, then specified in both single value
-# # and two component list form.
-#
-# # same with padding
-#
-# # test with and without weights
-#
-# # test with and without smoothing.
+def test_hist_2d_error_checking_types_no_strings():
+    """Proxy for non-numerical data of any kind."""
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d("a", [1, 2])
+
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d([1, 2], "a")
+
+
+def test_hist_2d_error_x_and_y_same_length():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [1, 2, 3])
+
+
+def test_hist_2d_bin_size_typing_string():
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d([1], [2], bin_size="he")
+
+
+def test_hist_2d_bin_size_typing_empty_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[])
+
+
+def test_hist_2d_bin_size_typing_too_long():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
+
+
+def test_hist_2d_bin_size_positive_scalar():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=0)
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=-4)
+
+
+def test_hist_2d_bin_size_positive_single_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[0])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[-4])
+
+
+def test_hist_2d_bin_size_positive_two_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[0, 2])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[2, 0])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1], [2], bin_size=[0, 0])
+
+
+def test_hist_2d_padding_typing_string():
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d([1, 2], [2, 3], padding="he")
+
+
+def test_hist_2d_padding_typing_empty_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[])
+
+
+def test_hist_2d_padding_typing_too_long_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[1, 2, 3])
+
+
+def test_hist_2d_padding_nonnegative_scalar():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=-4)
+
+
+def test_hist_2d_padding_nonnegative_single_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[-4])
+
+
+def test_hist_2d_padding_nonnegative_two_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, 2])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[2, -2])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, -1])
+
+
+def test_hist_2d_error_checking_types_no_list_weights():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [1, 2], weights=1)
+
+
+def test_hist_2d_error_checking_types_no_strings_weights():
+    """Proxy for non-numerical data of any kind."""
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d([1, 2], [1, 2], "ab")
+
+
+def test_hist_2d_error_x_y_weights_same_length():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [1, 2], weights=[1, 2, 3])
+
+
+def test_hist_2d_error_checking_weights_positive():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, -2, 3])
+    # zero is acceptable
+    tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, 0, 3])  # no error
+
+
+def test_hist_2d_error_checking_smoothing_typing_string():
+    with pytest.raises(TypeError):
+        tools.smart_hist_2d([1, 3], [2, 3], smoothing="he")
+
+
+def test_hist_2d_error_checking_smoothing_typing_empty_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=[])
+
+
+def test_hist_2d_error_checking_smoothing_typing_too_long_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=[1, 2, 3])
+
+
+def test_hist_2d_error_checking_smoothing_nonnegative_scalar():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=-4)
+
+
+def test_hist_2d_error_checking_smoothing_nonnegative_single_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-4])
+
+
+def test_hist_2d_error_checking_smoothing_nonnegative_two_element_list():
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-1, 2])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 2], [2, 3], smoothing=[2, -2])
+    with pytest.raises(ValueError):
+        tools.smart_hist_2d([1, 3], [2, 3], smoothing=[-1, -1])
+
+
+# done with error checking. Now test output
+def test_hist_2d_length_of_output():
+    output = tools.smart_hist_2d([1, 2], [2, 3])
+    assert len(output) == 3
+
+@pytest.fixture
+def random_data():
+    xs = np.random.normal(0, 10, 1000)
+    ys = np.random.normal(0, 10, 1000)
+    return xs, ys
+
+def test_hist_2d_bin_size_scalar(random_data):
+    bin_size = 2.345
+    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data, bin_size)
+    empirical_x_bin = x_edges[1] - x_edges[0]
+    empirical_y_bin = y_edges[1] - y_edges[0]
+    assert approx(empirical_x_bin) == bin_size
+    assert approx(empirical_y_bin) == bin_size
+
+
+def test_hist_2d_bin_size_single_item_list(random_data):
+    bin_size = 2.345
+    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data, [bin_size])
+    empirical_x_bin = x_edges[1] - x_edges[0]
+    empirical_y_bin = y_edges[1] - y_edges[0]
+    assert approx(bin_size) == empirical_x_bin
+    assert approx(bin_size) == empirical_y_bin
+
+
+def test_hist_2d_bin_size_separate_x_y(random_data):
+    x_bin_size = 2.345
+    y_bin_size = 7.347
+    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data,
+                                                 [x_bin_size, y_bin_size])
+    empirical_x_bin = x_edges[1] - x_edges[0]
+    empirical_y_bin = y_edges[1] - y_edges[0]
+    assert approx(x_bin_size) == empirical_x_bin
+    assert approx(y_bin_size) == empirical_y_bin
+
+
+def test_hist_2d_bin_size_all_same_single_bin(random_data):
+    xs, ys = random_data
+    bin_size = 2.345
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size)
+    for x_idx in range(len(x_edges) - 1):
+        empirical_x_bin = x_edges[x_idx + 1] - x_edges[x_idx]
+        assert empirical_x_bin == approx(bin_size)
+    for y_idx in range(len(y_edges) - 1):
+        empirical_y_bin = y_edges[y_idx + 1] - y_edges[y_idx]
+        assert empirical_y_bin == approx(bin_size)
+
+
+def test_hist_2d_bin_size_all_same_separate_xy(random_data):
+    xs, ys = random_data
+    x_bin_size = 2.345
+    y_bin_size = 7.347
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
+                                                 [x_bin_size, y_bin_size])
+    for x_idx in range(len(x_edges) - 1):
+        empirical_x_bin = x_edges[x_idx + 1] - x_edges[x_idx]
+        assert empirical_x_bin == approx(x_bin_size)
+    for y_idx in range(len(y_edges) - 1):
+        empirical_y_bin = y_edges[y_idx + 1] - y_edges[y_idx]
+        assert empirical_y_bin == approx(y_bin_size)
+
+
+def test_hist_edges_contain_data_no_bins(random_data):
+    xs, ys = random_data
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys)
+
+    assert x_edges[0]  < min(xs)
+    assert x_edges[-1] > max(xs)
+    assert y_edges[0]  < min(ys)
+    assert y_edges[-1] > max(ys)
+
+
+def test_hist_edges_contain_data_single_bin_size_scalar(random_data):
+    xs, ys = random_data
+
+    bin_size = 1.0
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=bin_size)
+
+    assert x_edges[0]  < min(xs)
+    assert x_edges[-1] > max(xs)
+    assert y_edges[0]  < min(ys)
+    assert y_edges[-1] > max(ys)
+
+
+def test_hist_edges_contain_data_two_bin_size(random_data):
+    xs, ys = random_data
+
+    x_bin_size = 0.56
+    y_bin_size = 0.892
+    _, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
+                                              bin_size=[x_bin_size, y_bin_size])
+
+    assert x_edges[0]  < min(xs)
+    assert x_edges[-1] > max(xs)
+    assert y_edges[0]  < min(ys)
+    assert y_edges[-1] > max(ys)
+
+
+def test_hist_edges_contain_data_single_bin_size_scalar_padding(random_data):
+    xs, ys = random_data
+
+    bin_size = 1.0
+    padding = 3.45
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=bin_size,
+                                                 padding=padding)
+
+    assert x_edges[0]  < (min(xs) - padding)
+    assert x_edges[-1] > (max(xs) + padding)
+    assert y_edges[0]  < (min(ys) - padding)
+    assert y_edges[-1] > (max(ys) + padding)
+
+
+def test_hist_edges_contain_data_two_bin_size_two_padding(random_data):
+    xs, ys = random_data
+
+    x_bin_size = 0.56
+    y_bin_size = 0.892
+    x_padding = 3.46
+    y_padding = 1.34
+    _, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
+                                              bin_size=[x_bin_size, y_bin_size],
+                                              padding=[x_padding, y_padding])
+
+    assert x_edges[0]  < (min(xs) - x_padding)
+    assert x_edges[-1] > (max(xs) + x_padding)
+    assert y_edges[0]  < (min(ys) - y_padding)
+    assert y_edges[-1] > (max(ys) + y_padding)
+
+
+def test_hist_2d_results_in_right_number_cells_one_point():
+    xs = [1]
+    ys = [1]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+    hist = hist.flatten()
+    assert len(hist.nonzero()) == 1
+
+
+def test_hist_2d_results_in_right_number_cells_many_points():
+    xs = [1, 2, 3, 3]
+    ys = [1, 1, 1, 2]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+    hist = hist.flatten()
+    assert len(hist.nonzero()[0]) == 4
+
+
+def test_hist_2d_results_in_right_number_cells_many_points_with_dups():
+    xs = [1, 2, 3, 4, 4] # two in same cell
+    ys = [1, 1, 1, 1, 1]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+    hist = hist.flatten()
+    assert len(hist.nonzero()[0]) == 4
+
+
+def test_hist_2d_results_right_height_no_weights_no_dups():
+    xs = [1, 2, 3, 3]
+    ys = [1, 1, 1, 2]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+    hist = hist.flatten()
+    assert np.max(hist) == 1
+
+
+def test_hist_2d_results_right_height_no_weights_with_dups():
+    xs = [1, 2, 3, 4, 4] # two in same cell
+    ys = [1, 1, 1, 1, 1]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+    hist = hist.flatten()
+    assert np.max(hist) == 2
+
+
+def test_hist_2d_results_right_height_with_weights_no_dups():
+    xs = [1, 2, 3, 3]
+    ys = [1, 1, 1, 2]
+    weights = [4, 3, 2, 1]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5,
+                                                 weights=weights)
+    hist = hist.flatten()
+    assert np.max(hist) == 4
+
+
+def test_hist_2d_results_right_height_with_weights_with_dups():
+    xs = [1, 2, 3, 4, 4] # two in same cell
+    ys = [1, 1, 1, 1, 1]
+    weights = [1.3, 2.3, 3.5, 2, 3]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5,
+                                                 weights=weights)
+    hist = hist.flatten()
+    assert np.max(hist) == 5
+
+
+def test_hist_2d_results_orientation():
+    xs = [0.75, 0.75, 1.25]
+    ys = [0.75, 1.25, 1.25]
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
+
+    # find the location of the indices of all three locations, according to bins
+    x_idxs = [None, None, None]
+    y_idxs = [None, None, None]
+    for x_edge_idx in range(len(x_edges) - 1):
+        for x_idx, x in enumerate(xs):
+            if x_edges[x_edge_idx] < x < x_edges[x_edge_idx + 1]:
+                x_idxs[x_idx] = x_edge_idx
+    for y_edge_idx in range(len(y_edges) - 1):
+        for y_idx, y in enumerate(ys):
+            if y_edges[y_edge_idx] < y < y_edges[y_edge_idx + 1]:
+                y_idxs[y_idx] = y_edge_idx
+
+    # then check that there are points where they should be. Rows go first in
+    # all the actual matplotlib applications, so that's what we'll use.
+    for x_idx, y_idx in zip(x_idxs, y_idxs):
+        assert hist[y_idx][x_idx] > 0
+
+
+def test_hist_2d_smoothing_scalar_all_cells_nonzero():
+    xs = [1]
+    ys = [1]
+    hist, _, _ = tools.smart_hist_2d(xs, ys, bin_size=0.01, smoothing=1)
+    assert np.all(hist > 0)
+
+
+def test_hist_2d_smoothing_different_scale_all_cells_nonzero():
+    xs = [1]
+    ys = [1]
+    hist, _, _ = tools.smart_hist_2d(xs, ys, bin_size=0.01, smoothing=[1, 2])
+    assert np.all(hist > 0)
+
+
+def test_hist_2d_smoothing_different_scale_different_results():
+    xs = [0]
+    ys = [0]
+    hist, _, _ = tools.smart_hist_2d(xs, ys, bin_size=0.1, padding=10,
+                                     smoothing=[5, 1])
+    # more smoothed in x than in y. So you need to go farther in x than y to
+    # get the same decrease
+    center_idx_x = int(hist.shape[0] / 2.0)
+    center_idx_y = int(hist.shape[1] / 2.0)
+
+    central_dens = hist[center_idx_y][center_idx_x]
+    off_in_x = hist[center_idx_y][center_idx_x + 20]
+    off_in_y = hist[center_idx_y + 20][center_idx_x]
+    assert central_dens > off_in_x
+    assert central_dens > off_in_y
+    assert off_in_x > off_in_y  # since at a given distance, x lowers less.
+
+
+
+
+
+
+
+
+# check for bin size not specified, then specified in both single value
+# and two component list form.
+
+# test with and without weights
+
+# test with and without smoothing.
 # #TODO: see about checking error messages to verify which error was called.
