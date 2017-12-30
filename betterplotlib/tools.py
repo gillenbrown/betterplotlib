@@ -7,8 +7,6 @@ import numbers
 
 from . import type_checking
 
-# TODO: I need to remake the plt.gca() function to find my Axes_bpl
-
 
 def _get_ax(**kwargs):
     """
@@ -70,13 +68,12 @@ def _alpha(n, threshold=30, scale=2000):
     # turn scale into a float to make sure it still works in Python 2
     return 0.99 / (1.0 + (n / float(scale)))
 
+
 # ------------------------------------------------------------------------------
 #
 # Bin sizing things
 #
 # ------------------------------------------------------------------------------
-
-
 def _freedman_diaconis(data):
     """This uses the Freedman Diaconis Algorithm, which is defined by
 
@@ -147,7 +144,7 @@ def _round_to_nice_width(bin_width):
 
     # we then figure out which one is closest to the original
     bin_diffs = [abs(bin_width - pos_width) for pos_width in possible_bins]
-    best_idx = np.argmin(bin_diffs)
+    best_idx = int(np.argmin(bin_diffs))
     # the indices are the same between the diffs and originals, so we know
     # which index to get.
     return possible_bins[best_idx]
@@ -165,7 +162,7 @@ def rounded_bin_width(data):
     the resulting histograms looks nicer, and still have reasonable bin sizes.
 
     :param data: Raw data that will be used to create the histogram.
-    :type data: list
+    :type data: list, ndarray
     :return: Appproximately correct bin size.
     :rtype: float
     """
@@ -174,7 +171,7 @@ def rounded_bin_width(data):
     return _round_to_nice_width(_freedman_diaconis(data))
 
 
-def _binning(min, max, bin_size, padding=0):
+def _binning(min_, max_, bin_size, padding=0):
     """
     Creates smarter bins for the histogram function.
 
@@ -186,37 +183,42 @@ def _binning(min, max, bin_size, padding=0):
     it helps when looking at them, especially something that is symmetric
     about zero.
 
-    :param data: List of data that will be placed in the histogram.
+    :param min_: Minimum value of the dataset.
+    :type min_: float
+    :param max_: Maximum value of the dataset.
+    :type max_: float
     :param bin_size: Width of bins along the x-axis.
+    :type bin_size: float
     :param padding: How much padding in will be done around the edges
                     of the min and max values. This is not normally needed, but
                     can be useful in smoothed contour plots when the contours
                     should extend past the maximal range of the data.
+    :type padding: float
     :return: numpy array, where each value in the array is a bin boundary.
+    :rtype: np.ndarray
     """
     msg = "{} must be a numerical value in `_binning`."
-    min = type_checking.numeric_scalar(min, msg.format("min"))
-    max = type_checking.numeric_scalar(max, msg.format("max"))
+    min_ = type_checking.numeric_scalar(min_, msg.format("min"))
+    max_ = type_checking.numeric_scalar(max_, msg.format("max"))
     bin_size = type_checking.numeric_scalar(bin_size, msg.format("bin_size"))
     padding = type_checking.numeric_scalar(padding, msg.format("padding"))
     if bin_size <= 0:
         raise ValueError("Bin size must be positive.")
     if padding < 0:
         raise ValueError("Padding must be non-negative.")
-    if min > max:
+    if min_ > max_:
         raise ValueError("Min must be smaller than max.")
-
 
     # first get a rough estimate of the number of bins needed to get to the
     # min and max
-    lower_multiples = (min - padding) // bin_size
-    upper_multiples = (max + padding) // bin_size + 1
+    lower_multiples = (min_ - padding) // bin_size
+    upper_multiples = (max_ + padding) // bin_size + 1
     # we add one to go the next bin (since it's floor divide).
 
     # we need to move the lower bin down one if the min value lands exactly on
     # a bin edge. We do this to avoid floating point errors that might move
     # our point outside the bin.
-    if np.isclose(np.mod((min - padding), bin_size), 0):
+    if np.isclose(np.mod((min_ - padding), bin_size), 0):
         lower_multiples -= 1
 
     # then turn these bin numbers into actual data limits for the lower and
@@ -234,7 +236,7 @@ def bin_centers(edges):
     All this does is take the average of each pair of edges.
 
     :param edges: List of edges of the bins of the histogram.
-    :type edges: list
+    :type edges: list, ndarray
     :return: list of bin centers
     :rtype: list of float
     """
@@ -256,7 +258,7 @@ def make_bins(data, bin_size=None, padding=0):
     Takes the user options and creates bins out of them.
 
     :param data: List of data values that will be binned.
-    :type data: list
+    :type data: list, ndarray
     :param bin_size: Size of bins. If not passed in one will be chosen. We will
                      use the Freedman-Diaconis bin width, but round it so that
                      the edges line up with ticks
@@ -390,6 +392,7 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
     hist = hist.transpose()
 
     return hist, x_edges, y_edges
+
 
 def _unique_total_sorted(values):
     """

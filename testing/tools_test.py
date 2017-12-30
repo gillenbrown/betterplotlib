@@ -6,6 +6,7 @@ from betterplotlib import tools
 np.random.seed(19680801)
 random_x = np.random.normal(0, 1, 1000)
 
+
 # ------------------------------------------------------------------------------
 #
 # testing alpha. I don't test a lot here, since the actual values are just
@@ -189,211 +190,211 @@ def test_round_to_nice_width_error_checking_types_list():
 # ------------------------------------------------------------------------------
 def test_binning_bin_size_error_checking_zero():
     with pytest.raises(ValueError):
-        tools._binning(min=1, max=2, bin_size=0)
+        tools._binning(min_=1, max_=2, bin_size=0)
 
 
 def test_binning_bin_size_error_checking_negative():
     with pytest.raises(ValueError):
-        tools._binning(min=1, max=2, bin_size=-1)
+        tools._binning(min_=1, max_=2, bin_size=-1)
 
 
 def test_binning_padding_error_checking():
     with pytest.raises(ValueError):
-        tools._binning(min=1, max=2, bin_size=1, padding=-1)
+        tools._binning(min_=1, max_=2, bin_size=1, padding=-1)
 
 
 def test_binning_min_max_checking_not_ordered():
     with pytest.raises(ValueError):
-        tools._binning(min=1, max=0, bin_size=1)
+        tools._binning(min_=1, max_=0, bin_size=1)
 
 
 def test_binning_wrong_type_min():
     with pytest.raises(TypeError):
-        tools._binning(min="a", max=0, bin_size=1)
+        tools._binning(min_="a", max_=0, bin_size=1)
 
 
 def test_binning_wrong_type_max():
     with pytest.raises(TypeError):
-        tools._binning(min=1, max="a", bin_size=1)
+        tools._binning(min_=1, max_="a", bin_size=1)
 
 
 def test_binning_wrong_type_min_max():
     with pytest.raises(TypeError):
-        tools._binning(min="a", max="b", bin_size=1)
+        tools._binning(min_="a", max_="b", bin_size=1)
 
 
 def test_binning_wrong_type_bin_size():
     with pytest.raises(TypeError):
-        tools._binning(min=0, max=1, bin_size="a")
+        tools._binning(min_=0, max_=1, bin_size="a")
 
 
 def test_binning_wrong_type_padding():
     with pytest.raises(TypeError):
-        tools._binning(min=-1, max=0, bin_size=1, padding="a")
+        tools._binning(min_=-1, max_=0, bin_size=1, padding="a")
 
 
 def test_binning_wrong_type_min_list():
     with pytest.raises(TypeError):
-        tools._binning(min=[-1, -2], max=2, bin_size=1, padding=0)
+        tools._binning(min_=[-1, -2], max_=2, bin_size=1, padding=0)
 
 
 def test_binning_wrong_type_max_list():
     with pytest.raises(TypeError):
-        tools._binning(min=-1, max=[0, 1], bin_size=1, padding=0)
+        tools._binning(min_=-1, max_=[0, 1], bin_size=1, padding=0)
 
 
 def test_binning_wrong_type_bin_size_list():
     with pytest.raises(TypeError):
-        tools._binning(min=-1, max=0, bin_size=[1, 2], padding=0)
+        tools._binning(min_=-1, max_=0, bin_size=[1, 2], padding=0)
 
 
 def test_binning_wrong_type_padding_list():
     with pytest.raises(TypeError):
-        tools._binning(min=-1, max=0, bin_size=1, padding=[0, 1])
+        tools._binning(min_=-1, max_=0, bin_size=1, padding=[0, 1])
 
 
 def test_binning_positive_bin_aligned():
-    test_bins = tools._binning(min=1.0, max=2.0, bin_size=0.5)
+    test_bins = tools._binning(min_=1.0, max_=2.0, bin_size=0.5)
     real_bins = [0.5, 1.0, 1.5, 2.0, 2.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_negative_bin_aligned():
-    test_bins = tools._binning(min=-2.0, max=-1.0, bin_size=0.5)
+    test_bins = tools._binning(min_=-2.0, max_=-1.0, bin_size=0.5)
     real_bins = [-2.5, -2, -1.5, -1, -0.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_zero_to_pos_bin_aligned():
-    test_bins = tools._binning(min=0, max=1, bin_size=0.5)
+    test_bins = tools._binning(min_=0, max_=1, bin_size=0.5)
     real_bins = [-0.5, 0, 0.5, 1.0, 1.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_neg_to_zero_bin_aligned():
-    test_bins = tools._binning(min=-1, max=0, bin_size=0.5)
+    test_bins = tools._binning(min_=-1, max_=0, bin_size=0.5)
     real_bins = [-1.5, -1, -0.5, 0, 0.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_zero_to_pos_bin_aligned_b():
-    test_bins = tools._binning(min=0.5, max=1, bin_size=0.5)
+    test_bins = tools._binning(min_=0.5, max_=1, bin_size=0.5)
     real_bins = [0, 0.5, 1.0, 1.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_neg_to_zero_bin_aligned_b():
-    test_bins = tools._binning(min=-1, max=-0.5, bin_size=0.5)
+    test_bins = tools._binning(min_=-1, max_=-0.5, bin_size=0.5)
     real_bins = [-1.5, -1, -0.5, 0]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_across_zero_bin_aligned():
-    test_bins = tools._binning(min=-0.5, max=1, bin_size=0.5)
+    test_bins = tools._binning(min_=-0.5, max_=1, bin_size=0.5)
     real_bins = [-1, -0.5, 0, 0.5, 1.0, 1.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_across_zero_not_aligned():
-    test_bins = tools._binning(min=-0.25, max=0.25, bin_size=0.5)
+    test_bins = tools._binning(min_=-0.25, max_=0.25, bin_size=0.5)
     real_bins = [-0.5, 0, 0.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_neg_to_zero_not_aligned():
-    test_bins = tools._binning(min=-0.75, max=-0.25, bin_size=0.5)
+    test_bins = tools._binning(min_=-0.75, max_=-0.25, bin_size=0.5)
     real_bins = [-1, -0.5, 0]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_zero_to_pos_not_aligned():
-    test_bins = tools._binning(min=0.25, max=0.75, bin_size=0.5)
+    test_bins = tools._binning(min_=0.25, max_=0.75, bin_size=0.5)
     real_bins = [0, 0.5, 1]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_positive_not_aligned():
-    test_bins = tools._binning(min=0.75, max=1.25, bin_size=0.5)
+    test_bins = tools._binning(min_=0.75, max_=1.25, bin_size=0.5)
     real_bins = [0.5, 1, 1.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_negative_not_aligned():
-    test_bins = tools._binning(min=-1.25, max=-0.75, bin_size=0.5)
+    test_bins = tools._binning(min_=-1.25, max_=-0.75, bin_size=0.5)
     real_bins = [-1.5, -1, -0.5]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_across_zero_many_bins_not_aligned():
-    test_bins = tools._binning(min=-0.51, max=0.61, bin_size=0.1)
+    test_bins = tools._binning(min_=-0.51, max_=0.61, bin_size=0.1)
     real_bins = [-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0,
                  0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_positive_many_bins_not_aligned():
-    test_bins = tools._binning(min=0.51, max=1.11, bin_size=0.1)
+    test_bins = tools._binning(min_=0.51, max_=1.11, bin_size=0.1)
     real_bins = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_negative_many_bins_not_aligned():
-    test_bins = tools._binning(min=-1.31, max=-0.49, bin_size=0.1)
+    test_bins = tools._binning(min_=-1.31, max_=-0.49, bin_size=0.1)
     real_bins = [-1.4, -1.3, -1.2, -1.1, -1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_zero_to_pos_many_bins_not_aligned():
-    test_bins = tools._binning(min=0.01, max=0.51, bin_size=0.1)
+    test_bins = tools._binning(min_=0.01, max_=0.51, bin_size=0.1)
     real_bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_neg_to_zero_many_bins_not_aligned():
-    test_bins = tools._binning(min=-0.51, max=-0.01, bin_size=0.1)
+    test_bins = tools._binning(min_=-0.51, max_=-0.01, bin_size=0.1)
     real_bins = [-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_padding_positive_aligned():
-    test_bins = tools._binning(min=5, max=10, bin_size=1, padding=2)
+    test_bins = tools._binning(min_=5, max_=10, bin_size=1, padding=2)
     real_bins = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_padding_negative_aligned():
-    test_bins = tools._binning(min=-1.0, max=-0.5, bin_size=0.1, padding=0.2)
+    test_bins = tools._binning(min_=-1.0, max_=-0.5, bin_size=0.1, padding=0.2)
     real_bins = [-1.3, -1.2, -1.1, -1, -0.9, -0.8, -0.7,
                  -0.6, -0.5, -0.4, -0.3, -0.2]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_padding_positive_not_aligned():
-    test_bins = tools._binning(min=0.5, max=1.1, bin_size=0.2, padding=0.2)
+    test_bins = tools._binning(min_=0.5, max_=1.1, bin_size=0.2, padding=0.2)
     real_bins = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_padding_negative_not_aligned():
-    test_bins = tools._binning(min=-11, max=-5, bin_size=2, padding=2)
+    test_bins = tools._binning(min_=-11, max_=-5, bin_size=2, padding=2)
     real_bins = [-14, -12, -10, -8, -6, -4, -2]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_range_smaller_than_bin_aligned():
-    test_bins = tools._binning(min=0.0, max=2.0, bin_size=10.0)
+    test_bins = tools._binning(min_=0.0, max_=2.0, bin_size=10.0)
     real_bins = [-10, 0, 10]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_range_smaller_than_bin_not_aligned():
-    test_bins = tools._binning(min=-5.0, max=-3.0, bin_size=10.0)
+    test_bins = tools._binning(min_=-5.0, max_=-3.0, bin_size=10.0)
     real_bins = [-10, 0]
     assert real_bins == approx(test_bins)
 
 
 def test_binning_min_equal_max():
-    test_bins = tools._binning(min=1, max=1, bin_size=0.5)
+    test_bins = tools._binning(min_=1, max_=1, bin_size=0.5)
     real_bins = [0.5, 1, 1.5]
     assert real_bins == approx(test_bins)
 
@@ -404,6 +405,7 @@ def test_binning_all_bins_same_size():
     for idx in range(len(bins) - 1):
         this_bin_size = bins[idx + 1] - bins[idx]
         assert this_bin_size == approx(desired_bin_size)
+
 
 # ------------------------------------------------------------------------------
 #
@@ -454,11 +456,11 @@ def test_centers_length():
     assert len(xs) == len(tools.bin_centers(xs)) + 1
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Testing the parsing of the bin size. This doesn't have a lot.
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def test_two_element_list_more_elt_array():
     with pytest.raises(ValueError):
         tools._two_item_list([0.4, 0.3, 0.1])
@@ -502,16 +504,17 @@ def test_two_element_list_strings_too_short():
 def test_two_element_list_strings_list_numeric_multiple():
     assert tools._two_item_list(["0.4", "0.5"]) == ["0.4", "0.5"]
 
+
 def test_two_element_list_strings_list_numeric_single():
     assert tools._two_item_list(["0.4"]) == ["0.4", "0.4"]
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Testing the parsing of the bin options. This relies heavily on the _binning
 # function, so a lot of the more detailed testing is taken care of there.
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def test_make_bins_error_checking_data_type():
     with pytest.raises(TypeError):
         tools.make_bins("hello")
@@ -728,11 +731,11 @@ def test_make_bins_all_same_size(bin_size):
         assert bins[idx+1] - bins[idx] == approx(real_bin_size)
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Testing the unique_total
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def test_unique_total_error_checking_types_string():
     with pytest.raises(TypeError):
         tools._unique_total_sorted("hello")
@@ -775,11 +778,11 @@ def test_unique_total_is_finally_sorted():
     assert sorted(new_data) == approx(new_data)
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Testing the level that contains certain percentages
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def test_percentile_level_error_checking_positive_density():
     with pytest.raises(ValueError):
         tools.percentile_level([-1, 0, 1, 2, 3], 0.5)
@@ -811,7 +814,7 @@ def test_percentile_level_list_vs_scalar_percentile():
     densities = np.random.uniform(0, 10, 100)
     level = 0.6
     scalar_value = tools.percentile_level(densities, level)
-    list_value   = tools.percentile_level(densities, [level])
+    list_value = tools.percentile_level(densities, [level])
     assert approx(scalar_value) == approx(list_value)
 
 
@@ -899,7 +902,7 @@ def test_percentile_level_values_order_not_matter():
 def test_percentile_level_big_data():
     # get a ton of data
     densities = np.linspace(0, 1, 1000)
-    percentages = np.arange(0.1, 1.0, 0.01) # 1 to 99 percent
+    percentages = np.arange(0.1, 1.0, 0.01)  # 1 to 99 percent
     # the levels can be computed analytically, since this is a uniform
     # distribution. The level should be computed such that the integral of x
     # from l to 1 is some percentage of the total. This gives P = 1 - l^2
@@ -913,7 +916,7 @@ def test_percentile_level_big_data():
 def test_percentile_level_big_data_warnings(recwarn):
     # get a ton of data
     densities = np.linspace(0, 1, 1000)
-    percentages = np.arange(0.1, 1.0, 0.01) # 1 to 99 percent
+    percentages = np.arange(0.1, 1.0, 0.01)  # 1 to 99 percent
     # there is enough data here that the levels should be well determined
     tools.percentile_level(densities, percentages)
     assert len(recwarn) == 0
@@ -1062,11 +1065,11 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
     assert len(recwarn) == 7  # four from imprecise level, two from duplicate
 
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Testing the density contours function
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 def test_hist_2d_error_checking_types_no_strings():
     """Proxy for non-numerical data of any kind."""
     with pytest.raises(TypeError):
@@ -1215,11 +1218,13 @@ def test_hist_2d_length_of_output():
     output = tools.smart_hist_2d([1, 2], [2, 3])
     assert len(output) == 3
 
+
 @pytest.fixture
 def random_data():
     xs = np.random.normal(0, 10, 1000)
     ys = np.random.normal(0, 10, 1000)
     return xs, ys
+
 
 def test_hist_2d_bin_size_scalar(random_data):
     bin_size = 2.345
@@ -1280,9 +1285,9 @@ def test_hist_edges_contain_data_no_bins(random_data):
     xs, ys = random_data
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys)
 
-    assert x_edges[0]  < min(xs)
+    assert x_edges[+0] < min(xs)
     assert x_edges[-1] > max(xs)
-    assert y_edges[0]  < min(ys)
+    assert y_edges[+0] < min(ys)
     assert y_edges[-1] > max(ys)
 
 
@@ -1292,9 +1297,9 @@ def test_hist_edges_contain_data_single_bin_size_scalar(random_data):
     bin_size = 1.0
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=bin_size)
 
-    assert x_edges[0]  < min(xs)
+    assert x_edges[+0] < min(xs)
     assert x_edges[-1] > max(xs)
-    assert y_edges[0]  < min(ys)
+    assert y_edges[+0] < min(ys)
     assert y_edges[-1] > max(ys)
 
 
@@ -1306,9 +1311,9 @@ def test_hist_edges_contain_data_two_bin_size(random_data):
     _, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
                                               bin_size=[x_bin_size, y_bin_size])
 
-    assert x_edges[0]  < min(xs)
+    assert x_edges[+0] < min(xs)
     assert x_edges[-1] > max(xs)
-    assert y_edges[0]  < min(ys)
+    assert y_edges[+0] < min(ys)
     assert y_edges[-1] > max(ys)
 
 
@@ -1320,9 +1325,9 @@ def test_hist_edges_contain_data_single_bin_size_scalar_padding(random_data):
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=bin_size,
                                                  padding=padding)
 
-    assert x_edges[0]  < (min(xs) - padding)
+    assert x_edges[+0] < (min(xs) - padding)
     assert x_edges[-1] > (max(xs) + padding)
-    assert y_edges[0]  < (min(ys) - padding)
+    assert y_edges[+0] < (min(ys) - padding)
     assert y_edges[-1] > (max(ys) + padding)
 
 
@@ -1337,9 +1342,9 @@ def test_hist_edges_contain_data_two_bin_size_two_padding(random_data):
                                               bin_size=[x_bin_size, y_bin_size],
                                               padding=[x_padding, y_padding])
 
-    assert x_edges[0]  < (min(xs) - x_padding)
+    assert x_edges[+0] < (min(xs) - x_padding)
     assert x_edges[-1] > (max(xs) + x_padding)
-    assert y_edges[0]  < (min(ys) - y_padding)
+    assert y_edges[+0] < (min(ys) - y_padding)
     assert y_edges[-1] > (max(ys) + y_padding)
 
 
@@ -1360,7 +1365,7 @@ def test_hist_2d_results_in_right_number_cells_many_points():
 
 
 def test_hist_2d_results_in_right_number_cells_many_points_with_dups():
-    xs = [1, 2, 3, 4, 4] # two in same cell
+    xs = [1, 2, 3, 4, 4]  # two in same cell
     ys = [1, 1, 1, 1, 1]
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
     hist = hist.flatten()
@@ -1376,7 +1381,7 @@ def test_hist_2d_results_right_height_no_weights_no_dups():
 
 
 def test_hist_2d_results_right_height_no_weights_with_dups():
-    xs = [1, 2, 3, 4, 4] # two in same cell
+    xs = [1, 2, 3, 4, 4]  # two in same cell
     ys = [1, 1, 1, 1, 1]
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5)
     hist = hist.flatten()
@@ -1394,7 +1399,7 @@ def test_hist_2d_results_right_height_with_weights_no_dups():
 
 
 def test_hist_2d_results_right_height_with_weights_with_dups():
-    xs = [1, 2, 3, 4, 4] # two in same cell
+    xs = [1, 2, 3, 4, 4]  # two in same cell
     ys = [1, 1, 1, 1, 1]
     weights = [1.3, 2.3, 3.5, 2, 3]
     hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5,
@@ -1456,18 +1461,3 @@ def test_hist_2d_smoothing_different_scale_different_results():
     assert central_dens > off_in_x
     assert central_dens > off_in_y
     assert off_in_x > off_in_y  # since at a given distance, x lowers less.
-
-
-
-
-
-
-
-
-# check for bin size not specified, then specified in both single value
-# and two component list form.
-
-# test with and without weights
-
-# test with and without smoothing.
-# #TODO: see about checking error messages to verify which error was called.
