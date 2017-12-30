@@ -22,5 +22,6 @@ def subplots(*args, **kwargs):
     # that we can access
     subplot_kwargs = kwargs.setdefault("subplot_kw", dict())
     subplot_kwargs.setdefault("projection", "bpl")
+    kwargs.setdefault("tight_layout", True)
 
     return plt.subplots(*args, **kwargs)
