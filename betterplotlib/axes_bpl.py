@@ -924,6 +924,7 @@ class Axes_bpl(Axes):
 
     def density_contourf(self, xs, ys, bin_size=None, percent_levels=None,
                          smoothing=0, weights=None, **kwargs):
+        """ """
 
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
