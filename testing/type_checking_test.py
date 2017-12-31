@@ -31,23 +31,27 @@ def test_numeric_list_empty_list():
 
 def test_numeric_list_list_multiple_dimensions():
     original_list = [[1.0, 2.0, 3.0], [4, 5, 6]]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         numeric_list_1d(original_list)
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_list_1d("abc")
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_empty_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_list_1d("")
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_string_array():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_list_1d(["a", "b", "c"])
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_string_float_value():
@@ -76,15 +80,17 @@ def test_numeric_list_string_array_float_length():
 
 
 def test_numeric_list_float_string_array():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_list_1d(["a", "b", "c"])
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_dict_with_int_keys():
     """Integer keys can mess up some things, since they act like indices."""
     test_dict = {0: "a", 1: "b", 2: "c"}
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_list_1d(test_dict)
+    assert str(err_msg.value) == "This item cannot be cast to a float array."
 
 
 def test_numeric_list_message_default():
@@ -130,23 +136,27 @@ def test_numeric_scalar_float_string_type():
 
 
 def test_numeric_scalar_empty_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar([])
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_empty_array():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar(np.array([]))
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_list_many_items():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar([1, 2, 3])
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_array_many_items():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar(np.array([1, 2, 3]))
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_single_item_list_allowed_type():
@@ -182,24 +192,28 @@ def test_numeric_scalar_float_string_array_type():
 
 
 def test_numeric_scalar_empty_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar("")
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_single_char_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar("a")
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_multiple_char_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar("abc")
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_dict():
     test_dict = {0: 0}
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         numeric_scalar(test_dict)
+    assert str(err_msg.value) == "This item cannot be cast to a scalar float."
 
 
 def test_numeric_scalar_message_default_empty_list():

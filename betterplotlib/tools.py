@@ -103,9 +103,9 @@ def _freedman_diaconis_core(iqr, n):
         raise ValueError("The number of data points must be positive in "
                          "Freedman Diaconis binning.")
     if iqr <= 0.0:
-        raise ValueError("The Freeman-Diaconis binning relies on interquartile"
-                         "range, and your data has zero. \nTry passing your"
-                         "own bin size.")
+        raise ValueError("The Freeman-Diaconis default binning relies on "
+                         "inter-quartile range, and your data has zero."
+                         "\nTry passing your own bin size.")
     return 2 * iqr * n ** (-1.0 / 3.0)
 
 
@@ -240,9 +240,13 @@ def bin_centers(edges):
     :return: list of bin centers
     :rtype: list of float
     """
+    err_msg = "Edges have to be numeric list-like."
     if isinstance(edges, numbers.Real):
-        raise TypeError("Edges have to be list-like.")
-    edges = type_checking.numeric_list_1d(edges, "Edges have to be list-like.")
+        raise TypeError(err_msg)
+    try:
+        edges = type_checking.numeric_list_1d(edges, err_msg)
+    except TypeError:
+        raise TypeError(err_msg)
     if len(edges) < 2:
         raise ValueError("Need at least two edges to calculate centers.")
 
@@ -271,6 +275,8 @@ def make_bins(data, bin_size=None, padding=0):
     """
     msg = "{} must be a {} in `make_bins`."
     data = type_checking.numeric_list_1d(data, msg.format("data", "list"))
+    if len(data) == 0:
+        raise ValueError("Empty list is not valid for data.")
     if bin_size is None:  # need to choose our own
         bin_size = rounded_bin_width(data)
     bin_size = type_checking.numeric_scalar(bin_size,
@@ -303,6 +309,59 @@ def _two_item_list(item):
             return [item[0], item[0]]
     except TypeError:  # will happen if scalar
         return [item, item]
+
+
+def _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
+                                  weights, smoothing):
+    """
+    Does the error checking for the _smart_hist_2d function.
+
+    All parameters the same as for that function.
+    """
+    msg = "{} must be an array in `smart_hist_2D`"
+    xs = type_checking.numeric_list_1d(xs, msg.format("x"))
+    ys = type_checking.numeric_list_1d(ys, msg.format("y"))
+    if len(xs) != len(ys):
+        raise ValueError("x and y data must be the same length.")
+
+    if weights is not None:
+        weights = type_checking.numeric_list_1d(weights, msg.format(weights))
+        if len(weights) != len(xs):
+            raise ValueError("Weights and data need to have the same length.")
+        if not all(weights >= 0):
+            raise ValueError("Weights must be non-negative.")
+
+    # parse the bin size options, then error check them.
+    two_elt_msg = "{} must be either a scalar or two element numeric list"
+    try:
+        bin_size_x, bin_size_y = _two_item_list(bin_size)
+    except ValueError:
+        raise ValueError(two_elt_msg.format("bin_size"))
+    if bin_size is not None:
+        type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("bin_size"))
+        type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("bin_size"))
+
+    # then do the same with the padding
+    try:
+        padding_x, padding_y = _two_item_list(padding)
+    except ValueError:
+        raise ValueError(two_elt_msg.format("padding"))
+    type_checking.numeric_scalar(padding_x, two_elt_msg.format("padding"))
+    type_checking.numeric_scalar(padding_y, two_elt_msg.format("padding"))
+
+    # and lastly with smoothing
+    try:
+        smoothing_x, smoothing_y = _two_item_list(smoothing)
+    except ValueError:
+        raise ValueError(two_elt_msg.format("smoothing"))
+    type_checking.numeric_scalar(smoothing_x, two_elt_msg.format("smoothing"))
+    type_checking.numeric_scalar(smoothing_y, two_elt_msg.format("smoothing"))
+    # smoothing must be positive, too
+    if smoothing_x < 0 or smoothing_y < 0:
+        raise ValueError("Smoothing must be nonnegative.")
+
+    return xs, ys, bin_size_x, bin_size_y, padding_x, padding_y, weights, \
+           smoothing_x, smoothing_y
 
 
 def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
@@ -346,33 +405,13 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
     :rtype: tuple of np.array, list, list
     """
     # error checking and data wrangling.
-    msg = "{} must be an array in `smart_hist_2D`"
-    xs = type_checking.numeric_list_1d(xs, msg.format(xs))
-    ys = type_checking.numeric_list_1d(ys, msg.format(ys))
-    if weights is not None:
-        weights = type_checking.numeric_list_1d(weights, msg.format(weights))
-        if not all(weights >= 0):
-            raise ValueError("Weights must be non-negative.")
-
-    # parse the bin size options, then error check them.
-    two_elt_msg = "{} must be either a scalar or two element numeric list"
-    bin_size_x, bin_size_y = _two_item_list(bin_size)
-    if bin_size is not None:
-        type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("bin_size"))
-        type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("bin_size"))
-
-    # then do the same with the padding
-    padding_x, padding_y = _two_item_list(padding)
-    type_checking.numeric_scalar(padding_x, two_elt_msg.format("padding"))
-    type_checking.numeric_scalar(padding_y, two_elt_msg.format("padding"))
-
-    # and lastly with smoothing
-    smoothing_x, smoothing_y = _two_item_list(smoothing)
-    type_checking.numeric_scalar(smoothing_x, two_elt_msg.format("smoothing"))
-    type_checking.numeric_scalar(smoothing_y, two_elt_msg.format("smoothing"))
-    # smoothing must be positive, too
-    if smoothing_x < 0 or smoothing_y < 0:
-        raise ValueError("Smoothing must be nonnegative.")
+    validated_params = _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
+                                            weights, smoothing)
+    xs, ys = validated_params[0:2]
+    bin_size_x, bin_size_y = validated_params[2:4]
+    padding_x, padding_y = validated_params[4:6]
+    weights = validated_params[6]
+    smoothing_x, smoothing_y = validated_params[7:]
 
     # then we can go ahead and make the bin edges using this data
     bin_edges = [make_bins(xs, bin_size_x, padding_x),
@@ -419,7 +458,10 @@ def _unique_total_sorted(values):
     :rtype: np.ndarray
     """
     unique_values, appearances = np.unique(values, return_counts=True)
-    return unique_values * appearances
+    try:
+        return unique_values * appearances
+    except TypeError:
+        raise TypeError("Need an array in `unique_total_sorted`.")
 
 
 def _percentile_level_warning_uncertain(percent):
@@ -493,6 +535,8 @@ def percentile_level(densities, percentages):
     msg = "{} in percentile_level must be array like."
     densities = type_checking.numeric_list_1d(densities,
                                               msg.format("densities"))
+    if len(densities) == 0:
+        raise ValueError("Empty density array not allowed")
 
     total_mass = np.sum(densities)
     if any(densities < 0):
@@ -576,3 +620,33 @@ def percentile_level(densities, percentages):
 
     # else, want them sorted from low to high for ease of plotting in contours
     return sorted(list(return_values.values()))
+
+
+def _padding_from_smoothing(smoothing):
+    """
+    If smoothing is desirec but padding is not specified, create the padding.
+
+    This is useful because the smoothing will go past the edges of the original
+    dataset, so we want to be able to see it. The default here is that the
+    padding 5 times the smoothing kernel in each dimension. This might be a
+    little big in some situations, but will ensure that the kernel dies off
+    before we stop calculating it.
+
+    :param smoothing: What the user passed in for the smoothing parameter in
+                      one of the main functions. Will be either a scalar, one
+                      element list, or two element list.
+    :type smoothing: int, float, list
+    :return: Two element list with the padding to be used for the 2D histogram.
+    :rtype: list
+    """
+    # see if what they passed in is the proper shape
+    try:
+        smoothing_x, smoothing_y = _two_item_list(smoothing)
+    except ValueError:
+        raise ValueError("Smoothing must be a scalar or two element tuple.")
+
+    # try convert to float. There is where we do the 5 times the smoothing.
+    try:
+        return [5 * float(smoothing_x), 5 * float(smoothing_y)]
+    except ValueError:
+        raise TypeError("Smoothing must be a numeric type.")

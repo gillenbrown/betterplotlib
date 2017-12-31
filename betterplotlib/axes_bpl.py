@@ -9,6 +9,7 @@ from matplotlib import __version__
 
 from . import colors
 from . import tools
+from . import type_checking
 
 mpl_2 = __version__[0] == "2"
 
@@ -877,37 +878,42 @@ class Axes_bpl(Axes):
 
     def density_contour(self, xs, ys, bin_size=None, percent_levels=None,
                         smoothing=0, weights=None, labels=False, **kwargs):
-        """
+        """ """
 
-        :param xs:
-        :param ys:
-        :param bin_size:
-        :param percent_levels:
-        :param smoothing:
-        :param weights:
-        :return:
-        """
         # error checking:
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = tools.smart_hist_2d(xs, ys, bin_size,
-                                             padding_x=4 * smoothing,
-                                             padding_y=4 * smoothing,
+        # if smoothing is not specified, we still want some padding on the
+        # outside so the contours aren't cut off.
+        if smoothing == 0:
+            padding = [2 * tools._freedman_diaconis(xs),
+                       2 * tools._freedman_diaconis(ys)]
+        else:
+            padding = tools._padding_from_smoothing(smoothing)
+        hist, x_e, y_e = tools.smart_hist_2d(xs, ys, bin_size,
+                                             padding=padding,
                                              weights=weights,
                                              smoothing=smoothing)
+        x_cen = tools.bin_centers(x_e)
+        y_cen = tools.bin_centers(y_e)
 
         # then get the levels of the contours
         if percent_levels is None:
             percent_levels = [0.25, 0.5, 0.75, 0.95]
+        else:
+            not_list_msg = "percent_levels needs to be a list in " \
+                           "`density_contour`"
+            percent_levels = type_checking.numeric_list_1d(percent_levels,
+                                                           not_list_msg)
 
-        levels = tools._percentile_level(hist.flatten(), percent_levels)
+        levels = tools.percentile_level(hist.flatten(), percent_levels)
         kwargs["levels"] = levels
         # then set some parameters
         kwargs.setdefault("linewidths", 2)
         kwargs["zorder"] = 3
 
-        contours = super(Axes_bpl, self).contour(x_c, y_c, hist,
+        contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
                                                  **kwargs)
 
         if labels:
@@ -1761,7 +1767,7 @@ class Axes_bpl(Axes):
 
         return new_ax
 
-    def shaded_density(self, xs, ys, bin_size=None, smoothing=None,
+    def shaded_density(self, xs, ys, bin_size=None, smoothing=0,
                        cmap="Greys", weights=None):
         """
         Creates shaded regions showing the density.
@@ -1797,27 +1803,12 @@ class Axes_bpl(Axes):
         :param cmap: colormap used for the density.
         :return: output of the pcolormesh function call.
         """
-        # TODO: take pcolormesh kwargs
-        # TODO: fix for tiny datasets
-        # TODO: make smoothing kernel have different size in each dimension
-
+        padding = tools._padding_from_smoothing(smoothing)
         # first get the underlying density histogram
-        if smoothing is not None:
-            x_bin, y_bin, hist = tools.smart_hist_2d(xs, ys, bin_size,
-                                                     padding_x=4*smoothing,
-                                                     padding_y=4*smoothing,
-                                                     weights=weights)
-        else:
-            x_bin, y_bin, hist = tools.smart_hist_2d(xs, ys, bin_size,
+        hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size,
+                                                     padding=padding,
+                                                     smoothing=smoothing,
                                                      weights=weights)
 
-        # then smooth if desired
-        if smoothing is not None:
-            if bin_size is None:  # may have been automatically determined
-                bin_size = x_bin[1] - x_bin[0]
-            # the smoothing kernel must be in pixels. Smoothing and bin_size are
-            # both in real data units, so we have to convert.
-            kernel_size = smoothing / bin_size
-            hist = ndimage.gaussian_filter(hist, kernel_size)
-
-        return super(Axes_bpl, self).pcolormesh(x_bin, y_bin, hist, cmap=cmap)
+        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist,
+                                                cmap=cmap)

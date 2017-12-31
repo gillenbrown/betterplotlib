@@ -34,32 +34,49 @@ def test_alpha_large_values():
 # ------------------------------------------------------------------------------
 def test_freedman_diaconis_core_zero_data():
     """Length of zero or negative doesn't work in FD."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(10, 0)
-    with pytest.raises(ValueError):
+    desired_msg = "The number of data points must be positive in " \
+                  "Freedman Diaconis binning."
+    assert str(err_msg.value) == desired_msg
+
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(10, -5)
+    assert str(err_msg.value) == desired_msg
 
 
 def test_freedman_diaconis_core_zero_iqr():
     """zero iqr gives zero bin size, which is meaningless"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(0, 10)
-    with pytest.raises(ValueError):
+    desired_msg = "The Freeman-Diaconis default binning relies on " \
+                  "inter-quartile range, and your data has zero.\n" \
+                  "Try passing your own bin size."
+    assert str(err_msg.value) == desired_msg
+
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(-5, 10)
+    assert str(err_msg.value) == desired_msg
 
 
 def test_freedman_diaconis_core_data_types_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._freedman_diaconis_core("t", 5)
-    with pytest.raises(TypeError):
+    assert str(err_msg.value) == "iqr must be a numeric scalar."
+
+    with pytest.raises(TypeError) as err_msg:
         tools._freedman_diaconis_core(5, "s")
+    assert str(err_msg.value) == "n must be a numeric scalar."
 
 
 def test_freedman_diaconis_core_data_types_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._freedman_diaconis_core([1, 2], 5)
-    with pytest.raises(TypeError):
+    assert str(err_msg.value) == "iqr must be a numeric scalar."
+
+    with pytest.raises(TypeError) as err_msg:
         tools._freedman_diaconis_core(5, [4, 5])
+    assert str(err_msg.value) == "n must be a numeric scalar."
 
 
 def test_freedman_diaconis_core_simple():
@@ -79,20 +96,31 @@ def test_freedman_diaconis_core_simple():
 # ------------------------------------------------------------------------------
 def test_freedman_diaconis_zero_data():
     """Zero data doesn't produce any bins."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([])
+    desired_msg = "The number of data points must be positive in " \
+                  "Freedman Diaconis binning."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_freedman_diaconis_zero_range_a():
     """No range produces bad bins."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([1])
+    desired_msg = "The Freeman-Diaconis default binning relies on " \
+                  "inter-quartile range, and your data has zero.\n" \
+                  "Try passing your own bin size."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_freedman_diaconis_zero_range_b():
     """zero interquartile range doesn't work."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([1, 2, 2, 2, 2, 2, 3])
+    desired_msg = "The Freeman-Diaconis default binning relies on " \
+                  "inter-quartile range, and your data has zero.\n" \
+                  "Try passing your own bin size."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_freedman_diaconis_example_a():
@@ -168,19 +196,24 @@ def test_round_to_nice_width_with_exp_general():
 
 def test_round_to_nice_width_error_checking_positive():
     """can't have a bin size that is negative or zero"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._round_to_nice_width(0)
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin width must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools._round_to_nice_width(-1)
+    assert str(err_msg.value) == "Bin width must be positive."
 
 
 def test_round_to_nice_width_error_checking_types_list():
     """can't pass in a list"""
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._round_to_nice_width([1, 3])
+    assert str(err_msg.value) == "Bin width must be a numeric scalar."
     # or an array
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._round_to_nice_width(np.array([5, 3]))
+    assert str(err_msg.value) == "Bin width must be a numeric scalar."
 
 
 # ------------------------------------------------------------------------------
@@ -189,68 +222,85 @@ def test_round_to_nice_width_error_checking_types_list():
 #
 # ------------------------------------------------------------------------------
 def test_binning_bin_size_error_checking_zero():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._binning(min_=1, max_=2, bin_size=0)
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_binning_bin_size_error_checking_negative():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._binning(min_=1, max_=2, bin_size=-1)
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_binning_padding_error_checking():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._binning(min_=1, max_=2, bin_size=1, padding=-1)
+    assert str(err_msg.value) == "Padding must be non-negative."
 
 
 def test_binning_min_max_checking_not_ordered():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._binning(min_=1, max_=0, bin_size=1)
+    assert str(err_msg.value) == "Min must be smaller than max."
 
 
 def test_binning_wrong_type_min():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_="a", max_=0, bin_size=1)
+    assert str(err_msg.value) == "min must be a numerical value in `_binning`."
 
 
 def test_binning_wrong_type_max():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=1, max_="a", bin_size=1)
+    assert str(err_msg.value) == "max must be a numerical value in `_binning`."
 
 
 def test_binning_wrong_type_min_max():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_="a", max_="b", bin_size=1)
+    assert str(err_msg.value) == "min must be a numerical value in `_binning`."
 
 
 def test_binning_wrong_type_bin_size():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=0, max_=1, bin_size="a")
+    desired_msg = "bin_size must be a numerical value in `_binning`."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_binning_wrong_type_padding():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=-1, max_=0, bin_size=1, padding="a")
+    desired_msg = "padding must be a numerical value in `_binning`."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_binning_wrong_type_min_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=[-1, -2], max_=2, bin_size=1, padding=0)
+    assert str(err_msg.value) == "min must be a numerical value in `_binning`."
 
 
 def test_binning_wrong_type_max_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=-1, max_=[0, 1], bin_size=1, padding=0)
+    assert str(err_msg.value) == "max must be a numerical value in `_binning`."
 
 
 def test_binning_wrong_type_bin_size_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=-1, max_=0, bin_size=[1, 2], padding=0)
+    desired_msg = "bin_size must be a numerical value in `_binning`."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_binning_wrong_type_padding_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._binning(min_=-1, max_=0, bin_size=1, padding=[0, 1])
+    desired_msg = "padding must be a numerical value in `_binning`."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_binning_positive_bin_aligned():
@@ -413,26 +463,32 @@ def test_binning_all_bins_same_size():
 #
 # ------------------------------------------------------------------------------
 def test_centers_wrong_type_noniterable():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.bin_centers("hello")
-    with pytest.raises(TypeError):
+    assert str(err_msg.value) == "Edges have to be numeric list-like."
+
+    with pytest.raises(TypeError) as err_msg:
         tools.bin_centers(100)
+    assert str(err_msg.value) == "Edges have to be numeric list-like."
 
 
 def test_centers_wrong_type_wrong_iterable():
     test_dict = {0: 0, 1: 1}
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.bin_centers(test_dict)
+    assert str(err_msg.value) == "Edges have to be numeric list-like."
 
 
 def test_centers_zero_length_edges():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.bin_centers([])
+    assert str(err_msg.value) == "Need at least two edges to calculate centers."
 
 
 def test_centers_one_length_edges():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.bin_centers([1])
+    assert str(err_msg.value) == "Need at least two edges to calculate centers."
 
 
 def test_centers_two_length():
@@ -462,13 +518,15 @@ def test_centers_length():
 
 # ------------------------------------------------------------------------------
 def test_two_element_list_more_elt_array():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._two_item_list([0.4, 0.3, 0.1])
+    assert str(err_msg.value) == "An iterable must have length two."
 
 
 def test_two_element_list_zero_elt_array():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._two_item_list([])
+    assert str(err_msg.value) == "An iterable must have length two."
 
 
 def test_two_element_list_scalar():
@@ -492,13 +550,15 @@ def test_two_element_list_one_item_string():
 
 
 def test_two_element_list_strings_too_long():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._two_item_list("hello")
+    assert str(err_msg.value) == "An iterable must have length two."
 
 
 def test_two_element_list_strings_too_short():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools._two_item_list("")
+    assert str(err_msg.value) == "An iterable must have length two."
 
 
 def test_two_element_list_strings_list_numeric_multiple():
@@ -516,44 +576,55 @@ def test_two_element_list_strings_list_numeric_single():
 
 # ------------------------------------------------------------------------------
 def test_make_bins_error_checking_data_type():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.make_bins("hello")
+    assert str(err_msg.value) == "data must be a list in `make_bins`."
 
 
 def test_make_bins_error_checking_bin_size_type():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.make_bins([1, 2 , 3], "hello")
+    assert str(err_msg.value) == "bin_size must be a scalar in `make_bins`."
 
 
 def test_make_bins_error_checking_padding_type():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.make_bins([1, 2, 3], 1, "hello")
+    assert str(err_msg.value) == "padding must be a scalar in `make_bins`."
 
 
 def test_make_bins_error_checking_bin_size_type_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.make_bins([1, 2, 3], [1, 2])
+    assert str(err_msg.value) == "bin_size must be a scalar in `make_bins`."
 
 
 def test_make_bins_error_checking_padding_type_list():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.make_bins([1, 2, 3], 1, [4, 5])
+    assert str(err_msg.value) == "padding must be a scalar in `make_bins`."
 
 
 def test_make_bins_error_checking_need_data_no_bin_size():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([])
+    assert str(err_msg.value) == "Empty list is not valid for data."
 
 
 def test_make_bins_error_checking_need_data_with_bin_size():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([], bin_size=1.0)
+    assert str(err_msg.value) == "Empty list is not valid for data."
 
 
 def test_make_bins_error_checking_length_of_data_too_small_bad():
     """If we don't pass in much data, we need to specify our bin size."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1])
+    desired_msg = "The Freeman-Diaconis default binning relies on " \
+                  "inter-quartile range, and your data has zero.\n" \
+                  "Try passing your own bin size."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_make_bins_error_checking_length_of_data_too_small_good():
@@ -564,21 +635,29 @@ def test_make_bins_error_checking_length_of_data_too_small_good():
 
 
 def test_make_bins_error_checking_bin_size_positive():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1, 2, 3], 0)
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin size must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1, 2, 3], -1)
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_make_bins_error_checking_padding_nonnegative():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1, 2, 3], 1, padding=-1)
+    assert str(err_msg.value) == "Padding must be non-negative."
 
 
 def test_make_bins_too_small_iqr_bad():
     """If the IQR of the data is too small, we have to pass in the bin size"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1, 2, 2, 2, 2, 2, 2, 3])
+    desired_msg = "The Freeman-Diaconis default binning relies on " \
+                  "inter-quartile range, and your data has zero.\n" \
+                  "Try passing your own bin size."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_make_bins_too_small_iqr_good():
@@ -737,13 +816,15 @@ def test_make_bins_all_same_size(bin_size):
 
 # ------------------------------------------------------------------------------
 def test_unique_total_error_checking_types_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._unique_total_sorted("hello")
+    assert str(err_msg.value) == "Need an array in `unique_total_sorted`."
 
 
 def test_unique_total_error_checking_types_string_array():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools._unique_total_sorted([1, 2, 3, "b"])
+    assert str(err_msg.value) == "Need an array in `unique_total_sorted`."
 
 
 def test_unique_total_no_duplicates():
@@ -784,29 +865,35 @@ def test_unique_total_is_finally_sorted():
 
 # ------------------------------------------------------------------------------
 def test_percentile_level_error_checking_positive_density():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([-1, 0, 1, 2, 3], 0.5)
+    assert str(err_msg.value) == "Density must be non-negative."
 
 
 def test_percentile_level_error_checking_no_negative_percentile():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([1, 2, 3], [-1, 0, 0.5])
+    assert str(err_msg.value) == "percentages must be between 0 and 1."
 
 
 def test_percentile_level_error_checking_no_greater_percent_than_one():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([1, 2, 3], [0, 0.35, 0.7, 1.002])
+    assert str(err_msg.value) == "percentages must be between 0 and 1."
 
 
 def test_percentile_level_error_checking_empty_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([], 0.3)
+    assert str(err_msg.value) == "Empty density array not allowed"
 
 
 def test_percentile_level_error_checking_no_multi_dimension_density():
     density = np.array([[1, 2], [3, 4]])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.percentile_level(density, 0.5)
+    desired_msg = "densities in percentile_level must be array like."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_percentile_level_list_vs_scalar_percentile():
@@ -1072,145 +1159,200 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
 # ------------------------------------------------------------------------------
 def test_hist_2d_error_checking_types_no_strings():
     """Proxy for non-numerical data of any kind."""
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d("a", [1, 2])
+    assert str(err_msg.value) == "x must be an array in `smart_hist_2D`"
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], "a")
+    assert str(err_msg.value) == "y must be an array in `smart_hist_2D`"
 
 
 def test_hist_2d_error_x_and_y_same_length():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [1, 2, 3])
+    desired_msg = "x and y data must be the same length."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size="he")
+    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_empty_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[])
+    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_too_long():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
+    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_positive_scalar():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=0)
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin size must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=-4)
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_hist_2d_bin_size_positive_single_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[0])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin size must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[-4])
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_hist_2d_bin_size_positive_two_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[0, 2])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin size must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[2, 0])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Bin size must be positive."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[0, 0])
+    assert str(err_msg.value) == "Bin size must be positive."
 
 
 def test_hist_2d_padding_typing_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], padding="he")
+    desired_msg = "padding must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_padding_typing_empty_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[])
+    desired_msg = "padding must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_padding_typing_too_long_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[1, 2, 3])
+    desired_msg = "padding must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_padding_nonnegative_scalar():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=-4)
+    assert str(err_msg.value) == "Padding must be non-negative."
 
 
 def test_hist_2d_padding_nonnegative_single_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[-4])
+    assert str(err_msg.value) == "Padding must be non-negative."
 
 
 def test_hist_2d_padding_nonnegative_two_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, 2])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Padding must be non-negative."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[2, -2])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Padding must be non-negative."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[-1, -1])
+    assert str(err_msg.value) == "Padding must be non-negative."
 
 
 def test_hist_2d_error_checking_types_no_list_weights():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [1, 2], weights=1)
+    desired_msg = "Weights and data need to have the same length."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_error_checking_types_no_strings_weights():
     """Proxy for non-numerical data of any kind."""
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], [1, 2], "ab")
+    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_error_x_y_weights_same_length():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [1, 2], weights=[1, 2, 3])
+    desired_msg = "Weights and data need to have the same length."
+    assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_error_checking_weights_positive():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, -2, 3])
+    assert str(err_msg.value) == "Weights must be non-negative."
+
     # zero is acceptable
     tools.smart_hist_2d([1, 2, 3], [1, 2, 3], weights=[1, 0, 3])  # no error
 
 
 def test_hist_2d_error_checking_smoothing_typing_string():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], smoothing="he")
+    des_msg = "smoothing must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == des_msg
 
 
 def test_hist_2d_error_checking_smoothing_typing_empty_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[])
+    des_msg = "smoothing must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == des_msg
 
 
 def test_hist_2d_error_checking_smoothing_typing_too_long_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[1, 2, 3])
+    des_msg = "smoothing must be either a scalar or two element numeric list"
+    assert str(err_msg.value) == des_msg
 
 
 def test_hist_2d_error_checking_smoothing_nonnegative_scalar():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=-4)
+    assert str(err_msg.value) == "Smoothing must be nonnegative."
 
 
 def test_hist_2d_error_checking_smoothing_nonnegative_single_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-4])
+    assert str(err_msg.value) == "Smoothing must be nonnegative."
 
 
 def test_hist_2d_error_checking_smoothing_nonnegative_two_element_list():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[-1, 2])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Smoothing must be nonnegative."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[2, -2])
-    with pytest.raises(ValueError):
+    assert str(err_msg.value) == "Smoothing must be nonnegative."
+
+    with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], smoothing=[-1, -1])
+    assert str(err_msg.value) == "Smoothing must be nonnegative."
 
 
 # done with error checking. Now test output
@@ -1461,3 +1603,66 @@ def test_hist_2d_smoothing_different_scale_different_results():
     assert central_dens > off_in_x
     assert central_dens > off_in_y
     assert off_in_x > off_in_y  # since at a given distance, x lowers less.
+
+
+# ------------------------------------------------------------------------------
+
+# Testing the padding from smoothing. Full error checking won't be done, since
+# that will be done in the 2D hist function.
+
+# ------------------------------------------------------------------------------
+def test_padding_from_smoothing_error_empty_list():
+    with pytest.raises(ValueError) as err_msg:
+        tools._padding_from_smoothing([])
+    desired_msg = "Smoothing must be a scalar or two element tuple."
+    assert str(err_msg.value) == desired_msg
+
+
+def test_padding_from_smoothing_error_list_too_long():
+    with pytest.raises(ValueError) as err_msg:
+        tools._padding_from_smoothing([1, 2, 3])
+    desired_msg = "Smoothing must be a scalar or two element tuple."
+    assert str(err_msg.value) == desired_msg
+
+
+def test_padding_from_smoothing_error_string():
+    with pytest.raises(TypeError) as err_msg:
+        tools._padding_from_smoothing("ab")
+    desired_msg = "Smoothing must be a numeric type."
+    assert str(err_msg.value) == desired_msg
+
+
+def test_padding_from_smoothing_error_string_array():
+    with pytest.raises(TypeError) as err_msg:
+        tools._padding_from_smoothing(["a", "b"])
+    desired_msg = "Smoothing must be a numeric type."
+    assert str(err_msg.value) == desired_msg
+
+
+def test_padding_from_smoothing_scalar():
+    smoothing = 4
+    padding = tools._padding_from_smoothing(smoothing)
+    assert padding == approx([20, 20])
+
+
+def test_padding_from_smoothing_single_list():
+    smoothing = [4.0]
+    padding = tools._padding_from_smoothing(smoothing)
+    assert padding == approx([20, 20])
+
+
+def test_padding_from_smoothing_multiple_list():
+    smoothing = [3.33, 9.33]
+    true_padding = [16.65, 46.65]
+    test_padding = tools._padding_from_smoothing(smoothing)
+    assert true_padding == approx(test_padding)
+
+
+def test_padding_from_smoothing_error_string_correct():
+    padding = tools._padding_from_smoothing("12")
+    assert padding == approx([5, 10])
+
+
+def test_padding_from_smoothing_error_string_array_correct():
+    padding = tools._padding_from_smoothing(["1", "2"])
+    assert padding == approx([5, 10])

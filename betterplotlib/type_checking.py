@@ -36,6 +36,8 @@ def numeric_list_1d(item, message=""):
         array = np.array(item, dtype="float64")
     except ValueError:  # wrong data type.
         raise TypeError(message)
+    except TypeError:
+        raise TypeError(message)
 
     # then check that it isn't multi-dimensional
     if len(array.shape) > 1:

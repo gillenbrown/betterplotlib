@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def make_ax_dark(minor_ticks=False):
     """Turns an axis into one with a dark background with white gridlines.
 
@@ -643,16 +644,7 @@ def easy_add_text(text, location, **kwargs):
 
 def density_contour(xs, ys, bin_size=None, percent_levels=None,
                     smoothing=0, weights=None, labels=False, **kwargs):
-    """
-
-    :param xs:
-    :param ys:
-    :param bin_size:
-    :param percent_levels:
-    :param smoothing:
-    :param weights:
-    :return:
-    """
+    """ """
     ax = plt.gca(projection='bpl')
     return ax.density_contour(xs, ys, bin_size, percent_levels,
                               smoothing, weights, labels, **kwargs)
@@ -1275,7 +1267,7 @@ def twin_axis(func, axis, new_ticks, label=None):
     return ax.twin_axis(func, axis, new_ticks, label)
 
 
-def shaded_density(xs, ys, bin_size=None, smoothing=None,
+def shaded_density(xs, ys, bin_size=None, smoothing=0,
                    cmap="Greys", weights=None):
     """
     Creates shaded regions showing the density.
