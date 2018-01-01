@@ -876,19 +876,39 @@ class Axes_bpl(Axes):
         # then add the text.
         return self.add_text(x_value, y_value, text, coords="axes", **kwargs)
 
-    def density_contour(self, xs, ys, bin_size=None, percent_levels=None,
-                        smoothing=0, weights=None, labels=False, **kwargs):
-        """ """
-
-        # error checking:
+    def _density_contour_core(self, xs, ys, bin_size=None, percent_levels=None,
+                              smoothing=0, weights=None, labels=False,
+                              filled=False, **kwargs):
+        """
+        :param xs:
+        :param ys:
+        :param bin_size:
+        :param percent_levels:
+        :param smoothing:
+        :param weights:
+        :param labels:
+        :param filled:
+        :param kwargs:
+        :return:
+        """
+        # error check weird error matplotlib has when all x and y data are same.
+        if len(set(xs)) == len(set(ys)) == 1:
+            raise ValueError(
+                "All points are identical. This breaks matplotlib "
+                "contours for some reason. Try other data.")
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
-            raise ValueError("The levels parameter is set by this function.")
+            raise ValueError(
+                "The levels parameter is set by this function. "
+                "Do not pass it in. ")
         # if smoothing is not specified, we still want some padding on the
         # outside so the contours aren't cut off.
         if smoothing == 0:
-            padding = [2 * tools._freedman_diaconis(xs),
-                       2 * tools._freedman_diaconis(ys)]
+            try:
+                padding = [2 * tools._freedman_diaconis(xs),
+                           2 * tools._freedman_diaconis(ys)]
+            except ValueError:  # data length too short, will handle in 2d hist
+                padding = 0
         else:
             padding = tools._padding_from_smoothing(smoothing)
         hist, x_e, y_e = tools.smart_hist_2d(xs, ys, bin_size,
@@ -902,19 +922,26 @@ class Axes_bpl(Axes):
         if percent_levels is None:
             percent_levels = [0.25, 0.5, 0.75, 0.95]
         else:
-            not_list_msg = "percent_levels needs to be a list in " \
-                           "`density_contour`"
+            not_list_msg = "Percent_levels needs to be a numeric list."
             percent_levels = type_checking.numeric_list_1d(percent_levels,
                                                            not_list_msg)
 
         levels = tools.percentile_level(hist.flatten(), percent_levels)
+        # then check that the levels are increasing and without duplicates
+        if len(set(levels)) < len(levels):
+            raise ValueError("The percent levels chosen lead to duplicate "
+                             "levels.\nContour levels must be increasing.")
         kwargs["levels"] = levels
         # then set some parameters
         kwargs.setdefault("linewidths", 2)
         kwargs["zorder"] = 3
 
-        contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
-                                                 **kwargs)
+        if not filled:
+            contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
+                                                     **kwargs)
+        else:
+            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, hist,
+                                                      **kwargs)
 
         if labels:
             # need to order the percent_levels properly (from high to low)
@@ -928,26 +955,32 @@ class Axes_bpl(Axes):
 
         return contours
 
+    def density_contour(self, xs, ys, bin_size=None, percent_levels=None,
+                        smoothing=0, weights=None, labels=False, **kwargs):
+        """ """
+        return self._density_contour_core(xs, ys,
+                                          bin_size=bin_size,
+                                          percent_levels=percent_levels,
+                                          smoothing=smoothing,
+                                          weights=weights,
+                                          labels=labels,
+                                          filled=False,
+                                          **kwargs)
+
     def density_contourf(self, xs, ys, bin_size=None, percent_levels=None,
                          smoothing=0, weights=None, **kwargs):
         """ """
-
-        if "levels" in kwargs:
-            raise ValueError("The levels parameter is set by this function.")
-        x_c, y_c, hist = tools.smart_hist_2d(xs, ys, bin_size,
-                                             padding_x=4 * smoothing,
-                                             padding_y=4 * smoothing,
-                                             weights=weights,
-                                             smoothing=smoothing)
-
-        # then get the levels of the contours
-        if percent_levels is None:
-            percent_levels = [0.25, 0.5, 0.75, 0.95]
-
-        levels = tools._percentile_level(hist.flatten(), percent_levels)
-        kwargs["levels"] = levels
-
-        return super(Axes_bpl, self).contourf(x_c, y_c, hist, **kwargs)
+        # don't let user use the labels param here like they can in contour
+        if "labels" in kwargs:
+            raise ValueError("Filled contours cannot have labels.")
+        return self._density_contour_core(xs, ys,
+                                          bin_size=bin_size,
+                                          percent_levels=percent_levels,
+                                          smoothing=smoothing,
+                                          weights=weights,
+                                          labels=False,
+                                          filled=False,
+                                          **kwargs)
 
     def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
                         min_level=5, num_contours=7, scatter_kwargs=None,

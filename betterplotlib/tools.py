@@ -318,44 +318,44 @@ def _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
 
     All parameters the same as for that function.
     """
-    msg = "{} must be an array in `smart_hist_2D`"
+    msg = "{} must be a numerical array."
     xs = type_checking.numeric_list_1d(xs, msg.format("x"))
     ys = type_checking.numeric_list_1d(ys, msg.format("y"))
     if len(xs) != len(ys):
         raise ValueError("x and y data must be the same length.")
 
     if weights is not None:
-        weights = type_checking.numeric_list_1d(weights, msg.format(weights))
+        weights = type_checking.numeric_list_1d(weights, msg.format("Weights"))
         if len(weights) != len(xs):
             raise ValueError("Weights and data need to have the same length.")
         if not all(weights >= 0):
             raise ValueError("Weights must be non-negative.")
 
     # parse the bin size options, then error check them.
-    two_elt_msg = "{} must be either a scalar or two element numeric list"
+    two_elt_msg = "{} must be either a scalar or two element numeric list."
     try:
         bin_size_x, bin_size_y = _two_item_list(bin_size)
     except ValueError:
-        raise ValueError(two_elt_msg.format("bin_size"))
+        raise ValueError(two_elt_msg.format("Bin_size"))
     if bin_size is not None:
-        type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("bin_size"))
-        type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("bin_size"))
+        type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("Bin_size"))
+        type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("Bin_size"))
 
     # then do the same with the padding
     try:
         padding_x, padding_y = _two_item_list(padding)
     except ValueError:
-        raise ValueError(two_elt_msg.format("padding"))
-    type_checking.numeric_scalar(padding_x, two_elt_msg.format("padding"))
-    type_checking.numeric_scalar(padding_y, two_elt_msg.format("padding"))
+        raise ValueError(two_elt_msg.format("Padding"))
+    type_checking.numeric_scalar(padding_x, two_elt_msg.format("Padding"))
+    type_checking.numeric_scalar(padding_y, two_elt_msg.format("Padding"))
 
     # and lastly with smoothing
     try:
         smoothing_x, smoothing_y = _two_item_list(smoothing)
     except ValueError:
-        raise ValueError(two_elt_msg.format("smoothing"))
-    type_checking.numeric_scalar(smoothing_x, two_elt_msg.format("smoothing"))
-    type_checking.numeric_scalar(smoothing_y, two_elt_msg.format("smoothing"))
+        raise ValueError(two_elt_msg.format("Smoothing"))
+    type_checking.numeric_scalar(smoothing_x, two_elt_msg.format("Smoothing"))
+    type_checking.numeric_scalar(smoothing_y, two_elt_msg.format("Smoothing"))
     # smoothing must be positive, too
     if smoothing_x < 0 or smoothing_y < 0:
         raise ValueError("Smoothing must be nonnegative.")
@@ -553,7 +553,7 @@ def percentile_level(densities, percentages):
     # check tht percentages are in the right range.
     for p in percentages:
         if not 0.0 <= p <= 1.0:
-            raise ValueError("percentages must be between 0 and 1.")
+            raise ValueError("Percentages must be between 0 and 1.")
 
     # the accumulated mass is the cumulative sum (starting from the highest
     # density point). We will get the array of values at each point first.
@@ -640,13 +640,14 @@ def _padding_from_smoothing(smoothing):
     :rtype: list
     """
     # see if what they passed in is the proper shape
+    msg = "Smoothing must be either a scalar or two element numeric list."
     try:
         smoothing_x, smoothing_y = _two_item_list(smoothing)
     except ValueError:
-        raise ValueError("Smoothing must be a scalar or two element tuple.")
+        raise ValueError(msg)
 
     # try convert to float. There is where we do the 5 times the smoothing.
     try:
         return [5 * float(smoothing_x), 5 * float(smoothing_y)]
     except ValueError:
-        raise TypeError("Smoothing must be a numeric type.")
+        raise TypeError(msg)

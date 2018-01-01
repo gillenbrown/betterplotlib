@@ -873,13 +873,13 @@ def test_percentile_level_error_checking_positive_density():
 def test_percentile_level_error_checking_no_negative_percentile():
     with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([1, 2, 3], [-1, 0, 0.5])
-    assert str(err_msg.value) == "percentages must be between 0 and 1."
+    assert str(err_msg.value) == "Percentages must be between 0 and 1."
 
 
 def test_percentile_level_error_checking_no_greater_percent_than_one():
     with pytest.raises(ValueError) as err_msg:
         tools.percentile_level([1, 2, 3], [0, 0.35, 0.7, 1.002])
-    assert str(err_msg.value) == "percentages must be between 0 and 1."
+    assert str(err_msg.value) == "Percentages must be between 0 and 1."
 
 
 def test_percentile_level_error_checking_empty_list():
@@ -1077,7 +1077,7 @@ def test_percentile_level_order():
         assert levels[idx] <= levels[idx + 1]
 
 
-def percentile_level_not_aligned():
+def test_percentile_level_not_aligned():
     """Test what happens when percentages are not aligned well with data."""
     densities = [1, 2, 3]
     assert 2 < tools.percentile_level(densities, 0.01) < 3
@@ -1161,11 +1161,11 @@ def test_hist_2d_error_checking_types_no_strings():
     """Proxy for non-numerical data of any kind."""
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d("a", [1, 2])
-    assert str(err_msg.value) == "x must be an array in `smart_hist_2D`"
+    assert str(err_msg.value) == "x must be a numerical array."
 
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], "a")
-    assert str(err_msg.value) == "y must be an array in `smart_hist_2D`"
+    assert str(err_msg.value) == "y must be a numerical array."
 
 
 def test_hist_2d_error_x_and_y_same_length():
@@ -1178,21 +1178,24 @@ def test_hist_2d_error_x_and_y_same_length():
 def test_hist_2d_bin_size_typing_string():
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size="he")
-    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    desired_msg = "Bin_size must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[])
-    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    desired_msg = "Bin_size must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_too_long():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
-    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    desired_msg = "Bin_size must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1233,21 +1236,21 @@ def test_hist_2d_bin_size_positive_two_element_list():
 def test_hist_2d_padding_typing_string():
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], padding="he")
-    desired_msg = "padding must be either a scalar or two element numeric list"
+    desired_msg = "Padding must be either a scalar or two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_padding_typing_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[])
-    desired_msg = "padding must be either a scalar or two element numeric list"
+    desired_msg = "Padding must be either a scalar or two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_padding_typing_too_long_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], padding=[1, 2, 3])
-    desired_msg = "padding must be either a scalar or two element numeric list"
+    desired_msg = "Padding must be either a scalar or two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1288,7 +1291,8 @@ def test_hist_2d_error_checking_types_no_strings_weights():
     """Proxy for non-numerical data of any kind."""
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], [1, 2], "ab")
-    desired_msg = "bin_size must be either a scalar or two element numeric list"
+    desired_msg = "Bin_size must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1311,21 +1315,21 @@ def test_hist_2d_error_checking_weights_positive():
 def test_hist_2d_error_checking_smoothing_typing_string():
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 3], [2, 3], smoothing="he")
-    des_msg = "smoothing must be either a scalar or two element numeric list"
+    des_msg = "Smoothing must be either a scalar or two element numeric list."
     assert str(err_msg.value) == des_msg
 
 
 def test_hist_2d_error_checking_smoothing_typing_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[])
-    des_msg = "smoothing must be either a scalar or two element numeric list"
+    des_msg = "Smoothing must be either a scalar or two element numeric list."
     assert str(err_msg.value) == des_msg
 
 
 def test_hist_2d_error_checking_smoothing_typing_too_long_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1, 2], [2, 3], smoothing=[1, 2, 3])
-    des_msg = "smoothing must be either a scalar or two element numeric list"
+    des_msg = "Smoothing must be either a scalar or two element numeric list."
     assert str(err_msg.value) == des_msg
 
 
@@ -1369,8 +1373,9 @@ def random_data():
 
 
 def test_hist_2d_bin_size_scalar(random_data):
+    xs, ys = random_data
     bin_size = 2.345
-    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data, bin_size)
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size)
     empirical_x_bin = x_edges[1] - x_edges[0]
     empirical_y_bin = y_edges[1] - y_edges[0]
     assert approx(empirical_x_bin) == bin_size
@@ -1378,8 +1383,9 @@ def test_hist_2d_bin_size_scalar(random_data):
 
 
 def test_hist_2d_bin_size_single_item_list(random_data):
+    xs, ys = random_data
     bin_size = 2.345
-    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data, [bin_size])
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=[bin_size])
     empirical_x_bin = x_edges[1] - x_edges[0]
     empirical_y_bin = y_edges[1] - y_edges[0]
     assert approx(bin_size) == empirical_x_bin
@@ -1387,9 +1393,10 @@ def test_hist_2d_bin_size_single_item_list(random_data):
 
 
 def test_hist_2d_bin_size_separate_x_y(random_data):
+    xs, ys = random_data
     x_bin_size = 2.345
     y_bin_size = 7.347
-    hist, x_edges, y_edges = tools.smart_hist_2d(*random_data,
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
                                                  [x_bin_size, y_bin_size])
     empirical_x_bin = x_edges[1] - x_edges[0]
     empirical_y_bin = y_edges[1] - y_edges[0]
@@ -1614,28 +1621,32 @@ def test_hist_2d_smoothing_different_scale_different_results():
 def test_padding_from_smoothing_error_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools._padding_from_smoothing([])
-    desired_msg = "Smoothing must be a scalar or two element tuple."
+    desired_msg = "Smoothing must be either a scalar or two element " \
+                  "numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_list_too_long():
     with pytest.raises(ValueError) as err_msg:
         tools._padding_from_smoothing([1, 2, 3])
-    desired_msg = "Smoothing must be a scalar or two element tuple."
+    desired_msg = "Smoothing must be either a scalar or two " \
+                  "element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_string():
     with pytest.raises(TypeError) as err_msg:
         tools._padding_from_smoothing("ab")
-    desired_msg = "Smoothing must be a numeric type."
+    desired_msg = "Smoothing must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_string_array():
     with pytest.raises(TypeError) as err_msg:
         tools._padding_from_smoothing(["a", "b"])
-    desired_msg = "Smoothing must be a numeric type."
+    desired_msg = "Smoothing must be either a scalar or " \
+                  "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
