@@ -1,6 +1,7 @@
 import pytest
 from pytest import approx
 import numpy as np
+from matplotlib import path
 from betterplotlib import tools
 
 np.random.seed(19680801)
@@ -1677,3 +1678,45 @@ def test_padding_from_smoothing_error_string_correct():
 def test_padding_from_smoothing_error_string_array_correct():
     padding = tools._padding_from_smoothing(["1", "2"])
     assert padding == approx([5, 10])
+
+
+# ------------------------------------------------------------------------------
+
+# Testing the outer contour level function.
+
+# ------------------------------------------------------------------------------
+def test_outer_contour_single_value():
+    circle = path.Path.circle((0, 0), 1)
+    assert tools._outer_contours([circle]) == [circle]
+
+
+def test_outer_contour_concentric_circles_two():
+    circle_inner = path.Path.circle((0, 0), 1)
+    circle_outer = path.Path.circle((0, 0), 2)
+    circles = [circle_inner, circle_outer]
+    assert tools._outer_contours(circles) == [circle_outer]
+
+
+def test_outer_contour_concentric_circles_many():
+    circle_1 = path.Path.circle((0, 0), 1)
+    circle_2 = path.Path.circle((0, 0), 2)
+    circle_3 = path.Path.circle((0, 0), 3)
+    circle_4 = path.Path.circle((0, 0), 4)
+    circles = [circle_3, circle_4, circle_2, circle_1]
+    assert tools._outer_contours(circles) == [circle_4]
+
+
+def test_outer_contour_few_offset():
+    circle_1 = path.Path.circle((0, 0), 1)
+    circle_2 = path.Path.circle((0, 0), 2)
+    circle_3 = path.Path.circle((7, 0), 3)
+    circle_4 = path.Path.circle((0, 10), 4)
+    circles = [circle_3, circle_4, circle_2, circle_1]
+
+    test_results = tools._outer_contours(circles)
+    true_results = [circle_4, circle_3, circle_2]
+    # can't directly test equality, since order doesn't matter.
+    for circle in true_results:
+        assert circle in test_results
+    assert len(true_results) == len(test_results)
+

@@ -651,3 +651,28 @@ def _padding_from_smoothing(smoothing):
         return [5 * float(smoothing_x), 5 * float(smoothing_y)]
     except ValueError:
         raise TypeError(msg)
+
+
+def _outer_contours(paths):
+    """
+    Find outer polygons among a collection of them.
+
+    :param paths: List of matplotlib path objects that come from contours. These
+                  are assumed to be closed and not overlapping. These will not
+                  be checked, so know what you are pasing in here.
+    :type paths: list of matplotlib.path.Path
+    :return: The outermost contours. There can be multiple of these if they are
+             distinct regions.
+    :rtype: list of matplotlib.path.Path
+    """
+    outer_polygons = []
+    for potential_outer in paths:
+        ever_contained = False
+        # see if any other shapes contain this one.
+        for other_polygon in paths:
+            if other_polygon.contains_path(potential_outer):
+                ever_contained = True
+        # if none other ones contain it, then it's an outer one.
+        if not ever_contained:
+            outer_polygons.append(potential_outer)
+    return outer_polygons

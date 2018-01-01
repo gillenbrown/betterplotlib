@@ -2,7 +2,6 @@ from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 from scipy import optimize
-from scipy import ndimage
 import numpy as np
 import sys
 from matplotlib import __version__
@@ -893,14 +892,12 @@ class Axes_bpl(Axes):
         """
         # error check weird error matplotlib has when all x and y data are same.
         if len(set(xs)) == len(set(ys)) == 1:
-            raise ValueError(
-                "All points are identical. This breaks matplotlib "
-                "contours for some reason. Try other data.")
+            raise ValueError("All points are identical. This breaks matplotlib "
+                             "contours for some reason. Try other data.")
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
-            raise ValueError(
-                "The levels parameter is set by this function. "
-                "Do not pass it in. ")
+            raise ValueError("The levels parameter is set by this function. "
+                             "Do not pass it in. ")
         # if smoothing is not specified, we still want some padding on the
         # outside so the contours aren't cut off.
         if smoothing == 0:
@@ -920,11 +917,13 @@ class Axes_bpl(Axes):
 
         # then get the levels of the contours
         if percent_levels is None:
-            percent_levels = [0.25, 0.5, 0.75, 0.95]
+            percent_levels = [0, 0.25, 0.5, 0.75, 0.95]
         else:
             not_list_msg = "Percent_levels needs to be a numeric list."
             percent_levels = type_checking.numeric_list_1d(percent_levels,
                                                            not_list_msg)
+            # add zero level to have center region full
+            percent_levels = np.insert(percent_levels, 0, 0)
 
         levels = tools.percentile_level(hist.flatten(), percent_levels)
         # then check that the levels are increasing and without duplicates
@@ -932,14 +931,14 @@ class Axes_bpl(Axes):
             raise ValueError("The percent levels chosen lead to duplicate "
                              "levels.\nContour levels must be increasing.")
         kwargs["levels"] = levels
-        # then set some parameters
-        kwargs.setdefault("linewidths", 2)
-        kwargs["zorder"] = 3
 
         if not filled:
+            kwargs.setdefault("zorder", 3)
+            kwargs.setdefault("linewidths", 2)
             contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
                                                      **kwargs)
         else:
+            kwargs.setdefault("zorder", 2)
             contours = super(Axes_bpl, self).contourf(x_cen, y_cen, hist,
                                                       **kwargs)
 
@@ -979,13 +978,13 @@ class Axes_bpl(Axes):
                                           smoothing=smoothing,
                                           weights=weights,
                                           labels=False,
-                                          filled=False,
+                                          filled=True,
                                           **kwargs)
 
-    def contour_scatter(self, xs, ys, fill_cmap="white", bin_size=None, 
-                        min_level=5, num_contours=7, scatter_kwargs=None,
-                        contour_kwargs=None, smoothing=None,
-                        percent_levels=None, weights=None, labels=None):
+    def contour_scatter(self, xs, ys, bin_size=None, percent_levels=None,
+                        smoothing=0, weights=None, labels=False,
+                        fill_cmap="white", scatter_kwargs=None,
+                        contour_kwargs=None, contourf_kwargs=None):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1016,60 +1015,60 @@ class Axes_bpl(Axes):
         :type xs: list
         :param ys: list of y values of your data
         :type ys: list
-        :param fill_cmap: Colormap that will fill the opaque contours. Defaults 
-                          to "white", which is just a solid white fill. You can 
-                          pass any name of a matplotlib colormap, as well as 
-                          some options I have created. "background_grey" gives 
-                          a solid fill that is the same color as the 
-                          make_ax_dark() background. "modified_greys" is a 
-                          colormap that starts at the "background_grey" color, 
-                          then transitions to black. 
+        :param fill_cmap: Colormap that will fill the opaque contours. Defaults
+                          to "white", which is just a solid white fill. You can
+                          pass any name of a matplotlib colormap, as well as
+                          some options I have created. "background_grey" gives
+                          a solid fill that is the same color as the
+                          make_ax_dark() background. "modified_greys" is a
+                          colormap that starts at the "background_grey" color,
+                          then transitions to black.
         :type fill_cmap: str
         :param bin_size: Size of the bins used in the 2D histogram. This is kind
-                         of an arbitraty parameter. The code will guess a 
-                         value for this if none is passed in, but this value 
-                         isn't always good. A smaller value gives noisier 
-                         contours. A value that is too large will lead to 
-                         "chunky" contours. Adjust this until your contours 
+                         of an arbitraty parameter. The code will guess a
+                         value for this if none is passed in, but this value
+                         isn't always good. A smaller value gives noisier
+                         contours. A value that is too large will lead to
+                         "chunky" contours. Adjust this until your contours
                          look good to your eye. That's the best
                          way to pick a value for this parameter. It can be
-                         either a scalar, in which case that will be used for 
+                         either a scalar, in which case that will be used for
                          both x and y. It could also be a two element list, in
-                         which case it will be the bin size for x and y. 
+                         which case it will be the bin size for x and y.
         :type bin_size: float or list
-        :param min_level: This is another arbitrary parameter that determines 
-                          how high the density of points needs to be before 
-                          the outer contour is drawn. The higher the value, 
-                          the more points will be outside the last contour. 
-                          Again, adjust this until it looks good to your eye. 
-                          The default parameter choice will generally be okay, 
-                          though. Also note that if you want to specify the 
+        :param min_level: This is another arbitrary parameter that determines
+                          how high the density of points needs to be before
+                          the outer contour is drawn. The higher the value,
+                          the more points will be outside the last contour.
+                          Again, adjust this until it looks good to your eye.
+                          The default parameter choice will generally be okay,
+                          though. Also note that if you want to specify the
                           levels yourself, use the `levels` keyword.
         :type min_level: int
-        :param num_contours: Number of contour lines to be drawn between the 
-                             lowest and highest density regions. Adjust this 
-                             until the plot looks good to your eye. Also note 
-                             that if you want to specify the levels yourself, 
+        :param num_contours: Number of contour lines to be drawn between the
+                             lowest and highest density regions. Adjust this
+                             until the plot looks good to your eye. Also note
+                             that if you want to specify the levels yourself,
                              use the `levels` keyword.
         :type num_contours: int
-        :param scatter_kwargs: This is a dictionary of keywords that will be 
-                               passed on to the `bpl.scatter()` function. Note 
-                               that this doesn't work like normal kwargs. You 
-                               need to pass in a dictionary. This is because we 
-                               have to separate the kwargs that go to the 
-                               scatter function from the ones that go to the 
-                               ontour function. 
+        :param scatter_kwargs: This is a dictionary of keywords that will be
+                               passed on to the `bpl.scatter()` function. Note
+                               that this doesn't work like normal kwargs. You
+                               need to pass in a dictionary. This is because we
+                               have to separate the kwargs that go to the
+                               scatter function from the ones that go to the
+                               ontour function.
         :type scatter_kwargs: dict
-        :param contour_kwargs: This is a dictionary of keywords that will be 
-                               passed on to the `plt.contour()` function. Note 
-                               that this doesn't work like normal kwargs. You 
-                               need to pass in a dictionary. This is because we 
-                               have to separate the kwargs that go to the 
-                               scatter function from the ones that go to the 
-                               contour function. 
+        :param contour_kwargs: This is a dictionary of keywords that will be
+                               passed on to the `plt.contour()` function. Note
+                               that this doesn't work like normal kwargs. You
+                               need to pass in a dictionary. This is because we
+                               have to separate the kwargs that go to the
+                               scatter function from the ones that go to the
+                               contour function.
         :type contour_kwargs: dict
-        :return: The output of the `contour` call will be returned. This doesn't 
-                 need to be saved, you can use it if you want. 
+        :return: The output of the `contour` call will be returned. This doesn't
+                 need to be saved, you can use it if you want.
 
         Examples
 
@@ -1267,19 +1266,10 @@ class Axes_bpl(Axes):
             scatter_kwargs = dict()
         if contour_kwargs is None:
             contour_kwargs = dict()
-        # first get the density info we need to make contours
-        if smoothing is not None:
-            x_cen, y_cen, pre_hist = tools.smart_hist_2d(xs, ys,
-                                                         bin_size,
-                                                         padding_x=4*smoothing,
-                                                         padding_y=4*smoothing,
-                                                         weights=weights)
-        else:
-            x_cen, y_cen, pre_hist = tools.smart_hist_2d(xs, ys,
-                                                         bin_size,
-                                                         weights=weights)
+        if contourf_kwargs is None:
+            contourf_kwargs = dict()
         
-        # then determine what our colormap for the fill will be
+        # determine what our colormap for the fill will be
         if fill_cmap == "white":
             # colormap with one color: white
             fill_cmap = mpl_colors.ListedColormap(colors="white", N=1)
@@ -1288,52 +1278,26 @@ class Axes_bpl(Axes):
             fill_cmap = mpl_colors.ListedColormap(colors=colors.light_gray, N=1)
         elif fill_cmap == "modified_greys":
             # make one that transitions from light grey to black
-            these_colors = [colors.light_gray, "black"]
-            fill_cmap = mpl_colors.LinearSegmentedColormap.from_list("mod_gray", 
-                                                                     these_colors)
+            new_colors = [colors.light_gray, "black"]
+            fill_cmap = mpl_colors.LinearSegmentedColormap.from_list("mod_gray",
+                                                                     new_colors)
         
         # then we can set a bunch of default parameters for the contours
         contour_kwargs.setdefault("linewidths", 2)
-        contour_kwargs["zorder"] = 3
+        contour_kwargs.setdefault("zorder", 3)
         if "colors" not in contour_kwargs:
             contour_kwargs.setdefault("cmap", "viridis")
-
-        # smooth if desired:
-        if smoothing is not None:
-            hist = ndimage.gaussian_filter(pre_hist, smoothing / bin_size)
-        else:
-            hist = pre_hist
-
-        # We then want to find the correct heights for the levels of the contours
-        max_hist = max(hist.flatten())
-        max_hist *= 1.0000001  # to get just above the current highest point.
-        if percent_levels is None:
-            if max_hist < min_level:
-                raise ValueError(
-                    "Min_level needs to be lower. This will be fixed.")
-                # TODO: actually fix this!
-            levels = np.linspace(min_level, max_hist, num_contours + 1)
-            # we add one to the number of contours because we have the highest
-            # one at the highest point, so it won't be shown.
-        else:
-            levels = tools.interval_level_2d(hist.flatten(), percent_levels)
-        contour_kwargs["levels"] = levels
         
         # we can then go ahead and plot the filled contours, then the contour lines
         if fill_cmap is not None:
-            super(Axes_bpl, self).contourf(x_cen, y_cen, hist, levels=levels,
-                                           cmap=fill_cmap, zorder=2)
-        contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
-                                                 **contour_kwargs)
-
-        # label the levels if desired
-        if labels is not None:
-            label_percents = percent_levels + [0]  # needed since there is
-            # one hidden coutour at the very center.
-            label_dict = {l:"{:.2f}".format(percent) for l, percent
-                          in zip(levels, label_percents)}
-
-            contours.clabel(fmt=label_dict, fontsize=16, use_clabeltext=True)
+            self.density_contourf(xs, ys, bin_size=bin_size,
+                                  percent_levels=percent_levels,
+                                  smoothing=smoothing, weights=weights,
+                                  cmap=fill_cmap, **contourf_kwargs)
+        contours = self.density_contour(xs, ys, bin_size=bin_size,
+                                        percent_levels=percent_levels,
+                                        smoothing=smoothing, weights=weights,
+                                        labels=labels, **contour_kwargs)
 
         # we saved the output from the contour, since it has information about the
         # shape of the contours we can use to figure out which points are outside
@@ -1343,10 +1307,18 @@ class Axes_bpl(Axes):
         # plot these points
         if scatter_kwargs.get("s") != 0:
             shapes_in = np.zeros(len(xs))
-            for line in contours.collections[0].get_segments():
+            polygons = []
+            for line in contours.allsegs:
+                if len(line) == 0:  # very inside point
+                    continue
                 # make a closed shape with the line
-                polygon = path.Path(line, closed=True)
-                # then figure out which points are inside it
+                for item in line:
+                    polygons.append(path.Path(item, closed=True))
+            # then get the outer ones
+            outer_polygons = tools._outer_contours(polygons)
+
+            # then figure out which points are inside it
+            for polygon in outer_polygons:
                 shapes_in += polygon.contains_points(list(zip(xs, ys)))
 
             # the ones that need to be hidden are inside an odd number of
@@ -1366,7 +1338,7 @@ class Axes_bpl(Axes):
             scatter_kwargs.setdefault("s", 10)
             if "c" not in scatter_kwargs:
                 scatter_kwargs.setdefault("color", colors.almost_black)
-            scatter_kwargs["zorder"] = 1
+            scatter_kwargs.setdefault("zorder", 1)
             self.scatter(outside_xs, outside_ys, **scatter_kwargs)
 
         return contours
