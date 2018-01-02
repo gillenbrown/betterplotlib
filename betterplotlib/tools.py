@@ -475,7 +475,8 @@ def _percentile_level_warning_uncertain(percent):
     :return: None, but raises the warning
     """
     warning_msg = "Location of {:.2f}% is uncertain by more than 1%. \n" \
-                  "Consider adding more data."
+                  "Consider adding more data, smoothing, or " \
+                  "increasing the bin size."
     warnings.warn(warning_msg.format(percent * 100), RuntimeWarning)
 
 

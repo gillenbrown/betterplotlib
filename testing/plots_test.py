@@ -596,7 +596,7 @@ def test_contour_scatter_error_checking_no_levels_contourf():
     assert str(err_msg.value) == levels_contour_err_msg
 
 
-# def test_contour_scatter_scatter_outside_contours():
+# def test_contour_scatter_scatter_outside_contours_image():
 #     xs = np.concatenate([xs_normal_10000, xs_normal_10000 + 5])
 #     ys = np.concatenate([ys_normal_10000, ys_normal_10000 + 5])
 #
@@ -606,6 +606,117 @@ def test_contour_scatter_error_checking_no_levels_contourf():
 #                        scatter_kwargs={"s":20, "zorder":3})
 #     ax.equal_scale()
 #     assert image_similarity_full(fig, "contour_scatter_outside_contours.png")
+
+# def test_contour_scatter_multiple_holes_image():
+#     rad1 = np.random.normal(10, 0.75, 10000)
+#     theta1 = np.random.uniform(0, 2 * np.pi, 10000)
+#     x1 = [r * np.cos(t) for r, t in zip(rad1, theta1)]
+#     y1 = [r * np.sin(t) for r, t in zip(rad1, theta1)]
+#
+#     rad2 = np.random.normal(20, 0.75, 20000)
+#     theta2 = np.random.uniform(0, 2 * np.pi, 20000)
+#     x2 = [r * np.cos(t) for r, t in zip(rad2, theta2)]
+#     y2 = [r * np.sin(t) for r, t in zip(rad2, theta2)]
+#
+#     rad3 = np.random.normal(12, 0.75, 12000)
+#     theta3 = np.random.uniform(0, 2 * np.pi, 12000)
+#     x3 = [r * np.cos(t) + 10 for r, t in zip(rad3, theta3)]
+#     y3 = [r * np.sin(t) + 10 for r, t in zip(rad3, theta3)]
+#
+#     x4 = np.random.uniform(-20, 20, 3500)
+#     y4 = x4 + np.random.normal(0, 0.5, 3500)
+#
+#     y5 = y4 * (-1)
+#
+#     xs = np.concatenate([x1, x2, x3, x4, x4])
+#     ys = np.concatenate([y1, y2, y3, y4, y5])
+#
+#     fig, ax = bpl.subplots()
+#
+#     ax.contour_scatter(xs, ys, smoothing=0.5, bin_size=0.5)
+#     ax.equal_scale()
+#
+#     assert image_similarity_full(fig, "contour_scatter_multiple_holes.png")
+
+# def test_contour_scatter_multiple_keywords_image():
+#     xs = np.concatenate([np.random.normal(0, 1, 10000),
+#                          np.random.normal(3, 1, 10000),
+#                          np.random.normal(0, 1, 10000)])
+#     ys = np.concatenate([np.random.normal(0, 1, 10000),
+#                          np.random.normal(3, 1, 10000),
+#                          np.random.normal(3, 1, 10000)])
+#
+#     fig, axs = bpl.subplots(nrows=2, ncols=2)
+#     [ax1, ax2], [ax3, ax4] = axs
+#
+#     percent_levels = [0.99, 0.7, 0.3]
+#     smoothing = 0.2
+#     bin_size = 0.1
+#
+#     ax1.contour_scatter(xs, ys,
+#                         bin_size=bin_size,
+#                         percent_levels=percent_levels,
+#                         smoothing=smoothing,
+#                         fill_cmap="background_grey",
+#                         contour_kwargs={"cmap": "magma"},
+#                         scatter_kwargs={"s": 10,
+#                                         "c": bpl.almost_black})
+#     ax1.make_ax_dark()
+#
+#     # or we can choose our own `fill_cmap`
+#     ax2.contour_scatter(xs, ys,
+#                         bin_size=bin_size,
+#                         smoothing=smoothing,
+#                         fill_cmap="viridis",
+#                         percent_levels=percent_levels,
+#                         contour_kwargs={"linewidths": 1,
+#                                         "colors":     "white"},
+#                         scatter_kwargs={"s":     50,
+#                                         "c":     bpl.color_cycle[3],
+#                                         "alpha": 0.3})
+#
+#     # There are also my colormaps that work with the dark axes
+#     ax3.contour_scatter(xs, ys,
+#                         bin_size=bin_size,
+#                         smoothing=smoothing,
+#                         fill_cmap="modified_greys",
+#                         percent_levels=percent_levels,
+#                         scatter_kwargs={"c": bpl.color_cycle[0]},
+#                         contour_kwargs={"linewidths": [2, 0, 0, 0, 0, 0, 0],
+#                                         "colors":     bpl.almost_black})
+#     ax3.make_ax_dark()
+#
+#     # the default `fill_cmap` is white.
+#     new_linestyles = ["solid", "dashed", "dashed", "dashed"]
+#     ax4.contour_scatter(xs, ys,
+#                         bin_size=bin_size,
+#                         smoothing=smoothing,
+#                         percent_levels=percent_levels,
+#                         scatter_kwargs={"marker":    "^",
+#                                         "linewidth": 0.2,
+#                                         "c":         bpl.color_cycle[1],
+#                                         "s":         20},
+#                         contour_kwargs={"linestyles": new_linestyles,
+#                                         "colors":     bpl.almost_black})
+#
+#     assert image_similarity_full(fig, "contour_scatter_multi_kwargs.png")
+
+
+# def test_contour_scatter_labels_and_different_smoothing():
+#     xs = [1, 2, 3, 4]
+#     ys = [1, 2, 3, 4]
+#     weights = [1, 2, 3, 4]
+#     fig, ax = bpl.subplots()
+#     ax.contour_scatter(xs, ys,
+#                        weights=weights,
+#                        bin_size=0.01,
+#                        smoothing=[0.8, 0.3],
+#                        fill_cmap="Blues",
+#                        labels=True,
+#                        contour_kwargs={"colors": "k"})
+#     ax.equal_scale()
+#
+#     assert image_similarity_full(fig, "contour_scatter_labels_smoothing.png")
 
 
 # ------------------------------------------------------------------------------
