@@ -493,7 +493,7 @@ def test_centers_one_length_edges():
 
 
 def test_centers_two_length():
-    assert tools.bin_centers([1, 2]) == approx(1.5)
+    assert tools.bin_centers([1, 2]) == approx([1.5])
 
 
 def test_centers_simple_equal_spacing():
@@ -903,7 +903,7 @@ def test_percentile_level_list_vs_scalar_percentile():
     level = 0.6
     scalar_value = tools.percentile_level(densities, level)
     list_value = tools.percentile_level(densities, [level])
-    assert approx(scalar_value) == approx(list_value)
+    assert [scalar_value] == approx(list_value)
 
 
 def test_percentile_level_zero_percentile():

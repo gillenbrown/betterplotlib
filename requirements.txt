@@ -4,6 +4,6 @@ nbsphinx
 ipykernel
 scipy
 numpy
-pytest
+pytest>=3.3
 cycler
 imageio

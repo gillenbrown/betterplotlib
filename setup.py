@@ -19,6 +19,10 @@ setup(
 
 	packages=find_packages(exclude=["docs"]),
 
-	install_requires=["matplotlib",  "numpy",  "palettable"]
+	install_requires=["matplotlib",
+					  "numpy",
+					  "palettable",
+					  "pytest>=3.3",
+					  "imageio"]
 
 	)
