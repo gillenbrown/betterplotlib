@@ -1,6 +1,6 @@
 # my testing
 testing_ignore/
-testing/temporary_images/
+testing/temporary_images/*.png
 
 # Pycharm stuff
 .idea/
