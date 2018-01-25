@@ -891,9 +891,10 @@ class Axes_bpl(Axes):
         :return:
         """
         # error check weird error matplotlib has when all x and y data are same.
-        if len(set(xs)) == len(set(ys)) == 1:
+        if len(set(xs)) == len(set(ys)) == 1 and smoothing == 0:
             raise ValueError("All points are identical. This breaks matplotlib "
-                             "contours for some reason. Try other data.")
+                             "contours for some reason. "
+                             "Try other data, or smooth.")
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
             raise ValueError("The levels parameter is set by this function. "

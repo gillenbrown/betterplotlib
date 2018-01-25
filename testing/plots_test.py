@@ -91,7 +91,7 @@ percent_levels_range_msg = "Percentages must be between 0 and 1."
 colormap_msg_part = "is not recognized. Possible values are: Accent"
 
 data_not_all_same_msg = "All points are identical. This breaks matplotlib " \
-                        "contours for some reason. Try other data."
+                        "contours for some reason. Try other data, or smooth."
 
 levels_contour_err_msg = "The levels parameter is set by this function. " \
                          "Do not pass it in. "
@@ -443,6 +443,13 @@ def test_density_contour_error_checking_data_not_all_same():
         ax.density_contour(xs, ys, bin_size=0.1, percent_levels=0.5)
     assert str(err_msg.value) == data_not_all_same_msg
 
+def test_density_contour_error_checking_data_not_all_same_smoothing_works():
+    xs = [1, 1, 1, 1]
+    ys = [4, 4, 4, 4]
+    fig, ax = bpl.subplots()
+    ax.density_contour(xs, ys, bin_size=0.1, percent_levels=0.5,
+                           smoothing=1.0)
+    # no error
 
 def test_density_contour_error_checking_data_no_variation_needs_bin_size():
     xs = [1, 2, 2, 2, 2, 2, 2, 3]
