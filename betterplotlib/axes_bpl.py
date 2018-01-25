@@ -2,6 +2,7 @@ from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 from scipy import optimize
+from scipy import ndimage
 import numpy as np
 import sys
 from matplotlib import __version__
@@ -1445,6 +1446,86 @@ class Axes_bpl(Axes):
                 scatter_kwargs.setdefault("color", colors.almost_black)
             scatter_kwargs.setdefault("zorder", 1)
             self.scatter(outside_xs, outside_ys, **scatter_kwargs)
+
+        return contours
+
+    def contour_all(self, xs, ys, x_smoothing, y_smoothing, bin_size=None,
+                    percent_levels=None, weights=None, labels=False,
+                    filled=False, **kwargs):
+        # TEST ME, TEST ME, TEST ME
+
+        # levels is set by this function, so it can't be in there
+        if "levels" in kwargs:
+            raise ValueError("The levels parameter is set by this function. "
+                             "Do not pass it in. ")
+        # if smoothing is not specified, we still want some padding on the
+        # outside so the contours aren't cut off.
+        padding = tools._padding_from_smoothing([max(x_smoothing),
+                                                 max(y_smoothing)])
+
+        # do a bunch of histograms
+        # then we can go ahead and make the bin edges using this data
+        bin_edges = [tools.make_bins(xs, bin_size, padding[0]),
+                     tools.make_bins(ys, bin_size, padding[1])]
+
+        # We can then use the bins to create the histogram
+        full_hist = None
+        for x, y, x_s, y_s, w in zip(xs, ys, x_smoothing, y_smoothing, weights):
+            this_hist, x_edges, y_edges = np.histogram2d([x], [y], bin_edges,
+                                                         weights=[w])
+
+            kernel_x = x_s / bin_size
+            kernel_y = y_s / bin_size
+            this_hist = ndimage.gaussian_filter(this_hist, [kernel_x, kernel_y])
+
+            if full_hist is None:
+                full_hist = this_hist
+            else:
+                full_hist += this_hist
+
+        # we need to transpose the histogram to get it to line up with the x, y
+        # used in other plotting functions.
+        full_hist = full_hist.transpose()
+
+        x_cen = tools.bin_centers(x_edges)
+        y_cen = tools.bin_centers(y_edges)
+
+        # then get the levels of the contours
+        if percent_levels is None:
+            percent_levels = [0, 0.25, 0.5, 0.75, 0.95]
+        else:
+            not_list_msg = "Percent_levels needs to be a numeric list."
+            percent_levels = type_checking.numeric_list_1d(percent_levels,
+                                                           not_list_msg)
+            # add zero level to have center region full
+            percent_levels = np.insert(percent_levels, 0, 0)
+
+        levels = tools.percentile_level(full_hist.flatten(), percent_levels)
+        # then check that the levels are increasing and without duplicates
+        if len(set(levels)) < len(levels):
+            raise ValueError("The percent levels chosen lead to duplicate "
+                             "levels.\nContour levels must be increasing.")
+        kwargs["levels"] = levels
+
+        if not filled:
+            kwargs.setdefault("zorder", 3)
+            kwargs.setdefault("linewidths", 2)
+            contours = super(Axes_bpl, self).contour(x_cen, y_cen, full_hist,
+                                                     **kwargs)
+        else:
+            kwargs.setdefault("zorder", 2)
+            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, full_hist,
+                                                      **kwargs)
+
+        if labels:
+            # need to order the percent_levels properly (from high to low)
+            percent_levels = sorted(percent_levels)[::-1]
+            label_percents = percent_levels + [0]
+            # needed since there is one hidden coutour at the very center.
+            label_dict = {l: "{:.1f}%".format(percent*100) for l, percent
+                          in zip(levels, label_percents)}
+
+            self.clabel(contours, fmt=label_dict, fontsize=16)
 
         return contours
 
