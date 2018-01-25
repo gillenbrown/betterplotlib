@@ -1460,8 +1460,7 @@ class Axes_bpl(Axes):
                              "Do not pass it in. ")
         # if smoothing is not specified, we still want some padding on the
         # outside so the contours aren't cut off.
-        padding = tools._padding_from_smoothing([max(x_smoothing),
-                                                 max(y_smoothing)])
+        padding = [0.5, 0.5]
 
         # do a bunch of histograms
         # then we can go ahead and make the bin edges using this data
