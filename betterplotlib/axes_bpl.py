@@ -2,7 +2,7 @@ from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path
 from scipy import optimize
-from scipy import ndimage
+from astropy import convolution
 import numpy as np
 import sys
 from matplotlib import __version__
@@ -1450,8 +1450,8 @@ class Axes_bpl(Axes):
         return contours
 
     def contour_all(self, xs, ys, x_smoothing, y_smoothing, bin_size=None,
-                    percent_levels=None, weights=None, labels=False,
-                    filled=False, **kwargs):
+                    percent_levels=None, weights=None, angles=None,
+                    labels=False, filled=False, **kwargs):
         # TEST ME, TEST ME, TEST ME
 
         # levels is set by this function, so it can't be in there
@@ -1469,22 +1469,21 @@ class Axes_bpl(Axes):
 
         # We can then use the bins to create the histogram
         full_hist = None
-        for x, y, x_s, y_s, w in zip(xs, ys, x_smoothing, y_smoothing, weights):
+        for x, y, x_s, y_s, a, w in zip(xs, ys, x_smoothing, y_smoothing,
+                                        angles, weights):
             this_hist, x_edges, y_edges = np.histogram2d([x], [y], bin_edges,
                                                          weights=[w])
 
             kernel_x = x_s / bin_size
             kernel_y = y_s / bin_size
-            this_hist = ndimage.gaussian_filter(this_hist, [kernel_x, kernel_y])
+            kernel = convolution.Gaussian2DKernel(kernel_x, kernel_y, a)
+            # the transpose is needed to make it consistent with real x/y
+            this_hist = convolution.convolve(this_hist.transpose(), kernel)
 
             if full_hist is None:
                 full_hist = this_hist
             else:
                 full_hist += this_hist
-
-        # we need to transpose the histogram to get it to line up with the x, y
-        # used in other plotting functions.
-        full_hist = full_hist.transpose()
 
         x_cen = tools.bin_centers(x_edges)
         y_cen = tools.bin_centers(y_edges)
