@@ -24,12 +24,10 @@ def _common_style():
     mpl.rcParams['ytick.major.size'] = 5.0
     mpl.rcParams['ytick.minor.size'] = 2.5
 
-    # the matplotlib 2.0 colors are fine, but the old ones aren't.
-    if mpl.__version__[0] == "1":
-        # I like my own color cycle based on one of the Tableu sets.
-        mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
-        # change the colormap while I'm at it.
-        mpl.rcParams['image.cmap'] = 'viridis'
+    # I like my own color cycle
+    mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
+    # change the colormap while I'm at it.
+    mpl.rcParams['image.cmap'] = 'viridis'
 
 
 def _set_font_settings(font="Avenir"):
