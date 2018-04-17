@@ -1469,6 +1469,8 @@ class Axes_bpl(Axes):
 
         # We can then use the bins to create the histogram
         full_hist = None
+        if angles is None:
+            angles = np.zeros(len(xs))
         for x, y, x_s, y_s, a, w in zip(xs, ys, x_smoothing, y_smoothing,
                                         angles, weights):
             this_hist, x_edges, y_edges = np.histogram2d([x], [y], bin_edges,
