@@ -1,4 +1,4 @@
-from palettable.tableau import Tableau_10
+import palettable
 
 almost_black = '#262626'
 light_gray = '#E5E5E5'
@@ -13,4 +13,4 @@ steel_blue = '#3F5D7D'
 parks_canada_heritage_green = '#284734'
 pchg = parks_canada_heritage_green  # alias
 
-color_cycle = Tableau_10.hex_colors
+color_cycle = palettable.cartocolors.qualitative.Pastel_10.hex_colors
