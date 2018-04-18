@@ -13,4 +13,15 @@ steel_blue = '#3F5D7D'
 parks_canada_heritage_green = '#284734'
 pchg = parks_canada_heritage_green  # alias
 
-color_cycle = palettable.cartocolors.qualitative.Pastel_10.hex_colors
+color_cycle_map = palettable.cartocolors.qualitative.Pastel_10.hex_colors
+color_cycle = [color_cycle_map[5],
+               color_cycle_map[4],
+               color_cycle_map[6],
+               color_cycle_map[2],
+               color_cycle_map[3],
+               color_cycle_map[1],
+               color_cycle_map[0],
+               color_cycle_map[8],
+               color_cycle_map[9],
+               color_cycle_map[7]
+              ]
