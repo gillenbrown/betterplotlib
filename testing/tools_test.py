@@ -771,7 +771,13 @@ def test_make_bins_larger_dataset_max(bin_size):
 def test_make_bins_larger_dataset_zero_in_bins(bin_size):
     data = np.random.normal(0, 1, 1000)
     bins = tools.make_bins(data, bin_size=bin_size)
-    assert approx(0.0) in bins
+    # want to check that zero is in the list, but we can't do that with the
+    # approx syntax nicely. We instead check if any item is close.
+    in_bins = False
+    for item in bins:
+        if approx(0.0) == item:
+            in_bins = True
+    assert in_bins  # true if zero is in, false otherwise
 
 
 @pytest.mark.parametrize("padding", [0, 23.4])
