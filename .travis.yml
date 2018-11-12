@@ -5,8 +5,8 @@ python:
   - "3.6"
   - "3.7"
 env:
-  matplotlib=1
-  matplotlib=2
+  - matplotlib=1
+  - matplotlib=2
 # command to install dependencies
 install:
   - pip install -r requirements.txt
