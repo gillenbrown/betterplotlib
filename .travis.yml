@@ -5,8 +5,11 @@ python:
   - "3.6"
   - "3.7"
 env:
-  - matplotlib=1.*
-  - matplotlib=2.*
+  global:
+    - MPLBACKEND=Agg
+  matrix:
+    - matplotlib=1.*
+    - matplotlib=2.*
 # command to install dependencies
 install:
   - pip install matplotlib==$matplotlib
