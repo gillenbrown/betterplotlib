@@ -9,8 +9,8 @@ env:
   - matplotlib=2
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
-  - python setup.py install
+  - pip install -r requirements.txt -q matplotlib=$matplotlib
+  - python setup.py install  # needed to import itself
 # command to run tests
 script:
   - pytest
