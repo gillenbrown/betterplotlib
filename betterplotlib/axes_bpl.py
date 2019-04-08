@@ -2003,3 +2003,29 @@ class Axes_bpl(Axes):
 
         return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist,
                                                 cmap=cmap)
+
+    def format_labels(self, axis, labels):
+        if axis == "x":
+            get_ticks = self.get_xticks
+            set_ticklabels = self.set_xticklabels
+        elif axis == "y":
+            get_ticks = self.get_yticks
+            set_ticklabels = self.set_yticklabels
+        else:
+            raise ValueError("Axis must be x or y.")
+
+        labels = np.array(labels)
+        for minor in [True, False]:
+            existing = get_ticks(minor=minor)
+            new_labels = []
+            for value in existing:
+                if np.any(np.isclose(labels, value)):
+                    new_labels.append("{:g}".format(value))
+
+                else:
+                    new_labels.append("")
+
+            set_ticklabels(new_labels, minor=minor)
+        # TODO: don't restrict it to labels that already exist
+        # TODO: maybe do the string formatting better
+        # TODO: test this more thoroughly
