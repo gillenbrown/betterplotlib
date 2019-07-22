@@ -11,7 +11,7 @@ from . import colors
 from . import tools
 from . import type_checking
 
-mpl_2 = __version__[0] == "2"
+mpl_1 = __version__[0] == "1"
 
 class Axes_bpl(Axes):
     
@@ -45,7 +45,7 @@ class Axes_bpl(Axes):
 
 
         """
-        if mpl_2:
+        if not mpl_1:
             self.set_facecolor(colors.light_gray)
         else:
             self.set_axis_bgcolor(colors.light_gray)
@@ -238,7 +238,7 @@ class Axes_bpl(Axes):
         # already exist, but won't overwrite anything.
         # first set the edge color for the points
         # only do this for large datasets in mpl 1.x
-        if not mpl_2 and len(args[0]) > 30:
+        if mpl_1 and len(args[0]) > 30:
             kwargs.setdefault('linewidth', 0.25)
             # we also need to set the edge color of the markers
             # edgecolor is a weird case, since it shouldn't be set if the user
@@ -673,7 +673,7 @@ class Axes_bpl(Axes):
             # turn the background into whatever color it needs to be
             frame = leg.get_frame()
             frame.set_linewidth(linewidth)
-            if not mpl_2:
+            if mpl_1:
                 frame.set_alpha(0.6)
 
         return leg
