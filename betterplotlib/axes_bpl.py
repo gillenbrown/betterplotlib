@@ -385,9 +385,15 @@ class Axes_bpl(Axes):
                              "used together. Use `bins` if you want to "
                              "pass your own bins, or use `bin_size` to "
                              "have the code determine its own bins. ")
-        kwargs.setdefault("bin_size", tools.rounded_bin_width(args[0]))
-        kwargs.setdefault("bins", tools._binning(min(args[0]), max(args[0]),
-                                                 kwargs.pop("bin_size")))
+        # the setdefault function calls the second argument no matter what
+        # This is a problem if the user's data has no IQR, since the
+        # rounded bin width function will raise an error. We'll do the check
+        # in a less elegant way
+        if "bins" not in kwargs:
+            if "bin_size" not in kwargs:
+                kwargs["bin_size"] = tools.rounded_bin_width(args[0])
+            kwargs["bins"] = tools._binning(min(args[0]), max(args[0]),
+                                            kwargs.pop("bin_size"))
 
         # plot the histogram, and keep the results
         return super(Axes_bpl, self).hist(*args, **kwargs)
