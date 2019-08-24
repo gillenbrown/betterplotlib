@@ -1819,7 +1819,8 @@ class Axes_bpl(Axes):
 
         return new_ax
 
-    def twin_axis(self, func, axis, new_ticks, label=None):
+    def twin_axis(self, axis, new_ticks, label, old_to_new_func=None,
+                  new_to_old_func=None):
         """
         Create a twin axis, where the new axis values are an arbitrary function
         of the old values.
@@ -1847,12 +1848,42 @@ class Axes_bpl(Axes):
             fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
             ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
             ax.add_labels("x", "y")
-            ax.twin_axis(square, "y", [0, 10, 30, 60, 100], r"$y^2$")
-            ax.twin_axis(cubed,"x", [0, 10, 100, 400, 1000], r"$x^3$")
+            ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$", square)
+            ax.twin_axis("x", [0, 10, 100, 400, 1000], "$x^3$", cubed)
 
         Note that we had to be careful with floating point errors when one of
         the markers we want is exactly on the edge. Make the borders slightly
         larger to ensure that all labels fit on the plot.
+
+        There are two ways to give the funtion that transforms the values from
+        one axis to the other. The parameter `old_to_new_func` (used as the
+        last parameter in the plot above) takes values on the original axis and
+        transforms them to values on the newly created axis. However, the
+        parameter `new_to_old_func` does the inverse, taking values on the
+        new axis and transforming them to the currently existing one. Only one
+        of these two parameters can be provided. Identical plots can be created
+        with either function, but due to specifics of the implementation, using
+        the `new_to_old_func` parameter is slightly more computationally
+        efficient. Here's an example of an identical plot to the first created
+        with `new_to_old_func` instead.
+
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            bpl.presentation_style()
+
+            def cube_root(x):
+                return x**(1.0/3.0)
+
+            fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
+            ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
+            ax.add_labels("x", "y")
+            ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$",
+                         new_to_old_func=np.sqrt)
+            ax.twin_axis("x", [0, 10, 100, 400, 1000], "$x^3$",
+                         new_to_old_func=cube_root)
 
         This function will ignore values for the ticks that are outside the
         limits of the plot. The following plot isn't the most useful, since
@@ -1874,20 +1905,31 @@ class Axes_bpl(Axes):
             ax.set_yscale("log")
             ax.add_labels("x", "y")
             # extraneous values are ignored.
-            ax.twin_axis(np.log10, "x", [-1, 0, 1, 2, 3, 4, 5], "log(x)")
-            ax.twin_axis(np.log10, "y", [-1, 0, 1, 2, 3, 4, 5], "log(y)")
+            ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
+            ax.twin_axis("y", [-1, 0, 1, 2, 3, 4, 5], "log(y)", np.log10)
 
-        :param func: Function that transforms values from the original axis
-                     into values that will be marked on the axis that will
-                     be created here.
         :param axis: Whether the new axis labels will be on the "x" or "y" axis.
                      If "x" is chosen this will place the markers on the top
                      botder of the plot, while "y" will place the values on the
                      left border of the plot. "x" and "y" are the only
                      allowed values.
+        :type axis: str
         :param new_ticks: List of of locations (in the new data values) to place
                           ticks. Any values outside the range of the plot
                           will be ignored.
+        :type new_ticks: list, np.ndarray
+        :param label: The label given to the newly created axis.
+        :type label: str
+        :param old_to_new_func: Function that takes values on the original axis
+                                and transforms them to corresponding values
+                                on the soon-to-be created axis. Either this
+                                parameter or `new_to_old_func` can be used, but
+                                not both.
+        :param new_to_old_func: Function that takes values on the
+                                soon-to-be-created axis and transforms them to
+                                corresponding values on the original axis.
+                                Either this parameter or `old_to_new_func` can
+                                be used, but not both.
         :return: New axis object that was created, containing the newly
                  created labels.
         """
@@ -1904,9 +1946,15 @@ class Axes_bpl(Axes):
         # implementation details: The data values for the old axes will be used
         # as the data values for the new scaled axis. This ensures that they
         # will line up with each other. However, we will set the label text
-        # to be the values of func(x). The user will pass in the values of
-        # func(x), so we have to invert this to find the values of x where we
-        # will set the labels. This can be done with scipy.
+        # to be the values the user passes in.
+
+        if old_to_new_func is None and new_to_old_func is None:
+            raise ValueError("Either `old_to_new_func` or `new_to_old_func` " 
+                             "must be provided.")
+        if old_to_new_func is not None and new_to_old_func is not None:
+            raise ValueError("Don't provide both `old_to_new_func` and "
+                             "`new_to_old_func`.\nUsing `new_to_old_func` is "
+                             "more efficient, so provide only that.")
 
         # depending on which axis the user wants to use, we have to get
         # different things.
@@ -1944,18 +1992,31 @@ class Axes_bpl(Axes):
         # old values
         tick_locs_in_old = []
         new_ticks_good = []
-        for new_value in new_ticks:
-            # define a function to minimize so scipy can work.
-            def minimize(x):
-                return abs(func(x) - new_value)
-
-            # ignore numpy warnings here, everything is fine.
-            with np.errstate(all='ignore'):
-                old_data_loc = optimize.minimize_scalar(minimize).x
-                # then check if it's within the correct values
+        if new_to_old_func is not None:
+            for new_value in new_ticks:
+                # we can directly use the function to go from the new ticks to
+                # the values on the old axis that correspond
+                old_data_loc = new_to_old_func(new_value)
+                # then check if it's within the original axis range
                 if old_min <= old_data_loc <= old_max:
                     tick_locs_in_old.append(old_data_loc)
                     new_ticks_good.append(new_value)
+        else:
+            for new_value in new_ticks:
+                # determine the value on the original axis corresponding to
+                # each tick. Since we have the function transforming the old
+                # ticks to the new ones, we have to invert it
+                # define a function to minimize so scipy can work.
+                def minimize(x):
+                    return abs(old_to_new_func(x) - new_value)
+
+                # ignore numpy warnings here, everything is fine.
+                with np.errstate(all='ignore'):
+                    old_data_loc = optimize.minimize_scalar(minimize).x
+                    # then check if it's within the original axis range
+                    if old_min <= old_data_loc <= old_max:
+                        tick_locs_in_old.append(old_data_loc)
+                        new_ticks_good.append(new_value)
 
         # then put the ticks at the locations of the old data, but label them
         # with the value of the transformed data.
