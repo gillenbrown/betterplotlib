@@ -14,17 +14,12 @@ steel_blue = '#3F5D7D'
 parks_canada_heritage_green = '#284734'
 pchg = parks_canada_heritage_green  # alias
 
-color_cycle_map = palettable.cartocolors.qualitative.Pastel_10.hex_colors
-color_cycle = [color_cycle_map[5],
-               color_cycle_map[4],
-               color_cycle_map[6],
-               color_cycle_map[2],
-               color_cycle_map[3],
-               color_cycle_map[1],
-               color_cycle_map[0],
-               color_cycle_map[8],
-               color_cycle_map[9],
-               color_cycle_map[7]
+color_cycle = ["#4B5387",
+               "#9BCFB3",
+               "#F0635E",
+               "#FFDC50",
+               "#82E6DC",
+               "#B4B4B4",
               ]
 
 # Some functions to fade and unfade colors, which can be helpful when plotting

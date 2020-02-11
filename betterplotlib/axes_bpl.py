@@ -17,16 +17,19 @@ class Axes_bpl(Axes):
     
     name="bpl"
 
-    def make_ax_dark(self, minor_ticks=False):
+    def make_ax_dark(self, grid=True, minor_ticks=False):
         """Turns an axis into one with a dark background with white gridlines.
 
         This will turn an axis into one with a slightly light gray background, 
         and with solid white gridlines. All the axes spines are removed (so 
         there isn't any outline), and the ticks are removed too.
 
+        :param grid: Whether or not to draw the grid. Defaults to True.
+        :type grid: bool
         :param minor_ticks: Whether or not to add minor ticks. They will be
                             drawn as dotted lines, rather than solid lines in 
-                            the axes space.
+                            the axes space. If `grid` is False then this 
+                            parameter does not matter.
         :type minor_ticks: bool
         :return: None
 
@@ -49,10 +52,11 @@ class Axes_bpl(Axes):
             self.set_facecolor(colors.light_gray)
         else:
             self.set_axis_bgcolor(colors.light_gray)
-        self.grid(which="major", color="w", linestyle="-", linewidth=0.5)
-        if minor_ticks:
-            self.minorticks_on()
-            self.grid(which="minor", color="w", linestyle=":", linewidth=0.5)
+        if grid:
+            self.grid(which="major", color="w", linestyle="-", linewidth=0.5)
+            if minor_ticks:
+                self.minorticks_on()
+                self.grid(which="minor", color="w", linestyle=":", linewidth=0.5)
 
         self.set_axisbelow(True)  # moves gridlines below the points
 
