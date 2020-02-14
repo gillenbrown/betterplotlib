@@ -14,13 +14,13 @@ steel_blue = '#3F5D7D'
 parks_canada_heritage_green = '#284734'
 pchg = parks_canada_heritage_green  # alias
 
-color_cycle = ["#4B5387",
-               "#9BCFB3",
-               "#F0635E",
-               "#FFDC50",
-               "#82E6DC",
-               "#B4B4B4",
-              ]
+# see the notebook in the docs folder for a description of why these colors
+# were chosen
+color_cycle = ['#4b5387', 
+               '#9bcfb3', 
+               '#bf595c', 
+               '#f0e298', 
+               '#ce9338']
 
 # Some functions to fade and unfade colors, which can be helpful when plotting
 # two lines with similar meaning
