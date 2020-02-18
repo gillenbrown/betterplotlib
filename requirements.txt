@@ -1,4 +1,3 @@
-palettable
 matplotlib
 nbsphinx
 ipykernel

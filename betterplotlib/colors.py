@@ -1,4 +1,3 @@
-import palettable
 from matplotlib import colors as mpl_colors
 
 almost_black = '#262626'
