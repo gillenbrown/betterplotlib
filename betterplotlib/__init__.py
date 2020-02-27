@@ -4,7 +4,7 @@ from .axes_bpl import Axes_bpl
 from .colors import *
 from .styles import *
 from ._interface import *
-
+from . import cm
 register_projection(Axes_bpl)
 
 
@@ -22,6 +22,6 @@ def subplots(*args, **kwargs):
     # that we can access
     subplot_kwargs = kwargs.setdefault("subplot_kw", dict())
     subplot_kwargs.setdefault("projection", "bpl")
-    kwargs.setdefault("tight_layout", True)
+    kwargs.setdefault("tight_layout", False)
 
     return plt.subplots(*args, **kwargs)
