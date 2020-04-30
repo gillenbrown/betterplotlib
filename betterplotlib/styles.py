@@ -99,11 +99,11 @@ def set_style(style="default", font="Nunito"):
     """
 
     _common_style()
-    _set_font_settings(font)
 
     if style == "default":
-        pass  # set in _common_style()
+        _set_font_settings(font)
     elif style == "white":
+        _set_font_settings(font)
         # override some of the colors
         mpl.rcParams['patch.edgecolor'] = "w"
         mpl.rcParams['text.color'] = "w"
@@ -117,6 +117,7 @@ def set_style(style="default", font="Nunito"):
         mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
                                                  colors.color_cycle)
     elif style == "latex":
+        # here font is ignored
         # change everything to LaTeX
         mpl.rcParams['font.family'] = 'serif'
         mpl.rcParams['font.sans-serif'] = 'Computer Modern Roman'
