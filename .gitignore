@@ -1,6 +1,7 @@
 # my testing
 testing_ignore/
 testing/temporary_images/*.png
+testing/font_samples
 
 # Pycharm stuff
 .idea/

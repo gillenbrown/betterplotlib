@@ -23,6 +23,7 @@ setup(
 					  "numpy",
 					  "palettable",
 					  "pytest>=3.3",
-					  "imageio"]
+					  "imageio",
+					  "urllib"]
 
 	)
