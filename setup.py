@@ -19,7 +19,7 @@ setup(
 
 	packages=find_packages(exclude=["docs"]),
 
-	include_package_data=True,
+	package_data={"betterplotlb": ["colormaps/*"]},
 
 	install_requires=["matplotlib",
 					  "numpy",

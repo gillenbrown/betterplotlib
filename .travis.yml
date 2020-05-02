@@ -13,6 +13,7 @@ env:
 install:
   - pip install matplotlib==$matplotlib
   - pip install .
+  - python install_fonts.py
 # command to run tests
 script:
   - pytest

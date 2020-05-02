@@ -88,7 +88,7 @@ def _set_font_settings(font, fontweight):
     :return: None
     """
     # Some good sans-serif font options: Lato, Nunito, Nunito Sans, Open Sans,
-    # Jost, Cabin, Tajawal, Muli, Rubik, Assistant
+    # Jost, Cabin, Tajawal, Muli, Rubik, Assistant, Alata
     # serif: PT Serif
     # fun: Lobster
 
