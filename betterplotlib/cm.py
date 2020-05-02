@@ -3,10 +3,10 @@ import numpy as np
 import os
 from matplotlib.colors import LinearSegmentedColormap
 
-colormap_dir = os.path.dirname(__file__) + "/colormaps/"
+colormap_dir = os.path.join(os.path.dirname(__file__), "colormaps")
 
 def get_colormap(cmap_name):
-    data_file = colormap_dir + cmap_name + ".txt"
+    data_file = os.path.join(colormap_dir, cmap_name + ".txt")
     cm_data = np.loadtxt(data_file)
     return LinearSegmentedColormap.from_list(cmap_name, cm_data)
 
