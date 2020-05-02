@@ -871,7 +871,7 @@ def test_contour_scatter_scatter_outside_contours_image():
     assert image_similarity_full(fig, "contour_scatter_outside_contours.png")
 
 
-def test_contour_scatter_mult_holes_example_image():
+def test_contour_scatter_multi_holes_example_image():
     # set the seed specifically for this test, so that I can keep this data
     # created in this function.
     np.random.seed(10)
@@ -903,10 +903,10 @@ def test_contour_scatter_mult_holes_example_image():
     ax.contour_scatter(xs, ys, smoothing=0.5, bin_size=0.5)
     ax.equal_scale()
 
-    assert image_similarity_full(fig, "contour_scatter_mult_holes_example.png")
+    assert image_similarity_full(fig, "contour_scatter_multi_holes_example.png")
 
 
-def test_contour_scatter_mult_kwargs_example_image():
+def test_contour_scatter_multi_kwargs_example_image():
     xs = np.concatenate([xs_normal_10000,
                          xs_normal_10000 + 3,
                          xs_normal_10000])
@@ -967,7 +967,7 @@ def test_contour_scatter_mult_kwargs_example_image():
                         contour_kwargs={"linestyles": new_linestyles,
                                         "colors":     bpl.almost_black})
 
-    assert image_similarity_full(fig, "contour_scatter_mult_kwargs_example.png")
+    assert image_similarity_full(fig, "contour_scatter_multi_kwargs_example.png")
 
 
 def test_contour_scatter_lab_smooth_example_image():

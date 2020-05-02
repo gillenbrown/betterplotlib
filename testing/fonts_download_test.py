@@ -60,20 +60,3 @@ def test_download_variable_font_into_directory(make_temp_dir):
 
     for item in jost_files:
         assert item in os.listdir(temp_dir)
-
-def test_download_real():
-    bpl.set_style(font="Nunito")
-
-    font_dir = os.path.join(rcParams["datapath"], "fonts/ttf/")
-
-    for item in nunito_files:
-        assert item in os.listdir(font_dir)
-
-
-def test_download_variable():
-    bpl.set_style(font="Jost")
-
-    font_dir = os.path.join(rcParams["datapath"], "fonts/ttf/")
-
-    for item in jost_files:
-        assert item in os.listdir(font_dir)
