@@ -5,12 +5,12 @@ import pytest
 
 import betterplotlib as bpl
 
-bpl.default_style()
+bpl.set_style()
 np.random.seed(314159)
 
 this_dir = os.path.realpath(os.path.split(__file__)[0])
-baseline_im_dir = this_dir + os.sep + "baseline_images" + os.sep
-new_im_dir = this_dir + os.sep + "temporary_images" + os.sep
+baseline_im_dir = os.path.join(this_dir, "baseline_images")
+new_im_dir = os.path.join(this_dir, "temporary_images")
 
 def image_similarity(im_1_path, im_2_path):
     """
@@ -30,10 +30,10 @@ def image_similarity(im_1_path, im_2_path):
 
 
 def image_similarity_full(fig, image_name):
-    new_img = new_im_dir + image_name
-    baseline_img = baseline_im_dir + image_name
+    new_img = os.path.join(new_im_dir, image_name)
+    baseline_img = os.path.join(baseline_im_dir, image_name)
 
-    fig.savefig(new_im_dir + image_name)
+    fig.savefig(new_img)
 
     try:
         matched = image_similarity(new_img, baseline_img)

@@ -7,7 +7,7 @@ from cycler import cycler
 
 from . import colors
 
-def set_style(style="default", font="Lato"):
+def set_style(style="default", font="Lato", fontweight="semibold"):
     """
     Same as default_style, but with larger text.
 
@@ -19,9 +19,9 @@ def set_style(style="default", font="Lato"):
     _common_style()
 
     if style == "default":
-        _set_font_settings(font)
+        _set_font_settings(font, fontweight)
     elif style == "white":
-        _set_font_settings(font)
+        _set_font_settings(font, fontweight)
         # override some of the colors
         rcParams['patch.edgecolor'] = "w"
         rcParams['text.color'] = "w"
@@ -81,13 +81,16 @@ def _common_style():
     rcParams['image.cmap'] = 'viridis'
 
 
-def _set_font_settings(font):
+def _set_font_settings(font, fontweight):
     """
     Sets the Helvetica Neue font settings, used by most styles.
 
     :return: None
     """
-    # Some good font options: Lato, Nunito, Open Sans,
+    # Some good sans-serif font options: Lato, Nunito, Nunito Sans, Open Sans,
+    # Jost, Cabin, Tajawal, Muli, Rubik, Assistant
+    # serif: PT Serif
+    # fun: Lobster
 
     # The font doesn't actually have to be sans-serif, we're just setting that
     # as a default since we currently don't know what family the requested
@@ -101,9 +104,9 @@ def _set_font_settings(font):
     rcParams['mathtext.default'] = 'regular'
 
     # set the rest of the default parameters
-    rcParams['font.weight'] = 'medium'
-    rcParams['axes.labelweight'] = 'medium'
-    rcParams['axes.titleweight'] = 'medium'
+    rcParams['font.weight'] = fontweight
+    rcParams['axes.labelweight'] = fontweight
+    rcParams['axes.titleweight'] = fontweight
 
     # The user might request a font that's not downloaded. To check this, we'll
     # see if the found font is the default. If so, we'll download the font
@@ -134,6 +137,7 @@ def _download_file(url, local_dir):
 
 
 def download_font(fontname, dir):
+    # https://github.com/google/fonts
     # format the font as it is in the github repo
     fontname = fontname.lower()
     fontname = fontname.replace(" ", "")
@@ -147,29 +151,69 @@ def download_font(fontname, dir):
 
         # try to get the metadata file
         metadata_url = os.path.join(font_dir_url, "METADATA.pb")
-        # this will throw an error if it's not found
+        # the download will throw an error if it's not found
         try:
-            _download_file(metadata_url, ".")
+            _download_file(metadata_url, dir)
             found = True
-            break
+            break  # needed so we keep the right license and therefore URL
         except ValueError:
             continue
 
     if not found:
         raise ValueError("Font not found!")
 
-    # then get the filenames from the metadata file
-    ttf_names = []
-    with open("./METADATA.pb", "r") as metadata:
+    # then get the filenames from the metadata file. We do need to watch out
+    # for variable fonts.
+    metadata_path = os.path.join(dir, "METADATA.pb")
+    with open(metadata_path, "r") as metadata_file:
+        metadata = [line.strip() for line in metadata_file]
+
+    # remove the metadata file
+    os.remove(metadata_path)
+
+    # see if we have a variable font. This particular line will note one of the
+    # variable font axes
+    variable = "axes {" in metadata
+
+    if not variable:
+        # In non-variable fonts, the filenames are all listed in the metadata
         for line in metadata:
-            strip_line = line.strip()
-            if strip_line.startswith("filename:"):
-                filename = strip_line.split()[-1]
+            if line.startswith("filename:"):
+                filename = line.split()[-1]
                 # this will have quotes, remove them
                 filename = filename.replace('"', '')
-                ttf_names.append(filename)
+                # then we can just download it
+                ttf_url = os.path.join(font_dir_url, filename)
+                _download_file(ttf_url, dir)
+                print("  - Downloading {}".format(filename))
 
-    # then download all those individual files
-    for ttf_file in ttf_names:
-        ttf_url = os.path.join(font_dir_url, ttf_file)
-        _download_file(ttf_url, dir)
+    else:  # we do have a variable font
+        # the metadata file does not list all the files, as they are in the
+        # "static" subdirectory. We have to manually find those files
+        # first get the name of the font as it will appear in the file
+        for md in metadata:
+            if md.startswith("filename:"):
+                full_name = md.split()[-1]
+                # only get the part before the bracket
+                idx = full_name.find("[")
+                # there is a " at the beginning we ignore
+                file_base_name = full_name[1:idx]
+                break
+
+        # we then iterate through all possible font names. Thankfully the names
+        # follow a regular pattern: FontName-WeightItalics.ttf. We'll iterate
+        # through all options and grab the ones that exist
+        weights = ["Thin", "ExtraLight", "Light", "Regular", "Medium",
+                   "SemiBold", "Bold", "ExtraBold", "Black", ""]
+        for weight in weights:
+            for italic in ["Italic", ""]:
+                ttf_name = "{}-{}{}.ttf".format(file_base_name, weight, italic)
+
+                ttf_url = os.path.join(font_dir_url, "static", ttf_name)
+
+                # some of these will not exist, which is fine. Grab what exists
+                try:
+                    _download_file(ttf_url, dir)
+                    print("  - Downloading {}".format(ttf_name))
+                except ValueError:
+                    pass

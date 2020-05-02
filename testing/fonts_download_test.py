@@ -30,10 +30,35 @@ nunito_files = ["Nunito-Black.ttf",
                 "Nunito-SemiBold.ttf",
                 "Nunito-SemiBoldItalic.ttf"]
 
+jost_files = ["Jost-Black.ttf",
+              "Jost-BlackItalic.ttf",
+              "Jost-Bold.ttf",
+              "Jost-BoldItalic.ttf",
+              "Jost-ExtraBold.ttf",
+              "Jost-ExtraBoldItalic.ttf",
+              "Jost-ExtraLight.ttf",
+              "Jost-ExtraLightItalic.ttf",
+              "Jost-Italic.ttf",
+              "Jost-Light.ttf",
+              "Jost-LightItalic.ttf",
+              "Jost-Medium.ttf",
+              "Jost-MediumItalic.ttf",
+              "Jost-Regular.ttf",
+              "Jost-SemiBold.ttf",
+              "Jost-SemiBoldItalic.ttf",
+              "Jost-Thin.ttf",
+              "Jost-ThinItalic.ttf"]
+
 def test_download_font_into_directory(make_temp_dir):
     bpl.download_font("Nunito", temp_dir)
 
     for item in nunito_files:
+        assert item in os.listdir(temp_dir)
+
+def test_download_variable_font_into_directory(make_temp_dir):
+    bpl.download_font("Jost", temp_dir)
+
+    for item in jost_files:
         assert item in os.listdir(temp_dir)
 
 def test_download_real():
@@ -42,4 +67,13 @@ def test_download_real():
     font_dir = os.path.join(rcParams["datapath"], "fonts/ttf/")
 
     for item in nunito_files:
+        assert item in os.listdir(font_dir)
+
+
+def test_download_variable():
+    bpl.set_style(font="Jost")
+
+    font_dir = os.path.join(rcParams["datapath"], "fonts/ttf/")
+
+    for item in jost_files:
         assert item in os.listdir(font_dir)
