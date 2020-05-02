@@ -19,9 +19,6 @@ setup(
 
 	packages=find_packages(exclude=["docs"]),
 
-	use_scm_version=True,  # to include everything under version control
-	setup_requires=['setuptools_scm'], # same
-
 	install_requires=["matplotlib",
 					  "numpy",
 					  "palettable",
