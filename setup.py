@@ -17,7 +17,7 @@ setup(
 
 	keywords="plotting matplotlib",
 
-	packages=find_packages(exclude=["docs"]),
+	include_package_data=True,
 
 	package_data={"betterplotlb": ["colormaps/*"]},
 
