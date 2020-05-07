@@ -940,7 +940,7 @@ def test_contour_scatter_multi_kwargs_example_image():
                         contour_kwargs={"linewidths": 1,
                                         "colors":     "white"},
                         scatter_kwargs={"s":     50,
-                                        "c":     bpl.color_cycle[3],
+                                        "c":     bpl.color_cycle[0],
                                         "alpha": 0.3})
 
     # There are also my colormaps that work with the dark axes
@@ -949,7 +949,7 @@ def test_contour_scatter_multi_kwargs_example_image():
                         smoothing=smoothing,
                         fill_cmap="modified_greys",
                         percent_levels=percent_levels,
-                        scatter_kwargs={"c": bpl.color_cycle[0]},
+                        scatter_kwargs={"c": bpl.color_cycle[1]},
                         contour_kwargs={"linewidths": [2, 0, 0, 0, 0, 0, 0],
                                         "colors":     bpl.almost_black})
     ax3.make_ax_dark()
@@ -962,7 +962,7 @@ def test_contour_scatter_multi_kwargs_example_image():
                         percent_levels=percent_levels,
                         scatter_kwargs={"marker":    "^",
                                         "linewidth": 0.2,
-                                        "c":         bpl.color_cycle[1],
+                                        "c":         bpl.color_cycle[2],
                                         "s":         20},
                         contour_kwargs={"linestyles": new_linestyles,
                                         "colors":     bpl.almost_black})

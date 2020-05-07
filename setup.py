@@ -27,7 +27,7 @@ setup(
 					  "pytest>=3.3",
 					  "imageio",
 					  "scipy",
-					  "numpy",
+					  "numpy>=1.16.0",
 					  "cycler",
 					  "astropy"
 					  ]

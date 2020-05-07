@@ -15,11 +15,14 @@ pchg = parks_canada_heritage_green  # alias
 
 # see the notebook in the docs folder for a description of why these colors
 # were chosen
-color_cycle = ['#4b5387', 
-               '#9bcfb3', 
-               '#bf595c', 
-               '#f0e298', 
-               '#ce9338']
+color_cycle = ['#4b5387',
+               '#9bcfb3',
+               '#919191',
+               '#ac4649',
+               '#d5b130',
+               '#5b8070',
+               '#ce9269',
+               '#8b77a5']
 
 # Some functions to fade and unfade colors, which can be helpful when plotting
 # two lines with similar meaning
