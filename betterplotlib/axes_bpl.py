@@ -13,9 +13,10 @@ from . import type_checking
 
 mpl_1 = __version__[0] == "1"
 
+
 class Axes_bpl(Axes):
-    
-    name="bpl"
+
+    name = "bpl"
 
     def make_ax_dark(self, grid=True, minor_ticks=False):
         """Turns an axis into one with a dark background with white gridlines.
@@ -230,12 +231,12 @@ class Axes_bpl(Axes):
         # get the color, if it hasn't already been set. I don't need to do this
         # in mpl 2.0 technically, but I do it anyway so I can use this color
         # for the invisible label below.
-        if 'color' not in kwargs and 'c' not in kwargs:
+        if "color" not in kwargs and "c" not in kwargs:
             # get the default color cycle, and get the next color.
             if sys.version_info.major == 2:
-                kwargs['c'] = self._get_lines.prop_cycler.next()['color']
+                kwargs["c"] = self._get_lines.prop_cycler.next()["color"]
             elif sys.version_info.major == 3:
-                kwargs['c'] = next(self._get_lines.prop_cycler)['color']
+                kwargs["c"] = next(self._get_lines.prop_cycler)["color"]
 
         # set other parameters, if they haven't been set already
         # I use setdefault to do that, which puts the values in if they don't
@@ -243,17 +244,17 @@ class Axes_bpl(Axes):
         # first set the edge color for the points
         # only do this for large datasets in mpl 1.x
         if mpl_1 and len(args[0]) > 30:
-            kwargs.setdefault('linewidth', 0.25)
+            kwargs.setdefault("linewidth", 0.25)
             # we also need to set the edge color of the markers
             # edgecolor is a weird case, since it shouldn't be set if the user
             # specifies 'color', since that refers to the whole point, not just
             # the color of the point. It includes the edge color.
-            if 'color' not in kwargs:
-                kwargs.setdefault('edgecolor', kwargs["c"])
+            if "color" not in kwargs:
+                kwargs.setdefault("edgecolor", kwargs["c"])
 
         # use the function we defined to get the proper alpha value.
         try:
-            kwargs.setdefault('alpha', tools._alpha(len(args[0])))
+            kwargs.setdefault("alpha", tools._alpha(len(args[0])))
         except TypeError:
             kwargs.setdefault("alpha", 1.0)
 
@@ -274,8 +275,9 @@ class Axes_bpl(Axes):
             label_kwargs["alpha"] = 1.0
             # we can then plot the fake data. Due to weirdness in matplotlib, we
             # have to plot a two element NaN list.
-            super(Axes_bpl, self).scatter([np.nan, np.nan], [np.nan, np.nan],
-                                          *label_args, **label_kwargs)
+            super(Axes_bpl, self).scatter(
+                [np.nan, np.nan], [np.nan, np.nan], *label_args, **label_kwargs
+            )
             # in the main plotting we don't want to have a label, so we pop it.
             kwargs.pop("label")
 
@@ -365,15 +367,17 @@ class Axes_bpl(Axes):
 
         # I like white as an edgecolor if we use bars.
         if "histtype" not in kwargs or kwargs["histtype"] != "step":
-            kwargs.setdefault('edgecolor', 'white')
+            kwargs.setdefault("edgecolor", "white")
 
         # do the relative frequency business if we need to
         if kwargs.pop("rel_freq", False):
             # check that they didn't set weights, since that's what I'll change
             if "weights" in kwargs:
-                raise ValueError("The `weights` keyword can't be used with "
-                                 "`rel_freq`, since `rel_freq` works by "
-                                 "modifying the weights.")
+                raise ValueError(
+                    "The `weights` keyword can't be used with "
+                    "`rel_freq`, since `rel_freq` works by "
+                    "modifying the weights."
+                )
             # normed doesn't work either.
             if "normed" in kwargs and kwargs["normed"] is True:
                 raise ValueError("Normed does not work properly with rel_freq.")
@@ -385,10 +389,12 @@ class Axes_bpl(Axes):
 
         # if they didn't specify the binning, use our binning
         if "bin_size" in kwargs and "bins" in kwargs:
-            raise ValueError("The `bins` and `bin_size` keywords cannot be "
-                             "used together. Use `bins` if you want to "
-                             "pass your own bins, or use `bin_size` to "
-                             "have the code determine its own bins. ")
+            raise ValueError(
+                "The `bins` and `bin_size` keywords cannot be "
+                "used together. Use `bins` if you want to "
+                "pass your own bins, or use `bin_size` to "
+                "have the code determine its own bins. "
+            )
         # the setdefault function calls the second argument no matter what
         # This is a problem if the user's data has no IQR, since the
         # rounded bin width function will raise an error. We'll do the check
@@ -396,14 +402,14 @@ class Axes_bpl(Axes):
         if "bins" not in kwargs:
             if "bin_size" not in kwargs:
                 kwargs["bin_size"] = tools.rounded_bin_width(args[0])
-            kwargs["bins"] = tools._binning(min(args[0]), max(args[0]),
-                                            kwargs.pop("bin_size"))
+            kwargs["bins"] = tools._binning(
+                min(args[0]), max(args[0]), kwargs.pop("bin_size")
+            )
 
         # plot the histogram, and keep the results
         return super(Axes_bpl, self).hist(*args, **kwargs)
 
-    def add_labels(self, x_label=None, y_label=None, title=None, 
-                   *args, **kwargs):
+    def add_labels(self, x_label=None, y_label=None, title=None, *args, **kwargs):
         """
         Adds labels to the x and y axis, plus a title.
 
@@ -445,8 +451,7 @@ class Axes_bpl(Axes):
         if title is not None:
             self.set_title(title, *args, **kwargs)
 
-    def set_limits(self, x_min=None, x_max=None, y_min=None, y_max=None, 
-                   **kwargs):
+    def set_limits(self, x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
         """
         Set axes limits for both x and y axis at once.
 
@@ -543,9 +548,11 @@ class Axes_bpl(Axes):
         # this function takes care of the transform keyword already, so don't
         # allow the user to specify it.
         if "transform" in kwargs:
-            raise ValueError("add_text takes care of the transform for you when"
-                             " you specify coords. \n"
-                             "Don't specify transform in this function.")
+            raise ValueError(
+                "add_text takes care of the transform for you when"
+                " you specify coords. \n"
+                "Don't specify transform in this function."
+            )
 
         # set the proper coordinate transformation
         if coords == "data":
@@ -601,11 +608,19 @@ class Axes_bpl(Axes):
         # validate their input
         if labels_to_remove not in ["both", "x", "y"]:
             raise ValueError('Please pass in either "x", "y", or "both".')
-        
+
         # then set the tick parameters.
-        self.tick_params(axis=labels_to_remove, bottom=False, top=False, 
-                         left=False, right=False, labelbottom=False, 
-                         labeltop=False, labelleft=False, labelright=False)
+        self.tick_params(
+            axis=labels_to_remove,
+            bottom=False,
+            top=False,
+            left=False,
+            right=False,
+            labelbottom=False,
+            labeltop=False,
+            labelleft=False,
+            labelright=False,
+        )
 
     def legend(self, linewidth=0, *args, **kwargs):
         """Create a nice looking legend.
@@ -668,7 +683,7 @@ class Axes_bpl(Axes):
         """
 
         # push the legend a little farther away from the edge.
-        kwargs.setdefault('borderaxespad', 0.75)
+        kwargs.setdefault("borderaxespad", 0.75)
 
         leg = super(Axes_bpl, self).legend(*args, **kwargs)
 
@@ -829,66 +844,80 @@ class Axes_bpl(Axes):
 
         """
         # check that the user didn't specify parameters I want to control.
-        if 'ha' in kwargs or 'va' in kwargs or 'horizontalalignment' in kwargs \
-                or 'verticalalignment' in kwargs:
-            raise ValueError("This function controls the alignment. Do not"
-                             "pass it in.")
+        if (
+            "ha" in kwargs
+            or "va" in kwargs
+            or "horizontalalignment" in kwargs
+            or "verticalalignment" in kwargs
+        ):
+            raise ValueError(
+                "This function controls the alignment. Do not" "pass it in."
+            )
 
         # then check each different case, and set the parameters we want to use.
         if location == 1 or location == "lower left":
             x_value = 0.04
             y_value = 0.04
-            kwargs['horizontalalignment'] = "left"
-            kwargs['verticalalignment'] = "bottom"
+            kwargs["horizontalalignment"] = "left"
+            kwargs["verticalalignment"] = "bottom"
         elif location == 2 or location == "lower center":
             x_value = 0.5
             y_value = 0.04
-            kwargs['horizontalalignment'] = "center"
-            kwargs['verticalalignment'] = "bottom"
+            kwargs["horizontalalignment"] = "center"
+            kwargs["verticalalignment"] = "bottom"
         elif location == 3 or location == "lower right":
             x_value = 0.96
             y_value = 0.04
-            kwargs['horizontalalignment'] = "right"
-            kwargs['verticalalignment'] = "bottom"
+            kwargs["horizontalalignment"] = "right"
+            kwargs["verticalalignment"] = "bottom"
         elif location == 4 or location == "center left":
             x_value = 0.04
             y_value = 0.5
-            kwargs['horizontalalignment'] = "left"
-            kwargs['verticalalignment'] = "center"
+            kwargs["horizontalalignment"] = "left"
+            kwargs["verticalalignment"] = "center"
         elif location == 5 or location == "center":
             x_value = 0.5
             y_value = 0.5
-            kwargs['horizontalalignment'] = "center"
-            kwargs['verticalalignment'] = "center"
+            kwargs["horizontalalignment"] = "center"
+            kwargs["verticalalignment"] = "center"
         elif location == 6 or location == "center right":
             x_value = 0.96
             y_value = 0.5
-            kwargs['horizontalalignment'] = "right"
-            kwargs['verticalalignment'] = "center"
+            kwargs["horizontalalignment"] = "right"
+            kwargs["verticalalignment"] = "center"
         elif location == 7 or location == "upper left":
             x_value = 0.04
             y_value = 0.96
-            kwargs['horizontalalignment'] = "left"
-            kwargs['verticalalignment'] = "top"
+            kwargs["horizontalalignment"] = "left"
+            kwargs["verticalalignment"] = "top"
         elif location == 8 or location == "upper center":
             x_value = 0.5
             y_value = 0.96
-            kwargs['horizontalalignment'] = "center"
-            kwargs['verticalalignment'] = "top"
+            kwargs["horizontalalignment"] = "center"
+            kwargs["verticalalignment"] = "top"
         elif location == 9 or location == "upper right":
             x_value = 0.96
             y_value = 0.96
-            kwargs['horizontalalignment'] = "right"
-            kwargs['verticalalignment'] = "top"
+            kwargs["horizontalalignment"] = "right"
+            kwargs["verticalalignment"] = "top"
         else:
             raise ValueError("loc was not specified properly.")
 
         # then add the text.
         return self.add_text(x_value, y_value, text, coords="axes", **kwargs)
 
-    def _density_contour_core(self, xs, ys, bin_size=None, percent_levels=None,
-                              smoothing=0, weights=None, labels=False,
-                              filled=False, **kwargs):
+    def _density_contour_core(
+        self,
+        xs,
+        ys,
+        bin_size=None,
+        percent_levels=None,
+        smoothing=0,
+        weights=None,
+        labels=False,
+        filled=False,
+        **kwargs
+    ):
         """
         :param xs:
         :param ys:
@@ -903,27 +932,31 @@ class Axes_bpl(Axes):
         """
         # error check weird error matplotlib has when all x and y data are same.
         if len(set(xs)) == len(set(ys)) == 1 and smoothing == 0:
-            raise ValueError("All points are identical. This breaks matplotlib "
-                             "contours for some reason. "
-                             "Try other data, or smooth.")
+            raise ValueError(
+                "All points are identical. This breaks matplotlib "
+                "contours for some reason. "
+                "Try other data, or smooth."
+            )
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
-            raise ValueError("The levels parameter is set by this function. "
-                             "Do not pass it in. ")
+            raise ValueError(
+                "The levels parameter is set by this function. " "Do not pass it in. "
+            )
         # if smoothing is not specified, we still want some padding on the
         # outside so the contours aren't cut off.
         if smoothing == 0:
             try:
-                padding = [2 * tools._freedman_diaconis(xs),
-                           2 * tools._freedman_diaconis(ys)]
+                padding = [
+                    2 * tools._freedman_diaconis(xs),
+                    2 * tools._freedman_diaconis(ys),
+                ]
             except ValueError:  # data length too short, will handle in 2d hist
                 padding = 0
         else:
             padding = tools._padding_from_smoothing(smoothing)
-        hist, x_e, y_e = tools.smart_hist_2d(xs, ys, bin_size,
-                                             padding=padding,
-                                             weights=weights,
-                                             smoothing=smoothing)
+        hist, x_e, y_e = tools.smart_hist_2d(
+            xs, ys, bin_size, padding=padding, weights=weights, smoothing=smoothing
+        )
         x_cen = tools.bin_centers(x_e)
         y_cen = tools.bin_centers(y_e)
 
@@ -932,42 +965,52 @@ class Axes_bpl(Axes):
             percent_levels = [0, 0.25, 0.5, 0.75, 0.95]
         else:
             not_list_msg = "Percent_levels needs to be a numeric list."
-            percent_levels = type_checking.numeric_list_1d(percent_levels,
-                                                           not_list_msg)
+            percent_levels = type_checking.numeric_list_1d(percent_levels, not_list_msg)
             # add zero level to have center region full
             percent_levels = np.insert(percent_levels, 0, 0)
 
         levels = tools.percentile_level(hist.flatten(), percent_levels)
         # then check that the levels are increasing and without duplicates
         if len(set(levels)) < len(levels):
-            raise ValueError("The percent levels chosen lead to duplicate "
-                             "levels.\nContour levels must be increasing.")
+            raise ValueError(
+                "The percent levels chosen lead to duplicate "
+                "levels.\nContour levels must be increasing."
+            )
         kwargs["levels"] = levels
 
         if not filled:
             kwargs.setdefault("zorder", 3)
             kwargs.setdefault("linewidths", 2)
-            contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist,
-                                                     **kwargs)
+            contours = super(Axes_bpl, self).contour(x_cen, y_cen, hist, **kwargs)
         else:
             kwargs.setdefault("zorder", 2)
-            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, hist,
-                                                      **kwargs)
+            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, hist, **kwargs)
 
         if labels:
             # need to order the percent_levels properly (from high to low)
             percent_levels = sorted(percent_levels)[::-1]
             label_percents = percent_levels + [0]
             # needed since there is one hidden coutour at the very center.
-            label_dict = {l: "{:.1f}%".format(percent*100) for l, percent
-                          in zip(levels, label_percents)}
+            label_dict = {
+                l: "{:.1f}%".format(percent * 100)
+                for l, percent in zip(levels, label_percents)
+            }
 
             self.clabel(contours, fmt=label_dict, fontsize=16)
 
         return contours
 
-    def density_contour(self, xs, ys, bin_size=None, percent_levels=None,
-                        smoothing=0, weights=None, labels=False, **kwargs):
+    def density_contour(
+        self,
+        xs,
+        ys,
+        bin_size=None,
+        percent_levels=None,
+        smoothing=0,
+        weights=None,
+        labels=False,
+        **kwargs
+    ):
         """
         Creates contours over a 2D histogram of data density.
 
@@ -1018,17 +1061,28 @@ class Axes_bpl(Axes):
                        matplotlib contour function.
         :return: output of the matplotlib.contour function.
         """
-        return self._density_contour_core(xs, ys,
-                                          bin_size=bin_size,
-                                          percent_levels=percent_levels,
-                                          smoothing=smoothing,
-                                          weights=weights,
-                                          labels=labels,
-                                          filled=False,
-                                          **kwargs)
+        return self._density_contour_core(
+            xs,
+            ys,
+            bin_size=bin_size,
+            percent_levels=percent_levels,
+            smoothing=smoothing,
+            weights=weights,
+            labels=labels,
+            filled=False,
+            **kwargs
+        )
 
-    def density_contourf(self, xs, ys, bin_size=None, percent_levels=None,
-                         smoothing=0, weights=None, **kwargs):
+    def density_contourf(
+        self,
+        xs,
+        ys,
+        bin_size=None,
+        percent_levels=None,
+        smoothing=0,
+        weights=None,
+        **kwargs
+    ):
         """
         Creates filled contours over a 2D histogram of data density.
 
@@ -1079,19 +1133,32 @@ class Axes_bpl(Axes):
         # don't let user use the labels param here like they can in contour
         if "labels" in kwargs:
             raise ValueError("Filled contours cannot have labels.")
-        return self._density_contour_core(xs, ys,
-                                          bin_size=bin_size,
-                                          percent_levels=percent_levels,
-                                          smoothing=smoothing,
-                                          weights=weights,
-                                          labels=False,
-                                          filled=True,
-                                          **kwargs)
+        return self._density_contour_core(
+            xs,
+            ys,
+            bin_size=bin_size,
+            percent_levels=percent_levels,
+            smoothing=smoothing,
+            weights=weights,
+            labels=False,
+            filled=True,
+            **kwargs
+        )
 
-    def contour_scatter(self, xs, ys, bin_size=None, percent_levels=None,
-                        smoothing=0, weights=None, labels=False,
-                        fill_cmap="white", scatter_kwargs=None,
-                        contour_kwargs=None, contourf_kwargs=None):
+    def contour_scatter(
+        self,
+        xs,
+        ys,
+        bin_size=None,
+        percent_levels=None,
+        smoothing=0,
+        weights=None,
+        labels=False,
+        fill_cmap="white",
+        scatter_kwargs=None,
+        contour_kwargs=None,
+        contourf_kwargs=None,
+    ):
         """
         Create a contour plot with scatter points in the sparse regions.
 
@@ -1393,7 +1460,7 @@ class Axes_bpl(Axes):
             contour_kwargs = dict()
         if contourf_kwargs is None:
             contourf_kwargs = dict()
-        
+
         # determine what our colormap for the fill will be
         if fill_cmap == "white":
             # colormap with one color: white
@@ -1404,35 +1471,48 @@ class Axes_bpl(Axes):
         elif fill_cmap == "modified_greys":
             # make one that transitions from light grey to black
             new_colors = [colors.light_gray, "black"]
-            fill_cmap = mpl_colors.LinearSegmentedColormap.from_list("mod_gray",
-                                                                     new_colors)
-        
+            fill_cmap = mpl_colors.LinearSegmentedColormap.from_list(
+                "mod_gray", new_colors
+            )
+
         # then we can set a bunch of default parameters for the contours
         contour_kwargs.setdefault("linewidths", 2)
         contour_kwargs.setdefault("zorder", 3)
         if "colors" not in contour_kwargs:
             contour_kwargs.setdefault("cmap", "viridis")
-        
+
         # we can then go ahead and plot the filled contours, then the contour lines
         if fill_cmap is not None:
-            self.density_contourf(xs, ys, bin_size=bin_size,
-                                  percent_levels=percent_levels,
-                                  smoothing=smoothing, weights=weights,
-                                  cmap=fill_cmap, **contourf_kwargs)
-        contours = self.density_contour(xs, ys, bin_size=bin_size,
-                                        percent_levels=percent_levels,
-                                        smoothing=smoothing, weights=weights,
-                                        labels=labels, **contour_kwargs)
+            self.density_contourf(
+                xs,
+                ys,
+                bin_size=bin_size,
+                percent_levels=percent_levels,
+                smoothing=smoothing,
+                weights=weights,
+                cmap=fill_cmap,
+                **contourf_kwargs
+            )
+        contours = self.density_contour(
+            xs,
+            ys,
+            bin_size=bin_size,
+            percent_levels=percent_levels,
+            smoothing=smoothing,
+            weights=weights,
+            labels=labels,
+            **contour_kwargs
+        )
 
         # we saved the output from the contour, since it has information about the
         # shape of the contours we can use to figure out which points are outside
         # and therefore need to be plotted. There may be multiple outside contours,
-        # especially if the shape is complicated, so we test to see how many 
+        # especially if the shape is complicated, so we test to see how many
         # each point is inside. We only do this if the user actually wants to
         # plot these points
         if scatter_kwargs.get("s") != 0:
             shapes_in = np.zeros(len(xs))
-            for line in contours.allsegs[0]: # zero index is lowest level
+            for line in contours.allsegs[0]:  # zero index is lowest level
                 # make a closed shape with the line
                 polygon = path.Path(line, closed=True)
                 shapes_in += polygon.contains_points(list(zip(xs, ys)))
@@ -1459,32 +1539,48 @@ class Axes_bpl(Axes):
 
         return contours
 
-    def contour_all(self, xs, ys, x_smoothing, y_smoothing, bin_size=None,
-                    percent_levels=None, weights=None, angles=None,
-                    labels=False, filled=False, **kwargs):
+    def contour_all(
+        self,
+        xs,
+        ys,
+        x_smoothing,
+        y_smoothing,
+        bin_size=None,
+        percent_levels=None,
+        weights=None,
+        angles=None,
+        labels=False,
+        filled=False,
+        **kwargs
+    ):
         # TEST ME, TEST ME, TEST ME
 
         # levels is set by this function, so it can't be in there
         if "levels" in kwargs:
-            raise ValueError("The levels parameter is set by this function. "
-                             "Do not pass it in. ")
+            raise ValueError(
+                "The levels parameter is set by this function. " "Do not pass it in. "
+            )
         # if smoothing is not specified, we still want some padding on the
         # outside so the contours aren't cut off.
         padding = [0.5, 0.5]
 
         # do a bunch of histograms
         # then we can go ahead and make the bin edges using this data
-        bin_edges = [tools.make_bins(xs, bin_size, padding[0]),
-                     tools.make_bins(ys, bin_size, padding[1])]
+        bin_edges = [
+            tools.make_bins(xs, bin_size, padding[0]),
+            tools.make_bins(ys, bin_size, padding[1]),
+        ]
 
         # We can then use the bins to create the histogram
         full_hist = None
         if angles is None:
             angles = np.zeros(len(xs))
-        for x, y, x_s, y_s, a, w in zip(xs, ys, x_smoothing, y_smoothing,
-                                        angles, weights):
-            this_hist, x_edges, y_edges = np.histogram2d([x], [y], bin_edges,
-                                                         weights=[w])
+        for x, y, x_s, y_s, a, w in zip(
+            xs, ys, x_smoothing, y_smoothing, angles, weights
+        ):
+            this_hist, x_edges, y_edges = np.histogram2d(
+                [x], [y], bin_edges, weights=[w]
+            )
 
             kernel_x = x_s / bin_size
             kernel_y = y_s / bin_size
@@ -1505,35 +1601,36 @@ class Axes_bpl(Axes):
             percent_levels = [0, 0.25, 0.5, 0.75, 0.95]
         else:
             not_list_msg = "Percent_levels needs to be a numeric list."
-            percent_levels = type_checking.numeric_list_1d(percent_levels,
-                                                           not_list_msg)
+            percent_levels = type_checking.numeric_list_1d(percent_levels, not_list_msg)
             # add zero level to have center region full
             percent_levels = np.insert(percent_levels, 0, 0)
 
         levels = tools.percentile_level(full_hist.flatten(), percent_levels)
         # then check that the levels are increasing and without duplicates
         if len(set(levels)) < len(levels):
-            raise ValueError("The percent levels chosen lead to duplicate "
-                             "levels.\nContour levels must be increasing.")
+            raise ValueError(
+                "The percent levels chosen lead to duplicate "
+                "levels.\nContour levels must be increasing."
+            )
         kwargs["levels"] = levels
 
         if not filled:
             kwargs.setdefault("zorder", 3)
             kwargs.setdefault("linewidths", 2)
-            contours = super(Axes_bpl, self).contour(x_cen, y_cen, full_hist,
-                                                     **kwargs)
+            contours = super(Axes_bpl, self).contour(x_cen, y_cen, full_hist, **kwargs)
         else:
             kwargs.setdefault("zorder", 2)
-            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, full_hist,
-                                                      **kwargs)
+            contours = super(Axes_bpl, self).contourf(x_cen, y_cen, full_hist, **kwargs)
 
         if labels:
             # need to order the percent_levels properly (from high to low)
             percent_levels = sorted(percent_levels)[::-1]
             label_percents = percent_levels + [0]
             # needed since there is one hidden coutour at the very center.
-            label_dict = {l: "{:.1f}%".format(percent*100) for l, percent
-                          in zip(levels, label_percents)}
+            label_dict = {
+                l: "{:.1f}%".format(percent * 100)
+                for l, percent in zip(levels, label_percents)
+            }
 
             self.clabel(contours, fmt=label_dict, fontsize=16)
 
@@ -1587,8 +1684,8 @@ class Axes_bpl(Axes):
         for x in x_data:
             self.axvline(x, ymin=0, ymax=extent, *args, **kwargs)
 
-        # Since the matplotlib command to ax(h/v)line uses an extent based on 
-        # percentage of the way to the end, to get the same physical size for 
+        # Since the matplotlib command to ax(h/v)line uses an extent based on
+        # percentage of the way to the end, to get the same physical size for
         # both axes, we have to scale based on the size of the axes
         h_extent = (self.bbox.height / self.bbox.width) * extent
         for y in y_data:
@@ -1673,7 +1770,7 @@ class Axes_bpl(Axes):
 
         """
 
-        # set the color to be almost black. Matplotlib has two keywords for 
+        # set the color to be almost black. Matplotlib has two keywords for
         # color, so we need to check both here.
         if not ("c" in kwargs or "color" in kwargs):
             kwargs.setdefault("c", colors.almost_black)
@@ -1713,7 +1810,7 @@ class Axes_bpl(Axes):
             
         """
 
-        # set the color to be almost black. Matplotlib has two keywords for 
+        # set the color to be almost black. Matplotlib has two keywords for
         # color, so we need to check both here.
         if not ("c" in kwargs or "color" in kwargs):
             kwargs.setdefault("c", colors.almost_black)
@@ -1757,8 +1854,8 @@ class Axes_bpl(Axes):
 
         kwargs.setdefault("capsize", 0)
         kwargs.setdefault("fmt", "o")
-        kwargs.setdefault('markeredgewidth', 0.25)
-        kwargs.setdefault('markeredgecolor', colors.almost_black)
+        kwargs.setdefault("markeredgewidth", 0.25)
+        kwargs.setdefault("markeredgecolor", colors.almost_black)
 
         return super(Axes_bpl, self).errorbar(*args, **kwargs)
 
@@ -1823,8 +1920,9 @@ class Axes_bpl(Axes):
 
         return new_ax
 
-    def twin_axis(self, axis, new_ticks, label, old_to_new_func=None,
-                  new_to_old_func=None):
+    def twin_axis(
+        self, axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
+    ):
         """
         Create a twin axis, where the new axis values are an arbitrary function
         of the old values.
@@ -1946,19 +2044,21 @@ class Axes_bpl(Axes):
         #         elif axis == "y":
         #             new_ticks = create_new_bins(func, ax.get_yticks())
 
-
         # implementation details: The data values for the old axes will be used
         # as the data values for the new scaled axis. This ensures that they
         # will line up with each other. However, we will set the label text
         # to be the values the user passes in.
 
         if old_to_new_func is None and new_to_old_func is None:
-            raise ValueError("Either `old_to_new_func` or `new_to_old_func` " 
-                             "must be provided.")
+            raise ValueError(
+                "Either `old_to_new_func` or `new_to_old_func` " "must be provided."
+            )
         if old_to_new_func is not None and new_to_old_func is not None:
-            raise ValueError("Don't provide both `old_to_new_func` and "
-                             "`new_to_old_func`.\nUsing `new_to_old_func` is "
-                             "more efficient, so provide only that.")
+            raise ValueError(
+                "Don't provide both `old_to_new_func` and "
+                "`new_to_old_func`.\nUsing `new_to_old_func` is "
+                "more efficient, so provide only that."
+            )
 
         # depending on which axis the user wants to use, we have to get
         # different things.
@@ -2015,7 +2115,7 @@ class Axes_bpl(Axes):
                     return abs(old_to_new_func(x) - new_value)
 
                 # ignore numpy warnings here, everything is fine.
-                with np.errstate(all='ignore'):
+                with np.errstate(all="ignore"):
                     old_data_loc = optimize.minimize_scalar(minimize).x
                     # then check if it's within the original axis range
                     if old_min <= old_data_loc <= old_max:
@@ -2029,8 +2129,9 @@ class Axes_bpl(Axes):
 
         return new_ax
 
-    def shaded_density(self, xs, ys, bin_size=None, smoothing=0,
-                       cmap="Greys", weights=None):
+    def shaded_density(
+        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None
+    ):
         """
         Creates shaded regions showing the density.
 
@@ -2067,13 +2168,11 @@ class Axes_bpl(Axes):
         """
         padding = tools._padding_from_smoothing(smoothing)
         # first get the underlying density histogram
-        hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size,
-                                                     padding=padding,
-                                                     smoothing=smoothing,
-                                                     weights=weights)
+        hist, x_edges, y_edges = tools.smart_hist_2d(
+            xs, ys, bin_size, padding=padding, smoothing=smoothing, weights=weights
+        )
 
-        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist,
-                                                cmap=cmap)
+        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist, cmap=cmap)
 
     def format_labels(self, axis, labels):
         if axis == "x":

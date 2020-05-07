@@ -48,10 +48,10 @@ def strip_defaults(function_def):
     # first get where the arguments start
     first_paren_idx = function_def.find("(")
     # get the function name and first parenthesis
-    def_begin = function_def[4:first_paren_idx + 1]
+    def_begin = function_def[4 : first_paren_idx + 1]
     # then get the arguments. The -3 at the end takes care of the newline,
     # colon, and closing parenthesis.
-    args = function_def[first_paren_idx + 1:-3]
+    args = function_def[first_paren_idx + 1 : -3]
 
     # then we can examine each one in turn, formatiing it properly
     args_list = []
@@ -83,10 +83,14 @@ for function_args in axes_functions_args:
     func_args_no_defauts = strip_defaults(function_args)
     func_docstring = Axes_bpl.__dict__[func_name].__doc__
     func_docstring = func_docstring.replace("        ", "    ")
-    interface.write(function_args +
-                    '    """' + func_docstring + '"""\n' +
-                    "    ax = plt.gca(projection='bpl')\n" +
-                    "    return ax.{}\n".format(func_args_no_defauts))
+    interface.write(
+        function_args
+        + '    """'
+        + func_docstring
+        + '"""\n'
+        + "    ax = plt.gca(projection='bpl')\n"
+        + "    return ax.{}\n".format(func_args_no_defauts)
+    )
     if function_args != axes_functions_args[-1]:
         interface.write("\n\n")
 

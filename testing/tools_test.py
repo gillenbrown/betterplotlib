@@ -37,8 +37,9 @@ def test_freedman_diaconis_core_zero_data():
     """Length of zero or negative doesn't work in FD."""
     with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(10, 0)
-    desired_msg = "The number of data points must be positive in " \
-                  "Freedman Diaconis binning."
+    desired_msg = (
+        "The number of data points must be positive in " "Freedman Diaconis binning."
+    )
     assert str(err_msg.value) == desired_msg
 
     with pytest.raises(ValueError) as err_msg:
@@ -50,9 +51,11 @@ def test_freedman_diaconis_core_zero_iqr():
     """zero iqr gives zero bin size, which is meaningless"""
     with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis_core(0, 10)
-    desired_msg = "The Freeman-Diaconis default binning relies on " \
-                  "inter-quartile range, and your data has zero.\n" \
-                  "Try passing your own bin size."
+    desired_msg = (
+        "The Freeman-Diaconis default binning relies on "
+        "inter-quartile range, and your data has zero.\n"
+        "Try passing your own bin size."
+    )
     assert str(err_msg.value) == desired_msg
 
     with pytest.raises(ValueError) as err_msg:
@@ -99,8 +102,9 @@ def test_freedman_diaconis_zero_data():
     """Zero data doesn't produce any bins."""
     with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([])
-    desired_msg = "The number of data points must be positive in " \
-                  "Freedman Diaconis binning."
+    desired_msg = (
+        "The number of data points must be positive in " "Freedman Diaconis binning."
+    )
     assert str(err_msg.value) == desired_msg
 
 
@@ -108,9 +112,11 @@ def test_freedman_diaconis_zero_range_a():
     """No range produces bad bins."""
     with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([1])
-    desired_msg = "The Freeman-Diaconis default binning relies on " \
-                  "inter-quartile range, and your data has zero.\n" \
-                  "Try passing your own bin size."
+    desired_msg = (
+        "The Freeman-Diaconis default binning relies on "
+        "inter-quartile range, and your data has zero.\n"
+        "Try passing your own bin size."
+    )
     assert str(err_msg.value) == desired_msg
 
 
@@ -118,9 +124,11 @@ def test_freedman_diaconis_zero_range_b():
     """zero interquartile range doesn't work."""
     with pytest.raises(ValueError) as err_msg:
         tools._freedman_diaconis([1, 2, 2, 2, 2, 2, 3])
-    desired_msg = "The Freeman-Diaconis default binning relies on " \
-                  "inter-quartile range, and your data has zero.\n" \
-                  "Try passing your own bin size."
+    desired_msg = (
+        "The Freeman-Diaconis default binning relies on "
+        "inter-quartile range, and your data has zero.\n"
+        "Try passing your own bin size."
+    )
     assert str(err_msg.value) == desired_msg
 
 
@@ -135,10 +143,35 @@ def test_freedman_diaconis_example_a():
 
 def test_freedman_diaconis_example_b():
     """Another example I can calculate easily."""
-    data = [1, 1,
-            2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-            4]
+    data = [
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4,
+    ]
     # here iqr = 1, n=27
     real_bin_size = 2.0 / 3.0
     test_bin_size = tools._freedman_diaconis(data)
@@ -157,42 +190,30 @@ def test_round_to_nice_width_simple():
 
 
 def test_round_to_nice_width_with_exp_small():
-    assert tools._round_to_nice_width(1.2E-7) == approx(1E-7)
+    assert tools._round_to_nice_width(1.2e-7) == approx(1e-7)
 
 
 def test_round_to_nice_width_with_exp_large():
-    assert tools._round_to_nice_width(8.6E7) == approx(1E8)
+    assert tools._round_to_nice_width(8.6e7) == approx(1e8)
 
 
 def test_round_to_nice_width_with_exp_general():
     """Want either 1, 2, 5, or 10 bins per 10 units. So we either round the
     bin to 10, 5, 2, or 1, respectively. """
     for exp in np.arange(-10.0, 10.0):
-        factor = 10**exp
-        assert np.isclose(tools._round_to_nice_width(1.0 * factor),
-                          1.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(1.49999 * factor),
-                          1.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(1.50001 * factor),
-                          2.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(2.0 * factor),
-                          2.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(3.49999 * factor),
-                          2.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(3.50001 * factor),
-                          5.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(5.0 * factor),
-                          5.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(7.49999 * factor),
-                          5.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(7.50001 * factor),
-                          10.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(10.0 * factor),
-                          10.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(14.9999 * factor),
-                          10.0 * factor)
-        assert np.isclose(tools._round_to_nice_width(15.0001 * factor),
-                          20.0 * factor)
+        factor = 10 ** exp
+        assert np.isclose(tools._round_to_nice_width(1.0 * factor), 1.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(1.49999 * factor), 1.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(1.50001 * factor), 2.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(2.0 * factor), 2.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(3.49999 * factor), 2.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(3.50001 * factor), 5.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(5.0 * factor), 5.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(7.49999 * factor), 5.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(7.50001 * factor), 10.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(10.0 * factor), 10.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(14.9999 * factor), 10.0 * factor)
+        assert np.isclose(tools._round_to_nice_width(15.0001 * factor), 20.0 * factor)
 
 
 def test_round_to_nice_width_error_checking_positive():
@@ -378,8 +399,22 @@ def test_binning_negative_not_aligned():
 
 def test_binning_across_zero_many_bins_not_aligned():
     test_bins = tools._binning(min_=-0.51, max_=0.61, bin_size=0.1)
-    real_bins = [-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0,
-                 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
+    real_bins = [
+        -0.6,
+        -0.5,
+        -0.4,
+        -0.3,
+        -0.2,
+        -0.1,
+        0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+    ]
     assert real_bins == approx(test_bins)
 
 
@@ -415,8 +450,7 @@ def test_binning_padding_positive_aligned():
 
 def test_binning_padding_negative_aligned():
     test_bins = tools._binning(min_=-1.0, max_=-0.5, bin_size=0.1, padding=0.2)
-    real_bins = [-1.3, -1.2, -1.1, -1, -0.9, -0.8, -0.7,
-                 -0.6, -0.5, -0.4, -0.3, -0.2]
+    real_bins = [-1.3, -1.2, -1.1, -1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2]
     assert real_bins == approx(test_bins)
 
 
@@ -584,7 +618,7 @@ def test_make_bins_error_checking_data_type():
 
 def test_make_bins_error_checking_bin_size_type():
     with pytest.raises(TypeError) as err_msg:
-        tools.make_bins([1, 2 , 3], "hello")
+        tools.make_bins([1, 2, 3], "hello")
     assert str(err_msg.value) == "bin_size must be a scalar in `make_bins`."
 
 
@@ -622,9 +656,11 @@ def test_make_bins_error_checking_length_of_data_too_small_bad():
     """If we don't pass in much data, we need to specify our bin size."""
     with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1])
-    desired_msg = "The Freeman-Diaconis default binning relies on " \
-                  "inter-quartile range, and your data has zero.\n" \
-                  "Try passing your own bin size."
+    desired_msg = (
+        "The Freeman-Diaconis default binning relies on "
+        "inter-quartile range, and your data has zero.\n"
+        "Try passing your own bin size."
+    )
     assert str(err_msg.value) == desired_msg
 
 
@@ -655,9 +691,11 @@ def test_make_bins_too_small_iqr_bad():
     """If the IQR of the data is too small, we have to pass in the bin size"""
     with pytest.raises(ValueError) as err_msg:
         tools.make_bins([1, 2, 2, 2, 2, 2, 2, 3])
-    desired_msg = "The Freeman-Diaconis default binning relies on " \
-                  "inter-quartile range, and your data has zero.\n" \
-                  "Try passing your own bin size."
+    desired_msg = (
+        "The Freeman-Diaconis default binning relies on "
+        "inter-quartile range, and your data has zero.\n"
+        "Try passing your own bin size."
+    )
     assert str(err_msg.value) == desired_msg
 
 
@@ -795,17 +833,17 @@ def test_make_bins_larger_dataset_max_padding(padding):
 
 
 def test_make_bins_order_of_magnitude_of_chosen_bins_small():
-    data = np.random.uniform(1E-4, 5E-4, 1000)
+    data = np.random.uniform(1e-4, 5e-4, 1000)
     bins = tools.make_bins(data)
     bin_size = bins[1] - bins[0]
-    assert 1E-6 < bin_size < 5E-4
+    assert 1e-6 < bin_size < 5e-4
 
 
 def test_make_bins_order_of_magnitude_of_chosen_bins_large():
-    data = np.random.uniform(1E4, 5E4, 1000)
+    data = np.random.uniform(1e4, 5e4, 1000)
     bins = tools.make_bins(data)
     bin_size = bins[1] - bins[0]
-    assert 1E3 < bin_size < 5E4
+    assert 1e3 < bin_size < 5e4
 
 
 @pytest.mark.parametrize("bin_size", [1, None])
@@ -814,7 +852,7 @@ def test_make_bins_all_same_size(bin_size):
     bins = tools.make_bins(data, bin_size=bin_size)
     real_bin_size = bins[1] - bins[0]
     for idx in range(len(bins) - 1):
-        assert bins[idx+1] - bins[idx] == approx(real_bin_size)
+        assert bins[idx + 1] - bins[idx] == approx(real_bin_size)
 
 
 # ------------------------------------------------------------------------------
@@ -967,7 +1005,15 @@ def test_percentile_level_core_simple_d():
 
 def test_percentile_level_values_multiple():
     densities = [1, 2, 3, 4, 5, 10]
-    percentiles = [1, 24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0, 0]
+    percentiles = [
+        1,
+        24.0 / 25.0,
+        22.0 / 25.0,
+        19.0 / 25.0,
+        15.0 / 25.0,
+        10.0 / 25.0,
+        0,
+    ]
     levels = tools.percentile_level(densities, percentiles)
     assert 0 < levels[0] < 1
     assert 1 < levels[1] < 2
@@ -980,7 +1026,7 @@ def test_percentile_level_values_multiple():
 
 def test_percentile_level_values_order_not_matter():
     densities = [1, 2, 3, 4, 5, 10]
-    percentiles = [24.0/25.0, 22.0/25.0, 19.0/25.0, 15.0/25.0, 10.0/25.0, 0]
+    percentiles = [24.0 / 25.0, 22.0 / 25.0, 19.0 / 25.0, 15.0 / 25.0, 10.0 / 25.0, 0]
     for _ in range(10):
         np.random.shuffle(percentiles)  # order of percentiles won't matter
         np.random.shuffle(densities)
@@ -1002,7 +1048,7 @@ def test_percentile_level_big_data():
     # from l to 1 is some percentage of the total. This gives P = 1 - l^2
     real_levels = sorted(np.sqrt(1 - percentages))
     test_levels = tools.percentile_level(densities, percentages)
-    assert real_levels == approx(test_levels, abs=1E-3)
+    assert real_levels == approx(test_levels, abs=1e-3)
     # need larger tolerance to account for the fact that our points are only
     # spaced 1E-3 apart.
 
@@ -1028,9 +1074,7 @@ def test_percentile_level_in_middle_of_constants_result():
     """What happens when the correct level is hard to define, since there are
     a bunch of ones like it. This won't matter in most cases since we will
     have floating point errors. """
-    data = [1, 1, 1, 1, 1, 1, 1, 1, 1,  # 9 total
-            3, 3, 3,                    # 9 total
-            9]                          # 9 total
+    data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 9]  # 9 total  # 9 total  # 9 total
     # here the 50th percentile (if cumulatively summing) is right in the middle
     # of the 3s. To get past 50 we do have to go below the threes
     assert 1.0 < tools.percentile_level(data, 0.5) < 3.0
@@ -1040,9 +1084,7 @@ def test_percentile_level_in_middle_of_constants_warning():
     """What happens when the correct level is hard to define, since there are
     a bunch of ones like it. When there is a big gap between what we have
     and what we want we raise an error also. """
-    data = [1, 1, 1, 1, 1, 1, 1, 1, 1,  # 9 total
-            3, 3, 3,                    # 9 total
-            9]                          # 9 total
+    data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 9]  # 9 total  # 9 total  # 9 total
     with pytest.warns(RuntimeWarning):
         tools.percentile_level(data, 0.5)
 
@@ -1137,8 +1179,16 @@ def test_percentile_level_dup_warn_once_for_multiple_dup_one_level(recwarn):
 
 def test_percentile_level_dup_warn_for_multiple_levels_with_dups(recwarn):
     densities = np.linspace(0, 100, 1000)
-    percentiles = [0.45000, 0.45000001, 0.45000002, 0.45000003,
-                   0.86000, 0.86000001, 0.86000002, 0.86000003]
+    percentiles = [
+        0.45000,
+        0.45000001,
+        0.45000002,
+        0.45000003,
+        0.86000,
+        0.86000001,
+        0.86000002,
+        0.86000003,
+    ]
     tools.percentile_level(densities, percentiles)
     assert len(recwarn) == 2
 
@@ -1185,24 +1235,21 @@ def test_hist_2d_error_x_and_y_same_length():
 def test_hist_2d_bin_size_typing_string():
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size="he")
-    desired_msg = "Bin_size must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Bin_size must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[])
-    desired_msg = "Bin_size must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Bin_size must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_hist_2d_bin_size_typing_too_long():
     with pytest.raises(ValueError) as err_msg:
         tools.smart_hist_2d([1], [2], bin_size=[1, 2, 3])
-    desired_msg = "Bin_size must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Bin_size must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1298,8 +1345,7 @@ def test_hist_2d_error_checking_types_no_strings_weights():
     """Proxy for non-numerical data of any kind."""
     with pytest.raises(TypeError) as err_msg:
         tools.smart_hist_2d([1, 2], [1, 2], "ab")
-    desired_msg = "Bin_size must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Bin_size must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1403,8 +1449,7 @@ def test_hist_2d_bin_size_separate_x_y(random_data):
     xs, ys = random_data
     x_bin_size = 2.345
     y_bin_size = 7.347
-    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
-                                                 [x_bin_size, y_bin_size])
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, [x_bin_size, y_bin_size])
     empirical_x_bin = x_edges[1] - x_edges[0]
     empirical_y_bin = y_edges[1] - y_edges[0]
     assert approx(x_bin_size) == empirical_x_bin
@@ -1427,8 +1472,7 @@ def test_hist_2d_bin_size_all_same_separate_xy(random_data):
     xs, ys = random_data
     x_bin_size = 2.345
     y_bin_size = 7.347
-    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
-                                                 [x_bin_size, y_bin_size])
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, [x_bin_size, y_bin_size])
     for x_idx in range(len(x_edges) - 1):
         empirical_x_bin = x_edges[x_idx + 1] - x_edges[x_idx]
         assert empirical_x_bin == approx(x_bin_size)
@@ -1464,8 +1508,7 @@ def test_hist_edges_contain_data_two_bin_size(random_data):
 
     x_bin_size = 0.56
     y_bin_size = 0.892
-    _, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
-                                              bin_size=[x_bin_size, y_bin_size])
+    _, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=[x_bin_size, y_bin_size])
 
     assert x_edges[+0] < min(xs)
     assert x_edges[-1] > max(xs)
@@ -1478,8 +1521,9 @@ def test_hist_edges_contain_data_single_bin_size_scalar_padding(random_data):
 
     bin_size = 1.0
     padding = 3.45
-    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=bin_size,
-                                                 padding=padding)
+    hist, x_edges, y_edges = tools.smart_hist_2d(
+        xs, ys, bin_size=bin_size, padding=padding
+    )
 
     assert x_edges[+0] < (min(xs) - padding)
     assert x_edges[-1] > (max(xs) + padding)
@@ -1494,9 +1538,9 @@ def test_hist_edges_contain_data_two_bin_size_two_padding(random_data):
     y_bin_size = 0.892
     x_padding = 3.46
     y_padding = 1.34
-    _, x_edges, y_edges = tools.smart_hist_2d(xs, ys,
-                                              bin_size=[x_bin_size, y_bin_size],
-                                              padding=[x_padding, y_padding])
+    _, x_edges, y_edges = tools.smart_hist_2d(
+        xs, ys, bin_size=[x_bin_size, y_bin_size], padding=[x_padding, y_padding]
+    )
 
     assert x_edges[+0] < (min(xs) - x_padding)
     assert x_edges[-1] > (max(xs) + x_padding)
@@ -1548,8 +1592,7 @@ def test_hist_2d_results_right_height_with_weights_no_dups():
     xs = [1, 2, 3, 3]
     ys = [1, 1, 1, 2]
     weights = [4, 3, 2, 1]
-    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5,
-                                                 weights=weights)
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5, weights=weights)
     hist = hist.flatten()
     assert np.max(hist) == 4
 
@@ -1558,8 +1601,7 @@ def test_hist_2d_results_right_height_with_weights_with_dups():
     xs = [1, 2, 3, 4, 4]  # two in same cell
     ys = [1, 1, 1, 1, 1]
     weights = [1.3, 2.3, 3.5, 2, 3]
-    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5,
-                                                 weights=weights)
+    hist, x_edges, y_edges = tools.smart_hist_2d(xs, ys, bin_size=0.5, weights=weights)
     hist = hist.flatten()
     assert np.max(hist) == 5
 
@@ -1604,8 +1646,7 @@ def test_hist_2d_smoothing_different_scale_all_cells_nonzero():
 def test_hist_2d_smoothing_different_scale_different_results():
     xs = [0]
     ys = [0]
-    hist, _, _ = tools.smart_hist_2d(xs, ys, bin_size=0.1, padding=10,
-                                     smoothing=[5, 1])
+    hist, _, _ = tools.smart_hist_2d(xs, ys, bin_size=0.1, padding=10, smoothing=[5, 1])
     # more smoothed in x than in y. So you need to go farther in x than y to
     # get the same decrease
     center_idx_x = int(hist.shape[0] / 2.0)
@@ -1628,32 +1669,28 @@ def test_hist_2d_smoothing_different_scale_different_results():
 def test_padding_from_smoothing_error_empty_list():
     with pytest.raises(ValueError) as err_msg:
         tools._padding_from_smoothing([])
-    desired_msg = "Smoothing must be either a scalar or two element " \
-                  "numeric list."
+    desired_msg = "Smoothing must be either a scalar or two element " "numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_list_too_long():
     with pytest.raises(ValueError) as err_msg:
         tools._padding_from_smoothing([1, 2, 3])
-    desired_msg = "Smoothing must be either a scalar or two " \
-                  "element numeric list."
+    desired_msg = "Smoothing must be either a scalar or two " "element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_string():
     with pytest.raises(TypeError) as err_msg:
         tools._padding_from_smoothing("ab")
-    desired_msg = "Smoothing must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Smoothing must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
 def test_padding_from_smoothing_error_string_array():
     with pytest.raises(TypeError) as err_msg:
         tools._padding_from_smoothing(["a", "b"])
-    desired_msg = "Smoothing must be either a scalar or " \
-                  "two element numeric list."
+    desired_msg = "Smoothing must be either a scalar or " "two element numeric list."
     assert str(err_msg.value) == desired_msg
 
 
@@ -1725,4 +1762,3 @@ def test_outer_contour_few_offset():
     for circle in true_results:
         assert circle in test_results
     assert len(true_results) == len(test_results)
-

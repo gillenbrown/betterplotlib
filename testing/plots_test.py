@@ -12,6 +12,7 @@ this_dir = os.path.realpath(os.path.split(__file__)[0])
 baseline_im_dir = os.path.join(this_dir, "baseline_images")
 new_im_dir = os.path.join(this_dir, "temporary_images")
 
+
 def image_similarity(im_1_path, im_2_path):
     """
     Compare two images to see if they are identical.
@@ -64,37 +65,44 @@ ys_normal_500 = np.random.normal(0, scale=1, size=500)
 # define some common error messages to check against
 #
 # ------------------------------------------------------------------------------
-no_iqr_msg = "The Freeman-Diaconis default binning relies on " \
-             "inter-quartile range, and your data has zero.\n" \
-             "Try passing your own bin size."
+no_iqr_msg = (
+    "The Freeman-Diaconis default binning relies on "
+    "inter-quartile range, and your data has zero.\n"
+    "Try passing your own bin size."
+)
 
 empty_data_msg = "Empty list is not valid for data."
 xy_length_msg = "x and y data must be the same length."
 
 bin_size_positive_msg = "Bin size must be positive."
-bin_size_typing_msg = "Bin_size must be either a scalar or " \
-                      "two element numeric list."
+bin_size_typing_msg = "Bin_size must be either a scalar or " "two element numeric list."
 
 smoothing_nonnegative_msg = "Smoothing must be nonnegative."
-smoothing_typing_msg = "Smoothing must be either a scalar or " \
-                       "two element numeric list."
+smoothing_typing_msg = (
+    "Smoothing must be either a scalar or " "two element numeric list."
+)
 
 weights_nonnegative_msg = "Weights must be non-negative."
 weights_wrong_length = "Weights and data need to have the same length."
 weights_typing_msg = "Weights must be a numerical array."
 
 percent_levels_typing_msg = "Percent_levels needs to be a numeric list."
-percent_levels_duplicates_msg = "The percent levels chosen lead to duplicate " \
-                                "levels.\nContour levels must be increasing."
+percent_levels_duplicates_msg = (
+    "The percent levels chosen lead to duplicate "
+    "levels.\nContour levels must be increasing."
+)
 percent_levels_range_msg = "Percentages must be between 0 and 1."
 
 colormap_msg_part = "is not recognized. Possible values are: Accent"
 
-data_not_all_same_msg = "All points are identical. This breaks matplotlib " \
-                        "contours for some reason. Try other data, or smooth."
+data_not_all_same_msg = (
+    "All points are identical. This breaks matplotlib "
+    "contours for some reason. Try other data, or smooth."
+)
 
-levels_contour_err_msg = "The levels parameter is set by this function. " \
-                         "Do not pass it in. "
+levels_contour_err_msg = (
+    "The levels parameter is set by this function. " "Do not pass it in. "
+)
 
 # ------------------------------------------------------------------------------
 #
@@ -203,7 +211,7 @@ def test_scatter_simple_example_image():
 def test_scatter_multiple_datasets_example_image():
     fig, ax = bpl.subplots()
 
-    ax.scatter(xs_normal_500,     ys_normal_500)
+    ax.scatter(xs_normal_500, ys_normal_500)
     ax.scatter(xs_normal_500 + 1, ys_normal_500 + 0.5)
     ax.scatter(xs_normal_500 + 1, ys_normal_500 + 1)
     ax.equal_scale()
@@ -231,16 +239,23 @@ def test_hist_few_options_example_image():
     data4 = xs_normal_10000 + 6
     bin_size = 0.5
     ax.hist(data1, rel_freq=True, bin_size=bin_size)
-    ax.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
-             linewidth=5)
-    ax.hist(data3, rel_freq=True, bin_size=bin_size,
-             histtype="stepfilled", hatch="o", alpha=0.8)
-    ax.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
-             hatch="x", linewidth=4)
+    ax.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", linewidth=5)
+    ax.hist(
+        data3,
+        rel_freq=True,
+        bin_size=bin_size,
+        histtype="stepfilled",
+        hatch="o",
+        alpha=0.8,
+    )
+    ax.hist(
+        data4, rel_freq=True, bin_size=bin_size, histtype="step", hatch="x", linewidth=4
+    )
 
     ax.add_labels(y_label="Relative Frequency")
 
     assert image_similarity_full(fig, "hist_few_options.png")
+
 
 # ------------------------------------------------------------------------------
 #
@@ -443,13 +458,14 @@ def test_density_contour_error_checking_data_not_all_same():
         ax.density_contour(xs, ys, bin_size=0.1, percent_levels=0.5)
     assert str(err_msg.value) == data_not_all_same_msg
 
+
 def test_density_contour_error_checking_data_not_all_same_smoothing_works():
     xs = [1, 1, 1, 1]
     ys = [4, 4, 4, 4]
     fig, ax = bpl.subplots()
-    ax.density_contour(xs, ys, bin_size=0.1, percent_levels=0.5,
-                           smoothing=1.0)
+    ax.density_contour(xs, ys, bin_size=0.1, percent_levels=0.5, smoothing=1.0)
     # no error
+
 
 def test_density_contour_error_checking_data_no_variation_needs_bin_size():
     xs = [1, 2, 2, 2, 2, 2, 2, 3]
@@ -468,15 +484,18 @@ def test_density_contour_error_checking_data_length_needs_same():
     assert str(err_msg.value) == xy_length_msg
 
 
-@pytest.mark.parametrize("bin_size,err,msg", [
-    (-1,         ValueError, bin_size_positive_msg),
-    ([-1, 5],    ValueError, bin_size_positive_msg),
-    ([1, -5],    ValueError, bin_size_positive_msg),
-    ([0, 5],     ValueError, bin_size_positive_msg),
-    ([1, 5, 3],  ValueError, bin_size_typing_msg),
-    ([],         ValueError, bin_size_typing_msg),
-    (["a", "b"], TypeError,  bin_size_typing_msg)
-])
+@pytest.mark.parametrize(
+    "bin_size,err,msg",
+    [
+        (-1, ValueError, bin_size_positive_msg),
+        ([-1, 5], ValueError, bin_size_positive_msg),
+        ([1, -5], ValueError, bin_size_positive_msg),
+        ([0, 5], ValueError, bin_size_positive_msg),
+        ([1, 5, 3], ValueError, bin_size_typing_msg),
+        ([], ValueError, bin_size_typing_msg),
+        (["a", "b"], TypeError, bin_size_typing_msg),
+    ],
+)
 def test_density_contour_error_checking_bin_size(bin_size, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -484,14 +503,17 @@ def test_density_contour_error_checking_bin_size(bin_size, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("smoothing,err,msg", [
-    (-1,         ValueError, smoothing_nonnegative_msg),
-    ([-1, 5],    ValueError, smoothing_nonnegative_msg),
-    ([1, -5],    ValueError, smoothing_nonnegative_msg),
-    ([1, 5, 3],  ValueError, smoothing_typing_msg),
-    ([],         ValueError, smoothing_typing_msg),
-    (["a", "b"], TypeError,  smoothing_typing_msg)
-])
+@pytest.mark.parametrize(
+    "smoothing,err,msg",
+    [
+        (-1, ValueError, smoothing_nonnegative_msg),
+        ([-1, 5], ValueError, smoothing_nonnegative_msg),
+        ([1, -5], ValueError, smoothing_nonnegative_msg),
+        ([1, 5, 3], ValueError, smoothing_typing_msg),
+        ([], ValueError, smoothing_typing_msg),
+        (["a", "b"], TypeError, smoothing_typing_msg),
+    ],
+)
 def test_density_contour_error_checking_smoothing(smoothing, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -502,16 +524,20 @@ def test_density_contour_error_checking_smoothing(smoothing, err, msg):
 def test_density_contour_error_checking_colormap():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError) as err_msg:
-        ax.density_contour(xs_uniform_10, ys_uniform_10, cmap="sdfsd",
-                           percent_levels=0.5)
+        ax.density_contour(
+            xs_uniform_10, ys_uniform_10, cmap="sdfsd", percent_levels=0.5
+        )
     assert colormap_msg_part in str(err_msg.value)
 
 
-@pytest.mark.parametrize("weights,err,msg", [
-    (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
-    ([1, 5, 3],          ValueError, weights_wrong_length),
-    (["a", "b"],         TypeError,  weights_typing_msg)
-])
+@pytest.mark.parametrize(
+    "weights,err,msg",
+    [
+        (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
+        ([1, 5, 3], ValueError, weights_wrong_length),
+        (["a", "b"], TypeError, weights_typing_msg),
+    ],
+)
 def test_density_contour_error_checking_weights(weights, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -519,17 +545,19 @@ def test_density_contour_error_checking_weights(weights, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("percents,err,msg", [
-    (["a"],       TypeError,  percent_levels_typing_msg),
-    ([0.45, 0.451],  ValueError, percent_levels_duplicates_msg),
-    ([-0.4, 0.5], ValueError, percent_levels_range_msg),
-    ([0.4, 1.01], ValueError, percent_levels_range_msg)
-])
+@pytest.mark.parametrize(
+    "percents,err,msg",
+    [
+        (["a"], TypeError, percent_levels_typing_msg),
+        ([0.45, 0.451], ValueError, percent_levels_duplicates_msg),
+        ([-0.4, 0.5], ValueError, percent_levels_range_msg),
+        ([0.4, 1.01], ValueError, percent_levels_range_msg),
+    ],
+)
 def test_density_contour_error_checking_percent_levels(percents, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
-        ax.density_contour(xs_uniform_10, ys_uniform_10,
-                           percent_levels=percents)
+        ax.density_contour(xs_uniform_10, ys_uniform_10, percent_levels=percents)
     assert str(err_msg.value) == msg
 
 
@@ -543,8 +571,13 @@ def test_density_contour_levels_not_in_kwargs():
 def test_density_contour_percent_level_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=5, c="orange")
-    ax.density_contour(xs_uniform_10, ys_uniform_10,
-                       bin_size=0.01, percent_levels=[0.4, 0.9], smoothing=0.1)
+    ax.density_contour(
+        xs_uniform_10,
+        ys_uniform_10,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.9],
+        smoothing=0.1,
+    )
     ax.equal_scale()
     ax.set_limits(-0.25, 1.25, -0.25, 1.25)
     assert image_similarity_full(fig, "density_contour_percent_level.png")
@@ -553,11 +586,14 @@ def test_density_contour_percent_level_image():
 def test_density_contour_diff_smoothing_bins_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=5, c="orange")
-    ax.density_contour(xs_uniform_10, ys_uniform_10,
-                       bin_size=0.01,
-                       percent_levels=[0.4, 0.95],
-                       smoothing=[0.05, 0.2],
-                       labels=False)
+    ax.density_contour(
+        xs_uniform_10,
+        ys_uniform_10,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.95],
+        smoothing=[0.05, 0.2],
+        labels=False,
+    )
     ax.equal_scale()
     ax.set_limits(-0.25, 1.25, -0.25, 1.25)
     assert image_similarity_full(fig, "density_contour_diff_smoothing_bins.png")
@@ -568,12 +604,16 @@ def test_density_contour_weights_image():
     xs = [1, 2, 3, 4]
     ys = xs
     weights = xs
-    ax.density_contour(xs, ys, weights=weights,
-                       bin_size=0.01,
-                       percent_levels=[0.4, 0.95],
-                       smoothing=0.3,
-                       labels=True,
-                       cmap="ocean")
+    ax.density_contour(
+        xs,
+        ys,
+        weights=weights,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.95],
+        smoothing=0.3,
+        labels=True,
+        cmap="ocean",
+    )
     ax.equal_scale()
     assert image_similarity_full(fig, "density_contour_weights.png")
 
@@ -616,15 +656,18 @@ def test_density_contourf_error_checking_data_length_needs_same():
     assert str(err_msg.value) == xy_length_msg
 
 
-@pytest.mark.parametrize("bin_size,err,msg", [
-    (-1,         ValueError, bin_size_positive_msg),
-    ([-1, 5],    ValueError, bin_size_positive_msg),
-    ([1, -5],    ValueError, bin_size_positive_msg),
-    ([0, 5],     ValueError, bin_size_positive_msg),
-    ([1, 5, 3],  ValueError, bin_size_typing_msg),
-    ([],         ValueError, bin_size_typing_msg),
-    (["a", "b"], TypeError,  bin_size_typing_msg)
-])
+@pytest.mark.parametrize(
+    "bin_size,err,msg",
+    [
+        (-1, ValueError, bin_size_positive_msg),
+        ([-1, 5], ValueError, bin_size_positive_msg),
+        ([1, -5], ValueError, bin_size_positive_msg),
+        ([0, 5], ValueError, bin_size_positive_msg),
+        ([1, 5, 3], ValueError, bin_size_typing_msg),
+        ([], ValueError, bin_size_typing_msg),
+        (["a", "b"], TypeError, bin_size_typing_msg),
+    ],
+)
 def test_density_contourf_error_checking_bin_size(bin_size, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -632,14 +675,17 @@ def test_density_contourf_error_checking_bin_size(bin_size, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("smoothing,err,msg", [
-    (-1,         ValueError, smoothing_nonnegative_msg),
-    ([-1, 5],    ValueError, smoothing_nonnegative_msg),
-    ([1, -5],    ValueError, smoothing_nonnegative_msg),
-    ([1, 5, 3],  ValueError, smoothing_typing_msg),
-    ([],         ValueError, smoothing_typing_msg),
-    (["a", "b"], TypeError,  smoothing_typing_msg)
-])
+@pytest.mark.parametrize(
+    "smoothing,err,msg",
+    [
+        (-1, ValueError, smoothing_nonnegative_msg),
+        ([-1, 5], ValueError, smoothing_nonnegative_msg),
+        ([1, -5], ValueError, smoothing_nonnegative_msg),
+        ([1, 5, 3], ValueError, smoothing_typing_msg),
+        ([], ValueError, smoothing_typing_msg),
+        (["a", "b"], TypeError, smoothing_typing_msg),
+    ],
+)
 def test_density_contourf_error_checking_smoothing(smoothing, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -650,16 +696,20 @@ def test_density_contourf_error_checking_smoothing(smoothing, err, msg):
 def test_density_contourf_error_checking_colormap():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError) as err_msg:
-        ax.density_contourf(xs_uniform_10, ys_uniform_10, cmap="sdfsd",
-                           percent_levels=0.5)
+        ax.density_contourf(
+            xs_uniform_10, ys_uniform_10, cmap="sdfsd", percent_levels=0.5
+        )
     assert colormap_msg_part in str(err_msg.value)
 
 
-@pytest.mark.parametrize("weights,err,msg", [
-    (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
-    ([1, 5, 3],          ValueError, weights_wrong_length),
-    (["a", "b"],         TypeError,  weights_typing_msg)
-])
+@pytest.mark.parametrize(
+    "weights,err,msg",
+    [
+        (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
+        ([1, 5, 3], ValueError, weights_wrong_length),
+        (["a", "b"], TypeError, weights_typing_msg),
+    ],
+)
 def test_density_contourf_error_checking_weights(weights, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -667,17 +717,19 @@ def test_density_contourf_error_checking_weights(weights, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("percents,err,msg", [
-    (["a"],       TypeError,  percent_levels_typing_msg),
-    ([0.45, 0.451],  ValueError, percent_levels_duplicates_msg),
-    ([-0.4, 0.5], ValueError, percent_levels_range_msg),
-    ([0.4, 1.01], ValueError, percent_levels_range_msg)
-])
+@pytest.mark.parametrize(
+    "percents,err,msg",
+    [
+        (["a"], TypeError, percent_levels_typing_msg),
+        ([0.45, 0.451], ValueError, percent_levels_duplicates_msg),
+        ([-0.4, 0.5], ValueError, percent_levels_range_msg),
+        ([0.4, 1.01], ValueError, percent_levels_range_msg),
+    ],
+)
 def test_density_contourf_error_checking_percent_levels(percents, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
-        ax.density_contourf(xs_uniform_10, ys_uniform_10,
-                           percent_levels=percents)
+        ax.density_contourf(xs_uniform_10, ys_uniform_10, percent_levels=percents)
     assert str(err_msg.value) == msg
 
 
@@ -698,9 +750,14 @@ def test_density_contourf_no_labels():
 def test_density_contourf_percent_level_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=5, c="white")
-    ax.density_contourf(xs_uniform_10, ys_uniform_10,
-                        bin_size=0.01, percent_levels=[0.4, 0.9], smoothing=0.1,
-                        zorder=0)
+    ax.density_contourf(
+        xs_uniform_10,
+        ys_uniform_10,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.9],
+        smoothing=0.1,
+        zorder=0,
+    )
     ax.equal_scale()
     ax.set_limits(-0.25, 1.25, -0.25, 1.25)
     assert image_similarity_full(fig, "density_contourf_percent_level.png")
@@ -709,11 +766,14 @@ def test_density_contourf_percent_level_image():
 def test_density_contourf_diff_smooth_bins_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=5, c="white")
-    ax.density_contourf(xs_uniform_10, ys_uniform_10,
-                        bin_size=0.01,
-                        percent_levels=[0.4, 0.95],
-                        smoothing=[0.05, 0.2],
-                        zorder=0)
+    ax.density_contourf(
+        xs_uniform_10,
+        ys_uniform_10,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.95],
+        smoothing=[0.05, 0.2],
+        zorder=0,
+    )
     ax.equal_scale()
     ax.set_limits(-0.25, 1.25, -0.25, 1.25)
     assert image_similarity_full(fig, "density_contourf_diff_smooth_bins.png")
@@ -724,11 +784,15 @@ def test_density_contourf_weights_image():
     xs = [1, 2, 3, 4]
     ys = xs
     weights = xs
-    ax.density_contourf(xs, ys, weights=weights,
-                        bin_size=0.01,
-                        percent_levels=[0.4, 0.95],
-                        smoothing=0.3,
-                        cmap="ocean")
+    ax.density_contourf(
+        xs,
+        ys,
+        weights=weights,
+        bin_size=0.01,
+        percent_levels=[0.4, 0.95],
+        smoothing=0.3,
+        cmap="ocean",
+    )
     ax.equal_scale()
     assert image_similarity_full(fig, "density_contourf_weights.png")
 
@@ -771,15 +835,18 @@ def test_contour_scatter_error_checking_data_length_needs_same():
     assert str(err_msg.value) == xy_length_msg
 
 
-@pytest.mark.parametrize("bin_size,err,msg", [
-    (-1,         ValueError, bin_size_positive_msg),
-    ([-1, 5],    ValueError, bin_size_positive_msg),
-    ([1, -5],    ValueError, bin_size_positive_msg),
-    ([0, 5],     ValueError, bin_size_positive_msg),
-    ([1, 5, 3],  ValueError, bin_size_typing_msg),
-    ([],         ValueError, bin_size_typing_msg),
-    (["a", "b"], TypeError,  bin_size_typing_msg)
-])
+@pytest.mark.parametrize(
+    "bin_size,err,msg",
+    [
+        (-1, ValueError, bin_size_positive_msg),
+        ([-1, 5], ValueError, bin_size_positive_msg),
+        ([1, -5], ValueError, bin_size_positive_msg),
+        ([0, 5], ValueError, bin_size_positive_msg),
+        ([1, 5, 3], ValueError, bin_size_typing_msg),
+        ([], ValueError, bin_size_typing_msg),
+        (["a", "b"], TypeError, bin_size_typing_msg),
+    ],
+)
 def test_contour_scatter_error_checking_bin_size(bin_size, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -787,14 +854,17 @@ def test_contour_scatter_error_checking_bin_size(bin_size, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("smoothing,err,msg", [
-    (-1,         ValueError, smoothing_nonnegative_msg),
-    ([-1, 5],    ValueError, smoothing_nonnegative_msg),
-    ([1, -5],    ValueError, smoothing_nonnegative_msg),
-    ([1, 5, 3],  ValueError, smoothing_typing_msg),
-    ([],         ValueError, smoothing_typing_msg),
-    (["a", "b"], TypeError,  smoothing_typing_msg)
-])
+@pytest.mark.parametrize(
+    "smoothing,err,msg",
+    [
+        (-1, ValueError, smoothing_nonnegative_msg),
+        ([-1, 5], ValueError, smoothing_nonnegative_msg),
+        ([1, -5], ValueError, smoothing_nonnegative_msg),
+        ([1, 5, 3], ValueError, smoothing_typing_msg),
+        ([], ValueError, smoothing_typing_msg),
+        (["a", "b"], TypeError, smoothing_typing_msg),
+    ],
+)
 def test_contour_scatter_error_checking_smoothing(smoothing, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -809,11 +879,14 @@ def test_contour_scatter_error_checking_colormap():
     assert colormap_msg_part in str(err_msg.value)
 
 
-@pytest.mark.parametrize("weights,err,msg", [
-    (xs_normal_10000, ValueError, weights_nonnegative_msg),
-    ([1, 5, 3],       ValueError, weights_wrong_length),
-    (["a", "b"],      TypeError,  weights_typing_msg)
-])
+@pytest.mark.parametrize(
+    "weights,err,msg",
+    [
+        (xs_normal_10000, ValueError, weights_nonnegative_msg),
+        ([1, 5, 3], ValueError, weights_wrong_length),
+        (["a", "b"], TypeError, weights_typing_msg),
+    ],
+)
 def test_contour_scatter_error_checking_weights(weights, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -821,41 +894,46 @@ def test_contour_scatter_error_checking_weights(weights, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("percents,err,msg", [
-    (["a"],       TypeError,  percent_levels_typing_msg),
-    ([0.45, 0.451],  ValueError, percent_levels_duplicates_msg),
-    ([-0.4, 0.5], ValueError, percent_levels_range_msg),
-    ([0.4, 1.01], ValueError, percent_levels_range_msg)
-])
+@pytest.mark.parametrize(
+    "percents,err,msg",
+    [
+        (["a"], TypeError, percent_levels_typing_msg),
+        ([0.45, 0.451], ValueError, percent_levels_duplicates_msg),
+        ([-0.4, 0.5], ValueError, percent_levels_range_msg),
+        ([0.4, 1.01], ValueError, percent_levels_range_msg),
+    ],
+)
 def test_contour_scatter_error_checking_percent_levels(percents, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
-        ax.contour_scatter(xs_normal_10000, ys_normal_10000,
-                           percent_levels=percents)
+        ax.contour_scatter(xs_normal_10000, ys_normal_10000, percent_levels=percents)
     assert str(err_msg.value) == msg
 
 
 def test_contour_scatter_error_checking_no_labels_contourf():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError) as err_msg:
-        ax.contour_scatter(xs_normal_10000, ys_normal_10000,
-                           contourf_kwargs={"labels": True})
+        ax.contour_scatter(
+            xs_normal_10000, ys_normal_10000, contourf_kwargs={"labels": True}
+        )
     assert str(err_msg.value) == "Filled contours cannot have labels."
 
 
 def test_contour_scatter_error_checking_no_levels_contour():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError) as err_msg:
-        ax.contour_scatter(xs_normal_10000, ys_normal_10000,
-                           contour_kwargs={"levels": [1]})
+        ax.contour_scatter(
+            xs_normal_10000, ys_normal_10000, contour_kwargs={"levels": [1]}
+        )
     assert str(err_msg.value) == levels_contour_err_msg
 
 
 def test_contour_scatter_error_checking_no_levels_contourf():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError) as err_msg:
-        ax.contour_scatter(xs_normal_10000, ys_normal_10000,
-                           contourf_kwargs={"levels": [1]})
+        ax.contour_scatter(
+            xs_normal_10000, ys_normal_10000, contourf_kwargs={"levels": [1]}
+        )
     assert str(err_msg.value) == levels_contour_err_msg
 
 
@@ -865,8 +943,9 @@ def test_contour_scatter_scatter_outside_contours_image():
 
     fig, ax = bpl.subplots()
     ax.scatter(xs, ys, c=bpl.color_cycle[1], s=2, alpha=1, zorder=4)
-    ax.contour_scatter(xs, ys, bin_size=0.01, smoothing=0.2,
-                       scatter_kwargs={"s":20, "zorder":3})
+    ax.contour_scatter(
+        xs, ys, bin_size=0.01, smoothing=0.2, scatter_kwargs={"s": 20, "zorder": 3}
+    )
     ax.equal_scale()
     assert image_similarity_full(fig, "contour_scatter_outside_contours.png")
 
@@ -907,12 +986,8 @@ def test_contour_scatter_multi_holes_example_image():
 
 
 def test_contour_scatter_multi_kwargs_example_image():
-    xs = np.concatenate([xs_normal_10000,
-                         xs_normal_10000 + 3,
-                         xs_normal_10000])
-    ys = np.concatenate([ys_normal_10000,
-                         ys_normal_10000 + 3,
-                         ys_normal_10000 + 3])
+    xs = np.concatenate([xs_normal_10000, xs_normal_10000 + 3, xs_normal_10000])
+    ys = np.concatenate([ys_normal_10000, ys_normal_10000 + 3, ys_normal_10000 + 3])
 
     fig, axs = bpl.subplots(nrows=2, ncols=2)
     [ax1, ax2], [ax3, ax4] = axs
@@ -921,51 +996,62 @@ def test_contour_scatter_multi_kwargs_example_image():
     smoothing = 0.2
     bin_size = 0.1
 
-    ax1.contour_scatter(xs, ys,
-                        bin_size=bin_size,
-                        percent_levels=percent_levels,
-                        smoothing=smoothing,
-                        fill_cmap="background_grey",
-                        contour_kwargs={"cmap": "magma"},
-                        scatter_kwargs={"s": 10,
-                                        "c": bpl.almost_black})
+    ax1.contour_scatter(
+        xs,
+        ys,
+        bin_size=bin_size,
+        percent_levels=percent_levels,
+        smoothing=smoothing,
+        fill_cmap="background_grey",
+        contour_kwargs={"cmap": "magma"},
+        scatter_kwargs={"s": 10, "c": bpl.almost_black},
+    )
     ax1.make_ax_dark()
 
     # or we can choose our own `fill_cmap`
-    ax2.contour_scatter(xs, ys,
-                        bin_size=bin_size,
-                        smoothing=smoothing,
-                        fill_cmap="viridis",
-                        percent_levels=percent_levels,
-                        contour_kwargs={"linewidths": 1,
-                                        "colors":     "white"},
-                        scatter_kwargs={"s":     50,
-                                        "c":     bpl.color_cycle[0],
-                                        "alpha": 0.3})
+    ax2.contour_scatter(
+        xs,
+        ys,
+        bin_size=bin_size,
+        smoothing=smoothing,
+        fill_cmap="viridis",
+        percent_levels=percent_levels,
+        contour_kwargs={"linewidths": 1, "colors": "white"},
+        scatter_kwargs={"s": 50, "c": bpl.color_cycle[0], "alpha": 0.3},
+    )
 
     # There are also my colormaps that work with the dark axes
-    ax3.contour_scatter(xs, ys,
-                        bin_size=bin_size,
-                        smoothing=smoothing,
-                        fill_cmap="modified_greys",
-                        percent_levels=percent_levels,
-                        scatter_kwargs={"c": bpl.color_cycle[1]},
-                        contour_kwargs={"linewidths": [2, 0, 0, 0, 0, 0, 0],
-                                        "colors":     bpl.almost_black})
+    ax3.contour_scatter(
+        xs,
+        ys,
+        bin_size=bin_size,
+        smoothing=smoothing,
+        fill_cmap="modified_greys",
+        percent_levels=percent_levels,
+        scatter_kwargs={"c": bpl.color_cycle[1]},
+        contour_kwargs={
+            "linewidths": [2, 0, 0, 0, 0, 0, 0],
+            "colors": bpl.almost_black,
+        },
+    )
     ax3.make_ax_dark()
 
     # the default `fill_cmap` is white.
     new_linestyles = ["solid", "dashed", "dashed", "dashed"]
-    ax4.contour_scatter(xs, ys,
-                        bin_size=bin_size,
-                        smoothing=smoothing,
-                        percent_levels=percent_levels,
-                        scatter_kwargs={"marker":    "^",
-                                        "linewidth": 0.2,
-                                        "c":         bpl.color_cycle[2],
-                                        "s":         20},
-                        contour_kwargs={"linestyles": new_linestyles,
-                                        "colors":     bpl.almost_black})
+    ax4.contour_scatter(
+        xs,
+        ys,
+        bin_size=bin_size,
+        smoothing=smoothing,
+        percent_levels=percent_levels,
+        scatter_kwargs={
+            "marker": "^",
+            "linewidth": 0.2,
+            "c": bpl.color_cycle[2],
+            "s": 20,
+        },
+        contour_kwargs={"linestyles": new_linestyles, "colors": bpl.almost_black},
+    )
 
     assert image_similarity_full(fig, "contour_scatter_multi_kwargs_example.png")
 
@@ -975,13 +1061,16 @@ def test_contour_scatter_lab_smooth_example_image():
     ys = [1, 2, 3, 4]
     weights = [1, 2, 3, 4]
     fig, ax = bpl.subplots()
-    ax.contour_scatter(xs, ys,
-                       weights=weights,
-                       bin_size=0.01,
-                       smoothing=[0.8, 0.3],
-                       fill_cmap="Blues",
-                       labels=True,
-                       contour_kwargs={"colors": "k"})
+    ax.contour_scatter(
+        xs,
+        ys,
+        weights=weights,
+        bin_size=0.01,
+        smoothing=[0.8, 0.3],
+        fill_cmap="Blues",
+        labels=True,
+        contour_kwargs={"colors": "k"},
+    )
     ax.equal_scale()
 
     assert image_similarity_full(fig, "contour_scatter_lab_smooth_example.png")
@@ -994,13 +1083,11 @@ def test_contour_scatter_lab_smooth_example_image():
 # ------------------------------------------------------------------------------
 
 
-
 # ------------------------------------------------------------------------------
 #
 # Testing plot
 #
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -1010,13 +1097,11 @@ def test_contour_scatter_lab_smooth_example_image():
 # ------------------------------------------------------------------------------
 
 
-
 # ------------------------------------------------------------------------------
 #
 # Testing axhline
 #
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -1026,7 +1111,6 @@ def test_contour_scatter_lab_smooth_example_image():
 # ------------------------------------------------------------------------------
 
 
-
 # ------------------------------------------------------------------------------
 #
 # Testing twin axis simple
@@ -1034,13 +1118,11 @@ def test_contour_scatter_lab_smooth_example_image():
 # ------------------------------------------------------------------------------
 
 
-
 # ------------------------------------------------------------------------------
 #
 # Testing twin axis
 #
 # ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -1078,15 +1160,18 @@ def test_shaded_density_error_checking_data_length_needs_same():
     assert str(err_msg.value) == xy_length_msg
 
 
-@pytest.mark.parametrize("bin_size,err,msg", [
-    (-1,         ValueError, bin_size_positive_msg),
-    ([-1, 5],    ValueError, bin_size_positive_msg),
-    ([1, -5],    ValueError, bin_size_positive_msg),
-    ([0, 5],     ValueError, bin_size_positive_msg),
-    ([1, 5, 3],  ValueError, bin_size_typing_msg),
-    ([],         ValueError, bin_size_typing_msg),
-    (["a", "b"], TypeError,  bin_size_typing_msg)
-])
+@pytest.mark.parametrize(
+    "bin_size,err,msg",
+    [
+        (-1, ValueError, bin_size_positive_msg),
+        ([-1, 5], ValueError, bin_size_positive_msg),
+        ([1, -5], ValueError, bin_size_positive_msg),
+        ([0, 5], ValueError, bin_size_positive_msg),
+        ([1, 5, 3], ValueError, bin_size_typing_msg),
+        ([], ValueError, bin_size_typing_msg),
+        (["a", "b"], TypeError, bin_size_typing_msg),
+    ],
+)
 def test_shaded_density_error_checking_bin_size(bin_size, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -1094,14 +1179,17 @@ def test_shaded_density_error_checking_bin_size(bin_size, err, msg):
     assert str(err_msg.value) == msg
 
 
-@pytest.mark.parametrize("smoothing,err,msg", [
-    (-1,         ValueError, smoothing_nonnegative_msg),
-    ([-1, 5],    ValueError, smoothing_nonnegative_msg),
-    ([1, -5],    ValueError, smoothing_nonnegative_msg),
-    ([1, 5, 3],  ValueError, smoothing_typing_msg),
-    ([],         ValueError, smoothing_typing_msg),
-    (["a", "b"], TypeError,  smoothing_typing_msg)
-])
+@pytest.mark.parametrize(
+    "smoothing,err,msg",
+    [
+        (-1, ValueError, smoothing_nonnegative_msg),
+        ([-1, 5], ValueError, smoothing_nonnegative_msg),
+        ([1, -5], ValueError, smoothing_nonnegative_msg),
+        ([1, 5, 3], ValueError, smoothing_typing_msg),
+        ([], ValueError, smoothing_typing_msg),
+        (["a", "b"], TypeError, smoothing_typing_msg),
+    ],
+)
 def test_shaded_density_error_checking_smoothing(smoothing, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -1116,11 +1204,14 @@ def test_shaded_density_error_checking_colormap():
     assert colormap_msg_part in str(err_msg.value)
 
 
-@pytest.mark.parametrize("weights,err,msg", [
-    (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
-    ([1, 5, 3],          ValueError, weights_wrong_length),
-    (["a", "b"],         TypeError,  weights_typing_msg)
-])
+@pytest.mark.parametrize(
+    "weights,err,msg",
+    [
+        (-1 * xs_uniform_10, ValueError, weights_nonnegative_msg),
+        ([1, 5, 3], ValueError, weights_wrong_length),
+        (["a", "b"], TypeError, weights_typing_msg),
+    ],
+)
 def test_shaded_density_error_checking_weights(weights, err, msg):
     fig, ax = bpl.subplots()
     with pytest.raises(err) as err_msg:
@@ -1141,8 +1232,9 @@ def test_shaded_density_points_are_inside_image():
     """Test that the scatter points to indeed lie in the regions they should."""
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=1, c="yellow", zorder=10)
-    ax.shaded_density(xs_uniform_10, ys_uniform_10, bin_size=0.01,
-                      smoothing=0, cmap="Greens")
+    ax.shaded_density(
+        xs_uniform_10, ys_uniform_10, bin_size=0.01, smoothing=0, cmap="Greens"
+    )
     for x in xs_uniform_10:
         ax.axvline(x, lw=0.01)
     for y in ys_uniform_10:
@@ -1155,8 +1247,9 @@ def test_shaded_density_points_are_inside_image():
 def test_shaded_density_with_smoothing_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=1, c="yellow", zorder=10)
-    ax.shaded_density(xs_uniform_10, ys_uniform_10, bin_size=0.01,
-                      smoothing=0.1, cmap="viridis")
+    ax.shaded_density(
+        xs_uniform_10, ys_uniform_10, bin_size=0.01, smoothing=0.1, cmap="viridis"
+    )
     ax.equal_scale()
     ax.set_limits(0, 1, 0, 1)
     assert image_similarity_full(fig, "shaded_density_with_smoothing.png")
@@ -1174,8 +1267,9 @@ def test_shaded_density_bin_size_image():
 def test_shaded_density_smoothing_image():
     fig, ax = bpl.subplots()
     ax.scatter(xs_uniform_10, ys_uniform_10, s=1, c="yellow", zorder=10)
-    ax.shaded_density(xs_uniform_10, ys_uniform_10, bin_size=0.01,
-                      smoothing=[0.5, 0.05])
+    ax.shaded_density(
+        xs_uniform_10, ys_uniform_10, bin_size=0.01, smoothing=[0.5, 0.05]
+    )
     ax.equal_scale()
     ax.set_limits(0, 1, 0, 1)
     assert image_similarity_full(fig, "shaded_density_smoothing.png")
@@ -1187,8 +1281,9 @@ def test_shaded_density_weights_image():
     weights = [1, 2, 3, 4]
 
     fig, ax = bpl.subplots()
-    ax.shaded_density(xs, ys, weights=weights, bin_size=0.01,
-                      smoothing=[0.05, 0.2], cmap="ocean")
+    ax.shaded_density(
+        xs, ys, weights=weights, bin_size=0.01, smoothing=[0.05, 0.2], cmap="ocean"
+    )
     ax.equal_scale()
     ax.set_limits(0, 1, 0, 1)
     assert image_similarity_full(fig, "shaded_density_weights.png")

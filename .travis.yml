@@ -13,9 +13,11 @@ env:
 install:
   - pip install matplotlib==$matplotlib
   - pip install .
+  - pip install black
 # Install the fonts now while we can:
 before_script:
   - python -c "import betterplotlib as bpl; bpl.set_style()"
 # command to run tests
 script:
   - pytest
+  - black --check betterplotlib testing setup.py

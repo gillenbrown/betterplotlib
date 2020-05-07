@@ -6,10 +6,12 @@ from matplotlib.colors import LinearSegmentedColormap
 this_dir = os.path.abspath(os.path.dirname(__file__))
 colormap_dir = os.path.join(this_dir, "colormaps")
 
+
 def _get_colormap(cmap_name):
     data_file = os.path.join(colormap_dir, cmap_name + ".txt")
     cm_data = np.loadtxt(data_file)
     return LinearSegmentedColormap.from_list(cmap_name, cm_data)
+
 
 acton = _get_colormap("acton")
 bamako = _get_colormap("bamako")

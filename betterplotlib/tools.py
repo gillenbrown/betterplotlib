@@ -60,8 +60,7 @@ def _alpha(n, threshold=30, scale=2000):
     # error checking
     err_msg = "{} must be a numeric scalar."
     n = type_checking.numeric_scalar(n, err_msg.format("n"))
-    threshold = type_checking.numeric_scalar(threshold,
-                                             err_msg.format("threshold"))
+    threshold = type_checking.numeric_scalar(threshold, err_msg.format("threshold"))
     scale = type_checking.numeric_scalar(scale, err_msg.format("scale"))
     if n < threshold:
         return 1.0
@@ -100,12 +99,16 @@ def _freedman_diaconis_core(iqr, n):
     iqr = type_checking.numeric_scalar(iqr, "iqr must be a numeric scalar.")
 
     if n <= 0:
-        raise ValueError("The number of data points must be positive in "
-                         "Freedman Diaconis binning.")
+        raise ValueError(
+            "The number of data points must be positive in "
+            "Freedman Diaconis binning."
+        )
     if iqr <= 0.0:
-        raise ValueError("The Freeman-Diaconis default binning relies on "
-                         "inter-quartile range, and your data has zero."
-                         "\nTry passing your own bin size.")
+        raise ValueError(
+            "The Freeman-Diaconis default binning relies on "
+            "inter-quartile range, and your data has zero."
+            "\nTry passing your own bin size."
+        )
     return 2 * iqr * n ** (-1.0 / 3.0)
 
 
@@ -130,8 +133,9 @@ def _round_to_nice_width(bin_width):
     :return: Rounded bin width, as described above.
     :rtype: float
     """
-    bin_width = type_checking.numeric_scalar(bin_width, "Bin width must be a "
-                                                        "numeric scalar.")
+    bin_width = type_checking.numeric_scalar(
+        bin_width, "Bin width must be a " "numeric scalar."
+    )
     if bin_width <= 0:
         raise ValueError("Bin width must be positive.")
     # we want to have it choose among the best of certain bins. We first
@@ -166,8 +170,9 @@ def rounded_bin_width(data):
     :return: Appproximately correct bin size.
     :rtype: float
     """
-    data = type_checking.numeric_list_1d(data, "data must be a list of numeric"
-                                               "values in `rounded_bin_width`.")
+    data = type_checking.numeric_list_1d(
+        data, "data must be a list of numeric" "values in `rounded_bin_width`."
+    )
     return _round_to_nice_width(_freedman_diaconis(data))
 
 
@@ -279,10 +284,8 @@ def make_bins(data, bin_size=None, padding=0):
         raise ValueError("Empty list is not valid for data.")
     if bin_size is None:  # need to choose our own
         bin_size = rounded_bin_width(data)
-    bin_size = type_checking.numeric_scalar(bin_size,
-                                            msg.format("bin_size", "scalar"))
-    padding = type_checking.numeric_scalar(padding,
-                                           msg.format("padding", "scalar"))
+    bin_size = type_checking.numeric_scalar(bin_size, msg.format("bin_size", "scalar"))
+    padding = type_checking.numeric_scalar(padding, msg.format("padding", "scalar"))
 
     return _binning(min(data), max(data), bin_size, padding)
 
@@ -311,8 +314,7 @@ def _two_item_list(item):
         return [item, item]
 
 
-def _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
-                                  weights, smoothing):
+def _smart_hist_2d_error_checking(xs, ys, bin_size, padding, weights, smoothing):
     """
     Does the error checking for the _smart_hist_2d function.
 
@@ -360,12 +362,20 @@ def _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
     if smoothing_x < 0 or smoothing_y < 0:
         raise ValueError("Smoothing must be nonnegative.")
 
-    return xs, ys, bin_size_x, bin_size_y, padding_x, padding_y, weights, \
-           smoothing_x, smoothing_y
+    return (
+        xs,
+        ys,
+        bin_size_x,
+        bin_size_y,
+        padding_x,
+        padding_y,
+        weights,
+        smoothing_x,
+        smoothing_y,
+    )
 
 
-def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
-                  smoothing=0):
+def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None, smoothing=0):
     """
     Makes a 2D histogram, with smart choices made if nothing is passed in.
 
@@ -405,8 +415,9 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
     :rtype: tuple of np.array, list, list
     """
     # error checking and data wrangling.
-    validated_params = _smart_hist_2d_error_checking(xs, ys, bin_size, padding,
-                                            weights, smoothing)
+    validated_params = _smart_hist_2d_error_checking(
+        xs, ys, bin_size, padding, weights, smoothing
+    )
     xs, ys = validated_params[0:2]
     bin_size_x, bin_size_y = validated_params[2:4]
     padding_x, padding_y = validated_params[4:6]
@@ -414,8 +425,10 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None,
     smoothing_x, smoothing_y = validated_params[7:]
 
     # then we can go ahead and make the bin edges using this data
-    bin_edges = [make_bins(xs, bin_size_x, padding_x),
-                 make_bins(ys, bin_size_y, padding_y)]
+    bin_edges = [
+        make_bins(xs, bin_size_x, padding_x),
+        make_bins(ys, bin_size_y, padding_y),
+    ]
 
     # We can then use the bins to create the histogram
     hist, x_edges, y_edges = np.histogram2d(xs, ys, bin_edges, weights=weights)
@@ -474,9 +487,11 @@ def _percentile_level_warning_uncertain(percent):
     :type percent: float
     :return: None, but raises the warning
     """
-    warning_msg = "Location of {:.2f}% is uncertain by more than 1%. \n" \
-                  "Consider adding more data, smoothing, or " \
-                  "increasing the bin size."
+    warning_msg = (
+        "Location of {:.2f}% is uncertain by more than 1%. \n"
+        "Consider adding more data, smoothing, or "
+        "increasing the bin size."
+    )
     warnings.warn(warning_msg.format(percent * 100), RuntimeWarning)
 
 
@@ -534,8 +549,7 @@ def percentile_level(densities, percentages):
     :return: The level that encloses `percentage` of the data.
     """
     msg = "{} in percentile_level must be array like."
-    densities = type_checking.numeric_list_1d(densities,
-                                              msg.format("densities"))
+    densities = type_checking.numeric_list_1d(densities, msg.format("densities"))
     if len(densities) == 0:
         raise ValueError("Empty density array not allowed")
 
@@ -548,8 +562,7 @@ def percentile_level(densities, percentages):
         percentages = list(percentages)
     except TypeError:  # happens if a float
         rtype = float
-    percentages = type_checking.numeric_list_1d(percentages,
-                                                msg.format("percentages"))
+    percentages = type_checking.numeric_list_1d(percentages, msg.format("percentages"))
 
     # check tht percentages are in the right range.
     for p in percentages:
