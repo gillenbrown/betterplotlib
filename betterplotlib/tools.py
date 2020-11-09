@@ -375,7 +375,9 @@ def _smart_hist_2d_error_checking(xs, ys, bin_size, padding, weights, smoothing)
     )
 
 
-def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None, smoothing=0):
+def smart_hist_2d(
+    xs, ys, bin_size=None, padding=0, weights=None, smoothing=0, log=False
+):
     """
     Makes a 2D histogram, with smart choices made if nothing is passed in.
 
@@ -407,6 +409,11 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None, smoothing=0):
                       Has the same format as padding and bin_size, so different
                       smoothing kernels are possible in the x and y directions.
     :type smoothing: int, float, list
+    :param log: Whether or not to do the smoothing and bin creation in log
+                space. This should be used if the plot will be done on log-scaled
+                axes. If this is used, the bin_size and smoothing parameters will
+                be interpreted as dex, rather than raw values.
+    :type log: bool
     :return: the 2d histogram values, list of x bin edges, list of y bin edges.
              These can be passed on to the contour functions after turning bin
              edges into bin centers. The first index into this array sets the
@@ -414,6 +421,11 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None, smoothing=0):
              column.
     :rtype: tuple of np.array, list, list
     """
+    # if the user wants log, do that
+    if log:
+        xs = np.log10(xs)
+        ys = np.log10(ys)
+
     # error checking and data wrangling.
     validated_params = _smart_hist_2d_error_checking(
         xs, ys, bin_size, padding, weights, smoothing
@@ -442,6 +454,13 @@ def smart_hist_2d(xs, ys, bin_size=None, padding=0, weights=None, smoothing=0):
     # we need to transpose the histogram to get it to line up with the x, y
     # used in other plotting functions.
     hist = hist.transpose()
+
+    # if we have something in log, we need to turn it back into regular space
+    if log:
+        x_edges = 10 ** x_edges
+        y_edges = 10 ** y_edges
+
+    # TODO: test this log functionality
 
     return hist, x_edges, y_edges
 

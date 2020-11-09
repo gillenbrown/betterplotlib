@@ -914,6 +914,7 @@ class Axes_bpl(Axes):
         percent_levels=None,
         smoothing=0,
         weights=None,
+        log=False,
         labels=False,
         filled=False,
         **kwargs
@@ -925,6 +926,7 @@ class Axes_bpl(Axes):
         :param percent_levels:
         :param smoothing:
         :param weights:
+        :param log:
         :param labels:
         :param filled:
         :param kwargs:
@@ -955,7 +957,13 @@ class Axes_bpl(Axes):
         else:
             padding = tools._padding_from_smoothing(smoothing)
         hist, x_e, y_e = tools.smart_hist_2d(
-            xs, ys, bin_size, padding=padding, weights=weights, smoothing=smoothing
+            xs,
+            ys,
+            bin_size,
+            padding=padding,
+            weights=weights,
+            smoothing=smoothing,
+            log=log,
         )
         x_cen = tools.bin_centers(x_e)
         y_cen = tools.bin_centers(y_e)
@@ -1008,6 +1016,7 @@ class Axes_bpl(Axes):
         percent_levels=None,
         smoothing=0,
         weights=None,
+        log=False,
         labels=False,
         **kwargs
     ):
@@ -1054,6 +1063,11 @@ class Axes_bpl(Axes):
                         are not passed, all data points will be weighted
                         equally.
         :type weights: list, np.ndarray
+        :param log: Whether or not to do the smoothing and contour creation in log
+                    space. This should be used if the plot will be done on log-scaled
+                    axes. If this is used, the bin_size and smoothing parameters will
+                    be interpreted as dex, rather than raw values.
+        :type log: bool
         :param labels: Whether or not to label the individual contour lines
                        with their percentage level.
         :type labels: bool
@@ -1068,6 +1082,7 @@ class Axes_bpl(Axes):
             percent_levels=percent_levels,
             smoothing=smoothing,
             weights=weights,
+            log=log,
             labels=labels,
             filled=False,
             **kwargs
@@ -1081,6 +1096,7 @@ class Axes_bpl(Axes):
         percent_levels=None,
         smoothing=0,
         weights=None,
+        log=False,
         **kwargs
     ):
         """
@@ -1126,6 +1142,11 @@ class Axes_bpl(Axes):
                         are not passed, all data points will be weighted
                         equally.
         :type weights: list, np.ndarray
+        :param log: Whether or not to do the smoothing and contour creation in log
+                    space. This should be used if the plot will be done on log-scaled
+                    axes. If this is used, the bin_size and smoothing parameters will
+                    be interpreted as dex, rather than raw values.
+        :type log: bool
         :param kwargs: Additional keyword arguments to pass on to the original
                        matplotlib contour function.
         :return: output of the matplotlib.contourf function.
@@ -1140,6 +1161,7 @@ class Axes_bpl(Axes):
             percent_levels=percent_levels,
             smoothing=smoothing,
             weights=weights,
+            log=log,
             labels=False,
             filled=True,
             **kwargs
@@ -2130,13 +2152,13 @@ class Axes_bpl(Axes):
         return new_ax
 
     def shaded_density(
-        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None
+        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None, log=False
     ):
         """
         Creates shaded regions showing the density.
 
         Is essentially a 2D histogram, but supports smoothing. Under the hood,
-        this uses the pcolormesh function in matplotlib.
+        this uses the  pcolormesh function in matplotlib.
 
         .. plot::
             :include-source:
@@ -2163,13 +2185,24 @@ class Axes_bpl(Axes):
         :param smoothing: The size of the Gaussian smoothing kernel for the
                           data. Currently is the same in both dimensions.
                           Pass None for no smoothing.
+        :param log: Whether or not to do the smoothing and contour creation in log
+                    space. This should be used if the plot will be done on log-scaled
+                    axes. If this is used, the bin_size and smoothing parameters will
+                    be interpreted as dex, rather than raw values.
+        :type log: bool
         :param cmap: colormap used for the density.
         :return: output of the pcolormesh function call.
         """
         padding = tools._padding_from_smoothing(smoothing)
         # first get the underlying density histogram
         hist, x_edges, y_edges = tools.smart_hist_2d(
-            xs, ys, bin_size, padding=padding, smoothing=smoothing, weights=weights
+            xs,
+            ys,
+            bin_size,
+            padding=padding,
+            smoothing=smoothing,
+            weights=weights,
+            log=log,
         )
 
         return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist, cmap=cmap)
