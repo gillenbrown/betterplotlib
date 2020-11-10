@@ -986,6 +986,9 @@ class Axes_bpl(Axes):
             )
         kwargs["levels"] = levels
 
+        # set the normalization to ignore the central dummy level.
+        kwargs["norm"] = mpl_colors.Normalize(vmin=levels[0], vmax=levels[-2])
+
         if not filled:
             kwargs.setdefault("zorder", 3)
             kwargs.setdefault("linewidths", 2)
