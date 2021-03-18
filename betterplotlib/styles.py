@@ -51,9 +51,10 @@ def _common_style():
     rcParams["legend.numpoints"] = 1
     # ^ these two needed for matplotlib 1.x
     rcParams["savefig.format"] = "pdf"
+    rcParams["savefig.dpi"] = 300
+    rcParams["savefig.facecolor"] = "w"
     rcParams["axes.formatter.useoffset"] = False
     rcParams["figure.dpi"] = 100
-    rcParams["savefig.dpi"] = 300
     rcParams["figure.figsize"] = [10, 7]
 
     rcParams["xtick.major.size"] = 5.0
