@@ -2155,7 +2155,8 @@ class Axes_bpl(Axes):
         return new_ax
 
     def shaded_density(
-        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None, log=False
+        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None, log_xy=False,
+            log_hist=False,
     ):
         """
         Creates shaded regions showing the density.
@@ -2192,7 +2193,7 @@ class Axes_bpl(Axes):
                     space. This should be used if the plot will be done on log-scaled
                     axes. If this is used, the bin_size and smoothing parameters will
                     be interpreted as dex, rather than raw values.
-        :type log: bool
+        :type log: bool, list
         :param cmap: colormap used for the density.
         :return: output of the pcolormesh function call.
         """
@@ -2205,10 +2206,19 @@ class Axes_bpl(Axes):
             padding=padding,
             smoothing=smoothing,
             weights=weights,
-            log=log,
+            log=log_xy
         )
 
-        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist, cmap=cmap)
+        vmax = np.max(hist)
+        vmin = np.percentile(hist[hist > 0], 1)
+
+        if log_hist:
+            hist = np.log10(hist)
+            vmax = np.log10(vmax)
+            vmin = max(np.log10(vmin), vmax - 3)
+
+        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist, cmap=cmap,
+                                                vmax=vmax, vmin=vmin)
 
     def format_labels(self, axis, labels):
         if axis == "x":

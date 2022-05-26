@@ -314,7 +314,7 @@ def _two_item_list(item):
         return [item, item]
 
 
-def _smart_hist_2d_error_checking(xs, ys, bin_size, padding, weights, smoothing):
+def _smart_hist_2d_error_checking(xs, ys, log, bin_size, padding, weights, smoothing):
     """
     Does the error checking for the _smart_hist_2d function.
 
@@ -343,6 +343,14 @@ def _smart_hist_2d_error_checking(xs, ys, bin_size, padding, weights, smoothing)
         type_checking.numeric_scalar(bin_size_x, two_elt_msg.format("Bin_size"))
         type_checking.numeric_scalar(bin_size_y, two_elt_msg.format("Bin_size"))
 
+    # parse the log options
+    try:
+        log_x, log_y = _two_item_list(log)
+    except ValueError:
+        raise ValueError(two_elt_msg.format("log"))
+    if log_x not in [True, False] or log_y not in [True, False]:
+        raise TypeError("log must be True or False")
+
     # then do the same with the padding
     try:
         padding_x, padding_y = _two_item_list(padding)
@@ -365,6 +373,8 @@ def _smart_hist_2d_error_checking(xs, ys, bin_size, padding, weights, smoothing)
     return (
         xs,
         ys,
+        log_x,
+        log_y,
         bin_size_x,
         bin_size_y,
         padding_x,
@@ -413,7 +423,7 @@ def smart_hist_2d(
                 space. This should be used if the plot will be done on log-scaled
                 axes. If this is used, the bin_size and smoothing parameters will
                 be interpreted as dex, rather than raw values.
-    :type log: bool
+    :type log: bool, list
     :return: the 2d histogram values, list of x bin edges, list of y bin edges.
              These can be passed on to the contour functions after turning bin
              edges into bin centers. The first index into this array sets the
@@ -421,20 +431,22 @@ def smart_hist_2d(
              column.
     :rtype: tuple of np.array, list, list
     """
-    # if the user wants log, do that
-    if log:
-        xs = np.log10(xs)
-        ys = np.log10(ys)
-
     # error checking and data wrangling.
     validated_params = _smart_hist_2d_error_checking(
-        xs, ys, bin_size, padding, weights, smoothing
+        xs, ys, log, bin_size, padding, weights, smoothing
     )
     xs, ys = validated_params[0:2]
-    bin_size_x, bin_size_y = validated_params[2:4]
-    padding_x, padding_y = validated_params[4:6]
-    weights = validated_params[6]
-    smoothing_x, smoothing_y = validated_params[7:]
+    log_x, log_y = validated_params[2:4]
+    bin_size_x, bin_size_y = validated_params[4:6]
+    padding_x, padding_y = validated_params[6:8]
+    weights = validated_params[8]
+    smoothing_x, smoothing_y = validated_params[9:]
+
+    # if the user wants log, do that
+    if log_x:
+        xs = np.log10(xs)
+    if log_y:
+        ys = np.log10(ys)
 
     # then we can go ahead and make the bin edges using this data
     bin_edges = [
@@ -456,8 +468,9 @@ def smart_hist_2d(
     hist = hist.transpose()
 
     # if we have something in log, we need to turn it back into regular space
-    if log:
+    if log_x:
         x_edges = 10 ** x_edges
+    if log_y:
         y_edges = 10 ** y_edges
 
     # TODO: test this log functionality
