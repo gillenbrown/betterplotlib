@@ -11,7 +11,7 @@ register_projection(Axes_bpl)
 
 def subplots(*args, **kwargs):
     """
-    A wrapper to the plt.subplots() function, and is the main way to access the 
+    A wrapper to the plt.subplots() function, and is the main way to access the
     betterplotlib functionality.
 
     This is exactly the same as the `plt.subplots()` function, only that it

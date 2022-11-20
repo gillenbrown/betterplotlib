@@ -36,13 +36,13 @@ def _alpha(n, threshold=30, scale=2000):
     """
     Calculate a rough guess for the best alpha value for a default scatterplot.
 
-    This is calculated with the equation 
+    This is calculated with the equation
 
     .. math::
         \\alpha = \\frac{0.99}{1 + \\frac{n}{\\text{scale}}}
 
     This is done so that is ranges from nearly 1 for small values of n to 0.01
-    for very large datasets. Note that very large datasets should probably use 
+    for very large datasets. Note that very large datasets should probably use
     a contour plot, but this is avaiable.
 
     :param n: Length of the dataset that will be plotted in the scatterplot.
@@ -50,7 +50,7 @@ def _alpha(n, threshold=30, scale=2000):
     :param threshold: For the size of the dataset below this, the points will
                       be 100% opaque.
     :param scale: Parameter in the function that determines the alpha value.
-                  Defaults to 2000. The larger the value, the more opaque 
+                  Defaults to 2000. The larger the value, the more opaque
                   points will be for a given n.
     :type scale: float
     :return: Guess at an alpha value for a scatterplot.
@@ -143,7 +143,7 @@ def _round_to_nice_width(bin_width):
     # multiples of 10^n, where n is the rounded log of the bin width. This
     # makes them be in the same order of magnitude as the original bin size.
     exponent = np.floor(np.log10(bin_width))
-    possible_bins = [x * 10 ** exponent for x in [1, 2, 5, 10]]
+    possible_bins = [x * 10**exponent for x in [1, 2, 5, 10]]
     # include 10 to give the full range from low to high that this bin can go to
 
     # we then figure out which one is closest to the original
@@ -158,11 +158,11 @@ def rounded_bin_width(data):
     """
     Gets a reasonable bin size, rounded so that it lines up with plot ticks.
 
-    This starts by getting the bin size recommended by the Freedman Diaconis 
-    algorithm. This bin size is then rounded to the one closest to it among the 
+    This starts by getting the bin size recommended by the Freedman Diaconis
+    algorithm. This bin size is then rounded to the one closest to it among the
     possibilites, which are of the format [1, 2, 5, 10] * 10^n, where n
     is some integer. This has the effect of making the bin edges line up with
-    the ticks that are automatically added to matplotlib plots. This makes 
+    the ticks that are automatically added to matplotlib plots. This makes
     the resulting histograms looks nicer, and still have reasonable bin sizes.
 
     :param data: Raw data that will be used to create the histogram.
@@ -469,9 +469,9 @@ def smart_hist_2d(
 
     # if we have something in log, we need to turn it back into regular space
     if log_x:
-        x_edges = 10 ** x_edges
+        x_edges = 10**x_edges
     if log_y:
-        y_edges = 10 ** y_edges
+        y_edges = 10**y_edges
 
     # TODO: test this log functionality
 

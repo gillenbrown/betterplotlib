@@ -21,15 +21,15 @@ class Axes_bpl(Axes):
     def make_ax_dark(self, grid=True, minor_ticks=False):
         """Turns an axis into one with a dark background with white gridlines.
 
-        This will turn an axis into one with a slightly light gray background, 
-        and with solid white gridlines. All the axes spines are removed (so 
+        This will turn an axis into one with a slightly light gray background,
+        and with solid white gridlines. All the axes spines are removed (so
         there isn't any outline), and the ticks are removed too.
 
         :param grid: Whether or not to draw the grid. Defaults to True.
         :type grid: bool
         :param minor_ticks: Whether or not to add minor ticks. They will be
-                            drawn as dotted lines, rather than solid lines in 
-                            the axes space. If `grid` is False then this 
+                            drawn as dotted lines, rather than solid lines in
+                            the axes space. If `grid` is False then this
                             parameter does not matter.
         :type minor_ticks: bool
         :return: None
@@ -67,13 +67,13 @@ class Axes_bpl(Axes):
     def remove_ticks(self, ticks_to_remove):
         """Removes ticks from the given locations.
 
-        In some situations, ticks aren't needed or wanted. Note that this 
+        In some situations, ticks aren't needed or wanted. Note that this
         doesn't remove the spine itself, or the labels on that axis.
 
-        Note that this can break when used with the various `remove_*()` 
-        functions. Order matters with these calls, presumably due to something 
-        with the way matplotlib works under the hood. Mess around with it if 
-        you're having trouble. 
+        Note that this can break when used with the various `remove_*()`
+        functions. Order matters with these calls, presumably due to something
+        with the way matplotlib works under the hood. Mess around with it if
+        you're having trouble.
 
         :param ticks_to_remove: locations where ticks need to be removed from.
                                 Pass in a list, and choose from: "all, "top",
@@ -134,17 +134,17 @@ class Axes_bpl(Axes):
 
         Note that this function can mess up if you call this function multiple
         times with the same axes object, due to the way matplotlib works under
-        the hood. I haven't really tested it extensively (since I have never 
+        the hood. I haven't really tested it extensively (since I have never
         wanted to call it more than once), but I think the last function call
         is the one that counts. Calling this multiple times on the same axes
-        would be pointless, though, since you can specify multiple axes in one 
-        call. If you really need to call it multiple times and it is breaking, 
-        let me know and I can try to fix it. This also can break when used with 
-        the  various `remove_*()` functions. Order matters with these calls, 
-        for some reason. 
+        would be pointless, though, since you can specify multiple axes in one
+        call. If you really need to call it multiple times and it is breaking,
+        let me know and I can try to fix it. This also can break when used with
+        the  various `remove_*()` functions. Order matters with these calls,
+        for some reason.
 
-        :param spines_to_remove: List of the desired spines to remove. Can 
-                                 choose from "all", "top", "bottom", "left", 
+        :param spines_to_remove: List of the desired spines to remove. Can
+                                 choose from "all", "top", "bottom", "left",
                                  or "right".
         :type spines_to_remove: list
         :return: None
@@ -185,12 +185,12 @@ class Axes_bpl(Axes):
         """
         Makes a scatter plot that looks nicer than the matplotlib default.
 
-        The call works just like a call to plt.scatter. It will set a few 
-        default parameters, but anything you pass in will override the default 
-        parameters. This function also uses the color cycle, unlike the default 
+        The call works just like a call to plt.scatter. It will set a few
+        default parameters, but anything you pass in will override the default
+        parameters. This function also uses the color cycle, unlike the default
         scatter.
 
-        It also automatically determines a guess at the proper alpha 
+        It also automatically determines a guess at the proper alpha
         (transparency) of the points in the plot.
 
         NOTE: the `c` parameter tells just the facecolor of the points, while
@@ -213,16 +213,16 @@ class Axes_bpl(Axes):
 
             x = np.random.normal(0, scale=0.5, size=500)
             y = np.random.normal(0, scale=0.5, size=500)
-            
+
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122, projection="bpl")
-            
+
             for ax in [ax1, ax2]:
                 ax.scatter(x,     y)
                 ax.scatter(x+0.5, y+0.5)
                 ax.scatter(x+1,   y+1)
-            
+
             ax1.set_title("matplotlib")
             ax2.add_labels(title="betterplotlib")
 
@@ -289,7 +289,7 @@ class Axes_bpl(Axes):
         A better histogram function. Also supports relative frequency plots, bin
         size, and hatching better than the default matplotlib implementation.
 
-        Everything is the same as the default matplotlib implementation, with 
+        Everything is the same as the default matplotlib implementation, with
         the exception a few keyword parameters. `rel_freq` makes the histogram a
         relative frequency plot and `bin_size` controls the width of each bin.
 
@@ -305,10 +305,10 @@ class Axes_bpl(Axes):
         :type rel_freq: bool
         :keyword bin_size: The width of the bins in the histogram. The bin
                            boundaries will start at zero, and will be integer
-                           multiples of bin_size from there. Specify either 
+                           multiples of bin_size from there. Specify either
                            this, or bins, but not both.
         :type bin_size: float
-        :keyword kwargs: additional controls that will be passed on through to 
+        :keyword kwargs: additional controls that will be passed on through to
                          the plt.hist() function.
         :return: same output as plt.hist()
 
@@ -330,14 +330,14 @@ class Axes_bpl(Axes):
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122, projection="bpl")
-            
+
             ax1.hist(data)
             ax2.hist(data)
-            
+
             ax1.set_title("matplotlib")
             ax2.add_labels(title="betterplotlib")
 
-        There are also plenty of options that make other histograms look nice 
+        There are also plenty of options that make other histograms look nice
         too.
 
         .. plot::
@@ -353,11 +353,11 @@ class Axes_bpl(Axes):
             data4 = np.random.normal(6, 1, size=10000)
             bin_size = 0.5
             bpl.hist(data1, rel_freq=True, bin_size=bin_size)
-            bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step", 
+            bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
                      linewidth=5)
-            bpl.hist(data3, rel_freq=True, bin_size=bin_size, 
+            bpl.hist(data3, rel_freq=True, bin_size=bin_size,
                      histtype="stepfilled", hatch="o", alpha=0.8)
-            bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step", 
+            bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
                      hatch="x", linewidth=4)
 
             bpl.add_labels(y_label="Relative Frequency")
@@ -423,7 +423,7 @@ class Axes_bpl(Axes):
         :type y_label: str
         :param title: title for the given axis
         :type title: str
-        :param args: additional properties that will be passed on to all the 
+        :param args: additional properties that will be passed on to all the
                      labels you asked for.
         :param kwargs: additional keyword arguments that will be passed on to
                        all the labels you make.
@@ -455,8 +455,8 @@ class Axes_bpl(Axes):
         """
         Set axes limits for both x and y axis at once.
 
-        Any additional kwargs will be passed on to the matplotlib functions 
-        that set the limits, so refer to that documentation to find the 
+        Any additional kwargs will be passed on to the matplotlib functions
+        that set the limits, so refer to that documentation to find the
         allowed parameters.
 
         :param x_min: minimum x value to be plotted
@@ -487,7 +487,7 @@ class Axes_bpl(Axes):
             ax1.plot(xs, ys)
 
             ax2.plot(xs, ys)
-            ax2.set_limits(0, 2*np.pi, -1.1, 1.1)        
+            ax2.set_limits(0, 2*np.pi, -1.1, 1.1)
         """
         # Any None values won't change the plot any.
         self.set_xlim([x_min, x_max], **kwargs)
@@ -506,7 +506,7 @@ class Axes_bpl(Axes):
         If data coords are used, the text is placed at that data point. If axes
         coords are used, the text is placed relative to the axes. (0,0) is the
         bottom left, (1,1) is the top right. Remember to use the
-        horizontalalignment and verticalalignment parameters if it isn't quite 
+        horizontalalignment and verticalalignment parameters if it isn't quite
         in the spot you expect.
 
         Also consider using easy_add_text, which gives 9 possible location to
@@ -518,8 +518,8 @@ class Axes_bpl(Axes):
         :type y: int, float
         :param text: text to be added
         :type text: str
-        :param coords: type of coordinates. This parameter can be either 'data' 
-        or 'axes'. 'data' puts the text at that data point. 'axes' puts the 
+        :param coords: type of coordinates. This parameter can be either 'data'
+        or 'axes'. 'data' puts the text at that data point. 'axes' puts the
         text in that location relative the axes. See above.
         :type coords: str
         :param kwargs: any additional keyword arguments to pass on the text
@@ -574,12 +574,12 @@ class Axes_bpl(Axes):
         This is useful for making conceptual plots where the numbers on the axis
         don't matter. Axes labels still work, also.
 
-        Note that this can break when used with the various `remove_*()` 
-        functions. Order matters with these calls, presumably due to something 
-        with the way matplotlib works under the hood. Mess around with it if 
-        you're having trouble. 
+        Note that this can break when used with the various `remove_*()`
+        functions. Order matters with these calls, presumably due to something
+        with the way matplotlib works under the hood. Mess around with it if
+        you're having trouble.
 
-        :param labels_to_remove: location of labels to remove. Choose from: 
+        :param labels_to_remove: location of labels to remove. Choose from:
                                  "both", "x", or "y".
         :type labels_to_remove: str
         :return: None
@@ -625,18 +625,18 @@ class Axes_bpl(Axes):
     def legend(self, linewidth=0, *args, **kwargs):
         """Create a nice looking legend.
 
-        Works by calling the ax.legend() function with the given args and 
-        kwargs. If some are not specified, they will be filled with values that 
+        Works by calling the ax.legend() function with the given args and
+        kwargs. If some are not specified, they will be filled with values that
         make the legend look nice.
 
         :param linewidth: linewidth of the border of the legend. Defaults to
-                          zero. 
+                          zero.
         :param args: non-keyword arguments passed on to the ax.legend() fuction.
-        :param kwargs: keyword arguments that will be passed on to the 
-                       ax.legend() function. This will be things like loc, 
+        :param kwargs: keyword arguments that will be passed on to the
+                       ax.legend() function. This will be things like loc,
                        and title, etc.
         :return: legend object returned by the ax.legend() function.
-        
+
         The default legend is a transparent background with no border, like so.
 
         .. plot::
@@ -652,13 +652,13 @@ class Axes_bpl(Axes):
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
-            
+
             for ax in [ax1, ax2]:
                 ax.plot(x, x, label="x")
                 ax.plot(x, 2*x, label="2x")
                 ax.plot(x, 3*x, label="3x")
                 ax.legend(loc=2)
-            
+
             ax1.set_title("matplotlib")
             ax2.set_title("betterplotlib")
 
@@ -704,18 +704,18 @@ class Axes_bpl(Axes):
         return leg
 
     def equal_scale(self):
-        """ Makes the x and y axes have the same scale.
+        """Makes the x and y axes have the same scale.
 
         Useful for plotting things like ra and dec, something with the same
         quantity on both axes, or anytime the x and y axis have the same scale.
 
-        It's really one one command, but it's one I have a hard time 
+        It's really one one command, but it's one I have a hard time
         remembering.
 
         Note that this keeps the range the same from the plot as before, so you
-        may want to adjust the limits to make the plot look better. It will 
-        keep the axes adjusted the same, though, no matter how you change the 
-        limits afterward. 
+        may want to adjust the limits to make the plot look better. It will
+        keep the axes adjusted the same, though, no matter how you change the
+        limits afterward.
 
         :return: None
 
@@ -744,7 +744,7 @@ class Axes_bpl(Axes):
             ax2.add_labels(title="Shows true shape")
 
         Here is proof that changing the limits don't change the scaling between
-        the axes. 
+        the axes.
 
         .. plot::
             :include-source:
@@ -782,7 +782,7 @@ class Axes_bpl(Axes):
 
         VERY IMPORTANT NOTE: Although this works similar to plt.legend()'s loc
         parameter, the numbering is NOT the same. My numbering is based on the
-        keypad. 1 is in the bottom left, 5 in the center, and 9 in the top 
+        keypad. 1 is in the bottom left, 5 in the center, and 9 in the top
         right. You can also specify words that tell the location.
 
         :param text: Text to add to the axes.
@@ -793,10 +793,10 @@ class Axes_bpl(Axes):
                          number's location on a standard keyboard numpad.
                          You can also pass a string that describe the location.
                          'upper', 'center', and 'lower' describe the vertical
-                         location, and 'left', 'center', and 'right' describe 
+                         location, and 'left', 'center', and 'right' describe
                          the horizontal location. You need to specify vertical,
-                         then horizontal, like 'upper right'. Note that 
-                         'center' is the code for the center, not 
+                         then horizontal, like 'upper right'. Note that
+                         'center' is the code for the center, not
                          'center center'.
         :type location: str, int
         :param kwargs: additional text parameters that will be passed on to the
@@ -1187,23 +1187,23 @@ class Axes_bpl(Axes):
         """
         Create a contour plot with scatter points in the sparse regions.
 
-        When a dataset is large, plotting a scatterplot is often really hard to 
-        understand, due to many points overlapping and the high density of 
-        points overall. A contour or hexbin plot solves many of these problems, 
-        but these still have the disadvantage of making outliers less obvious. 
-        A simple solution is to plot contours in the dense regions, while 
-        plotting individual points where the density is low. That is what 
+        When a dataset is large, plotting a scatterplot is often really hard to
+        understand, due to many points overlapping and the high density of
+        points overall. A contour or hexbin plot solves many of these problems,
+        but these still have the disadvantage of making outliers less obvious.
+        A simple solution is to plot contours in the dense regions, while
+        plotting individual points where the density is low. That is what
         this function does.
 
-        Here's how this works under the hood. Skip this paragraph if you don't 
-        care; it won't affect how you use this. This function uses the numpy 
-        2D histogram function to create an array representing the density in 
-        each region. If no binning info is specified by the user, the 
-        Freedman-Diaconis algorithm is used in both dimensions to find the 
-        ideal bin size for the data. First, an opaque filled contour is 
-        plotted, then the contour lines are put on top. Then the outermost 
-        contour is made into a matplotlib path object, which lets us 
-        check which of the points are outside of this contour. Only the points 
+        Here's how this works under the hood. Skip this paragraph if you don't
+        care; it won't affect how you use this. This function uses the numpy
+        2D histogram function to create an array representing the density in
+        each region. If no binning info is specified by the user, the
+        Freedman-Diaconis algorithm is used in both dimensions to find the
+        ideal bin size for the data. First, an opaque filled contour is
+        plotted, then the contour lines are put on top. Then the outermost
+        contour is made into a matplotlib path object, which lets us
+        check which of the points are outside of this contour. Only the points
         that are outside are plotted.
 
         :param xs: X values of the data.
@@ -1267,9 +1267,9 @@ class Axes_bpl(Axes):
 
         Examples
 
-        First, we'll show why this plot is useful. This won't use any of the 
-        fancy settings, other than `bin_size`, which is used to make the 
-        contours look nicer. 
+        First, we'll show why this plot is useful. This won't use any of the
+        fancy settings, other than `bin_size`, which is used to make the
+        contours look nicer.
 
         .. plot::
             :include-source:
@@ -1290,10 +1290,10 @@ class Axes_bpl(Axes):
             ax1.scatter(xs, ys)
             ax2.contour_scatter(xs, ys, bin_size=0.3)
 
-        The scatter plot is okay, but the contour makes things easier to see. 
+        The scatter plot is okay, but the contour makes things easier to see.
 
-        We'll now mess with some of the other parameters. This plot shows how 
-        the  `bin_size` parameter changes things. 
+        We'll now mess with some of the other parameters. This plot shows how
+        the  `bin_size` parameter changes things.
 
         .. plot::
             :include-source:
@@ -1315,8 +1315,8 @@ class Axes_bpl(Axes):
             ax2.contour_scatter(xs, ys, bin_size=0.3)
             ax3.contour_scatter(xs, ys, bin_size=0.5)
 
-        You can see how small values of `bin_size` lead to more noisy contours. 
-        The code will attempt to choose its own value of `bin_size` if nothing 
+        You can see how small values of `bin_size` lead to more noisy contours.
+        The code will attempt to choose its own value of `bin_size` if nothing
         is specified, but it's normally not a very good choice.
 
         Adjusting the smoothing is often the better way to control the
@@ -1367,7 +1367,7 @@ class Axes_bpl(Axes):
                                contour_kwargs={"colors":"k"})
             ax.equal_scale()
 
-        Now we can mess with the fun stuff, which is the `fill_cmap` param and 
+        Now we can mess with the fun stuff, which is the `fill_cmap` param and
         the kwargs that get passed to the `scatter`, `contour`, and `contourf`
         function calls. There is a lot of stuff going on here, just for
         demonstration purposes. Note that the code has some default parameters
@@ -1440,9 +1440,9 @@ class Axes_bpl(Axes):
                                 contour_kwargs={"linestyles": new_linestyles,
                                                 "colors":bpl.almost_black})
 
-        Note that the contours will work appropriately for datasets with 
+        Note that the contours will work appropriately for datasets with
         "holes", as demonstrated here.
-        
+
         .. plot::
             :include-source:
 
@@ -1671,24 +1671,24 @@ class Axes_bpl(Axes):
                        to be the same length as `x-data`, necessarily.
         :type y_data: list
         :param extent: How far the ticks go up from the x-axis. The default is
-                       0.02, meaning the ticks go 2% of the way to the top of 
+                       0.02, meaning the ticks go 2% of the way to the top of
                        the plot. Note that the ticks created by this function
                        will have the same physical size on both axes. Since in
-                       general the x and y axes aren't the same physical size, 
-                       the ticks on the y-axis will be scaled to match the 
-                       physical size of the x ticks. This means that in the 
+                       general the x and y axes aren't the same physical size,
+                       the ticks on the y-axis will be scaled to match the
+                       physical size of the x ticks. This means that in the
                        default case, the y ticks won't cover 2% of the axis, but
-                       again will be the same physical size as the x ticks. 
+                       again will be the same physical size as the x ticks.
         :type extent: float
         :param args: Additional arguments to pass to the `axvline` and `axhline`
                      functions, which is what is used to make each tick.
         :param kwargs: Additional keyword arguments to pass to the `axvline` and
-                       `axhline` functions. `color` is an important one here, 
+                       `axhline` functions. `color` is an important one here,
                        and it defaults to `almost_black` here.
 
 
         Example
-        
+
         .. plot::
             :include-source:
 
@@ -1701,7 +1701,7 @@ class Axes_bpl(Axes):
 
             fig, ax = bpl.subplots()
             ax.scatter(xs, ys)
-            ax.data_ticks(xs, ys)       
+            ax.data_ticks(xs, ys)
         """
         kwargs.setdefault("color", colors.almost_black)
         kwargs.setdefault("linewidth", 0.5)
@@ -1726,7 +1726,7 @@ class Axes_bpl(Axes):
         There isn't any added functionality.
 
         The parameters here are the exact same as they are for the regular
-        `plt.plot()` or `ax.plot()` functions, so I don't think any 
+        `plt.plot()` or `ax.plot()` functions, so I don't think any
         documentation would be helpful.
 
         .. plot::
@@ -1744,13 +1744,13 @@ class Axes_bpl(Axes):
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
-            
-            ax1.plot(xs, ys_1) 
-            ax1.plot(xs, ys_2) 
-            
-            ax2.plot(xs, ys_1) 
-            ax2.plot(xs, ys_2) 
-            
+
+            ax1.plot(xs, ys_1)
+            ax1.plot(xs, ys_2)
+
+            ax2.plot(xs, ys_1)
+            ax2.plot(xs, ys_2)
+
             ax1.set_title("matplotlib")
             ax2.set_title("betterplotlib")
 
@@ -1763,14 +1763,14 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).plot(*args, **kwargs)
 
     def axvline(self, x=0, *args, **kwargs):
-        """ Place a vertical line at some point on the axes.
+        """Place a vertical line at some point on the axes.
 
         :param x: Data value on the x-axis to place the line.
         :type x: float
-        :param args: Additional parameters that will be passed on the the 
-                     regular `plt.axvline` function. See it's documentation 
+        :param args: Additional parameters that will be passed on the the
+                     regular `plt.axvline` function. See it's documentation
                      for details.
-        :param kwargs: Similarly, additional keyword arguments that will be 
+        :param kwargs: Similarly, additional keyword arguments that will be
                        passed on to the regular `plt.axvline` function.
 
         .. plot::
@@ -1803,16 +1803,16 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).axvline(x, *args, **kwargs)
 
     def axhline(self, y=0, *args, **kwargs):
-        """ Place a horizontal line at some point on the axes.
+        """Place a horizontal line at some point on the axes.
 
         :param y: Data value on the y-axis to place the line.
         :type y: float
-        :param args: Additional parameters that will be passed on the the 
-                     regular `plt.axhline` function. See it's documentation 
+        :param args: Additional parameters that will be passed on the the
+                     regular `plt.axhline` function. See it's documentation
                      for details.
-        :param kwargs: Similarly, additional keyword arguments that will be 
+        :param kwargs: Similarly, additional keyword arguments that will be
                        passed on to the regular `plt.axhline` function.
-        
+
         .. plot::
             :include-source:
 
@@ -1832,7 +1832,7 @@ class Axes_bpl(Axes):
             ax.axvline(1.0, linestyle="--")
             ax.axhline(1.0, linestyle="--")
             ax.set_limits(-10, 10, -10, 10)
-            
+
         """
 
         # set the color to be almost black. Matplotlib has two keywords for
@@ -1844,13 +1844,13 @@ class Axes_bpl(Axes):
 
     def errorbar(self, *args, **kwargs):
         """Wrapper for the plt.errorbar() function.
-        
-        Style changes: capsize is automatically zero, and the format is 
+
+        Style changes: capsize is automatically zero, and the format is
         automatically a scatter plot, rather than the connected lines that
         are used by default otherwise. It also adds a black marker edge to
         distinguish the markers when there are lots of data poitns. Otherwise
         everything blends together.
-        
+
         .. plot::
             :include-source:
 
@@ -1858,24 +1858,24 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             import matplotlib.pyplot as plt
             bpl.default_style()
-            
+
             xs = np.random.normal(0, 1, 100)
             ys = np.random.normal(0, 1, 100)
             yerr = np.random.uniform(0.3, 0.8, 100)
             xerr = np.random.uniform(0.3, 0.8, 100)
-            
+
             fig = plt.figure(figsize=[15, 7])
             ax1 = fig.add_subplot(121)
             ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
-            
+
             for ax in [ax1, ax2]:
                 ax.errorbar(xs,   ys,   xerr=xerr, yerr=yerr, label="set 1")
                 ax.errorbar(xs+1, ys+1, xerr=xerr, yerr=yerr, label="set 2")
                 ax.legend()
             ax1.set_title("matplotlib")
             ax2.set_title("betterplotlib")
-            
-            """
+
+        """
 
         kwargs.setdefault("capsize", 0)
         kwargs.setdefault("fmt", "o")
@@ -1886,46 +1886,46 @@ class Axes_bpl(Axes):
 
     def twin_axis_simple(self, axis, lower_lim, upper_lim, label="", log=False):
         """Creates a differently scaled axis on either the top or the left.
-    
-        This can be used to put multiple scales on one plot for easier 
+
+        This can be used to put multiple scales on one plot for easier
         comparison. Some examples might be distance/time, redshift/age, or
         any two related quantities.
-        
-        Note that this only does simple scalings of the new axes, which will 
+
+        Note that this only does simple scalings of the new axes, which will
         still only be linear or log scaled axes. If you want a function that
         smartly places labels based on a function that takes one set of axes
-        values to another (in a potentially nonlinear way), the other function 
-        I haven't made will do that. 
-    
+        values to another (in a potentially nonlinear way), the other function
+        I haven't made will do that.
+
         :param axis: Where the new scaled axis will be placed. Must
-                     either be "x" or "y". 
+                     either be "x" or "y".
         :param lower_lim: Value to be put on the left/bottom of the newly
                           created axis.
-        :param upper_lim: Value to be put on the right/top of the newly 
-                          created axis. 
-        :param label: The label to put on this new axis. 
+        :param upper_lim: Value to be put on the right/top of the newly
+                          created axis.
+        :param label: The label to put on this new axis.
         :param log: Whether or not to log scale this axis.
         :returns: the new axes
-        
+
         .. plot::
             :include-source:
-            
+
             import betterplotlib as bpl
             bpl.presentation_style()
-            
+
             fig, ax = bpl.subplots(tight_layout=True)
             ax.set_limits(0, 10, 0, 5)
             ax.add_labels("x", "y")
             ax.twin_axis_simple("x", 0, 100, r"$10 x$")
             ax.twin_axis_simple("y", 1, 10**5, r"$10^y$", log=True)
-            
+
         Note that for a slightly more complicated version of this plot, say if
         we wanted the top x axis to be x^2 rather than 10x, the limits would
         still be the same, but since the new axis will always be a linear or log
         scale the new axis won't represent the true relationship between the
-        variables on the twin axes. See the other function for that. 
-            
-            
+        variables on the twin axes. See the other function for that.
+
+
         """
 
         if axis == "x":
@@ -2155,8 +2155,15 @@ class Axes_bpl(Axes):
         return new_ax
 
     def shaded_density(
-        self, xs, ys, bin_size=None, smoothing=0, cmap="Greys", weights=None, log_xy=False,
-            log_hist=False,
+        self,
+        xs,
+        ys,
+        bin_size=None,
+        smoothing=0,
+        cmap="Greys",
+        weights=None,
+        log_xy=False,
+        log_hist=False,
     ):
         """
         Creates shaded regions showing the density.
@@ -2206,7 +2213,7 @@ class Axes_bpl(Axes):
             padding=padding,
             smoothing=smoothing,
             weights=weights,
-            log=log_xy
+            log=log_xy,
         )
 
         vmax = np.max(hist)
@@ -2217,8 +2224,9 @@ class Axes_bpl(Axes):
             vmax = np.log10(vmax)
             vmin = max(np.log10(vmin), vmax - 3)
 
-        return super(Axes_bpl, self).pcolormesh(x_edges, y_edges, hist, cmap=cmap,
-                                                vmax=vmax, vmin=vmin)
+        return super(Axes_bpl, self).pcolormesh(
+            x_edges, y_edges, hist, cmap=cmap, vmax=vmax, vmin=vmin
+        )
 
     def format_labels(self, axis, labels):
         if axis == "x":

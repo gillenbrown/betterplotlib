@@ -23,9 +23,9 @@ def test_alpha_small_values():
 
 def test_alpha_large_values():
     """Test that alpha values never go to zero."""
-    assert 0 < tools._alpha(10 ** 2) <= 1.0
-    assert 0 < tools._alpha(10 ** 4) <= 1.0
-    assert 0 < tools._alpha(10 ** 10) <= 1.0
+    assert 0 < tools._alpha(10**2) <= 1.0
+    assert 0 < tools._alpha(10**4) <= 1.0
+    assert 0 < tools._alpha(10**10) <= 1.0
 
 
 # ------------------------------------------------------------------------------
@@ -199,9 +199,9 @@ def test_round_to_nice_width_with_exp_large():
 
 def test_round_to_nice_width_with_exp_general():
     """Want either 1, 2, 5, or 10 bins per 10 units. So we either round the
-    bin to 10, 5, 2, or 1, respectively. """
+    bin to 10, 5, 2, or 1, respectively."""
     for exp in np.arange(-10.0, 10.0):
-        factor = 10 ** exp
+        factor = 10**exp
         assert np.isclose(tools._round_to_nice_width(1.0 * factor), 1.0 * factor)
         assert np.isclose(tools._round_to_nice_width(1.49999 * factor), 1.0 * factor)
         assert np.isclose(tools._round_to_nice_width(1.50001 * factor), 2.0 * factor)
@@ -1073,7 +1073,7 @@ def test_percentile_level_points_very_close():
 def test_percentile_level_in_middle_of_constants_result():
     """What happens when the correct level is hard to define, since there are
     a bunch of ones like it. This won't matter in most cases since we will
-    have floating point errors. """
+    have floating point errors."""
     data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 9]  # 9 total  # 9 total  # 9 total
     # here the 50th percentile (if cumulatively summing) is right in the middle
     # of the 3s. To get past 50 we do have to go below the threes
@@ -1083,7 +1083,7 @@ def test_percentile_level_in_middle_of_constants_result():
 def test_percentile_level_in_middle_of_constants_warning():
     """What happens when the correct level is hard to define, since there are
     a bunch of ones like it. When there is a big gap between what we have
-    and what we want we raise an error also. """
+    and what we want we raise an error also."""
     data = [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 9]  # 9 total  # 9 total  # 9 total
     with pytest.warns(RuntimeWarning):
         tools.percentile_level(data, 0.5)

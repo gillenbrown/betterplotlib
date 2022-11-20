@@ -264,7 +264,7 @@ def test_hist_few_options_example_image():
 # ------------------------------------------------------------------------------
 def test_add_labels_example_image():
     xs = np.arange(0, 10, 0.1)
-    ys = xs ** 2
+    ys = xs**2
 
     fig, ax = bpl.subplots()
     ax.plot(xs, ys)
@@ -299,7 +299,7 @@ def test_set_limits_example_image():
 # ------------------------------------------------------------------------------
 def test_add_text_example_image():
     xs = np.arange(0, 7, 0.1)
-    ys = xs ** 2
+    ys = xs**2
 
     fig, ax = bpl.subplots()
 
@@ -317,7 +317,7 @@ def test_add_text_example_image():
 # ------------------------------------------------------------------------------
 def test_remove_labels_example_image():
     xs = np.arange(0, 5, 0.1)
-    ys = xs ** 2
+    ys = xs**2
 
     fig, ax = bpl.subplots()
 
