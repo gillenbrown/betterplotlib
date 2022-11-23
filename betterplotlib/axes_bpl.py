@@ -968,8 +968,14 @@ class Axes_bpl(Axes):
             )
         kwargs["levels"] = levels
 
-        # set the normalization to ignore the central dummy level.
-        kwargs["norm"] = mpl_colors.Normalize(vmin=levels[0], vmax=levels[-2])
+        # set the normalization to ignore the central dummy level. But I don't want
+        # either level to be at the edge of the colormap, since those are often white
+        # or black
+        vmin = levels[0]
+        vmax = levels[-2]
+        vmin -= 0.1 * (vmax - vmin)
+        vmax += 0.1 * (vmax - vmin)
+        kwargs["norm"] = mpl_colors.Normalize(vmin=vmin, vmax=vmax)
 
         if not filled:
             kwargs.setdefault("zorder", 3)
@@ -2199,12 +2205,13 @@ class Axes_bpl(Axes):
         )
 
         vmax = np.max(hist)
-        vmin = np.percentile(hist[hist > 0], 1)
+        vmin = np.percentile(hist[hist >= 0], 1)
 
         if log_hist:
+            vmin_linear = np.percentile(hist[hist > 0], 1)
             hist = np.log10(hist)
             vmax = np.log10(vmax)
-            vmin = max(np.log10(vmin), vmax - 3)
+            vmin = max(np.log10(vmin_linear), vmax - 3)
 
         return super(Axes_bpl, self).pcolormesh(
             x_edges, y_edges, hist, cmap=cmap, vmax=vmax, vmin=vmin
