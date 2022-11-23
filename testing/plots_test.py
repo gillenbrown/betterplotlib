@@ -12,7 +12,7 @@ this_dir = Path(__file__).parent
 baseline_im_dir = this_dir / "baseline_images"
 new_im_dir = this_dir / "temporary_images"
 
-if str(Path.home()) == "/Users/gillenbrown":
+if str(Path.home()) == "/Users/gillenbrown":  # pragma: no cover
     pass_local_fail_remote = lambda x: x
 else:
     pass_local_fail_remote = pytest.mark.xfail
@@ -35,7 +35,7 @@ def image_similarity(im_1_path, im_2_path):
     return abs(np.sum(im_1 - im_2)) < 1
 
 
-def image_similarity_full(fig, image_name):
+def image_similarity_full(fig, image_name):  # pragma: no cover
     new_img = new_im_dir / image_name
     baseline_img = baseline_im_dir / image_name
 
