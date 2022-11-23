@@ -9,7 +9,7 @@ temp_dir = Path(__file__).parent / "temp_font_dir"
 @pytest.fixture(scope="function")
 def make_temp_dir():
     temp_dir.mkdir(exist_ok=False)
-    yield   
+    yield
     for item in temp_dir.iterdir():
         item.unlink()
     temp_dir.rmdir()
