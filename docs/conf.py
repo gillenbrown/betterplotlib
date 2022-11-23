@@ -70,9 +70,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"betterplotlib"
-copyright = u"2015-2017, Gillen Brown"
-author = u"Gillen Brown"
+project = "betterplotlib"
+copyright = "2015-2017, Gillen Brown"
+author = "Gillen Brown"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -246,8 +246,8 @@ latex_documents = [
     (
         master_doc,
         "betterplotlib.tex",
-        u"betterplotlib Documentation",
-        u"Gillen Brown",
+        "betterplotlib Documentation",
+        "Gillen Brown",
         "manual",
     ),
 ]
@@ -277,7 +277,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "betterplotlib", u"betterplotlib Documentation", [author], 1)]
+man_pages = [(master_doc, "betterplotlib", "betterplotlib Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -292,7 +292,7 @@ texinfo_documents = [
     (
         master_doc,
         "betterplotlib",
-        u"betterplotlib Documentation",
+        "betterplotlib Documentation",
         author,
         "betterplotlib",
         "One line description of project.",
