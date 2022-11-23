@@ -19,6 +19,12 @@ jobs:
         run: python -c "import betterplotlib as bpl; bpl.set_style()"
       - name: run pytest with coverage
         run: coverage run -m pytest
+
+      # handle coverage, only for one version (chose most recent python version, but
+      # this shouldn't matter
+      - name: make lcov file for Coveralls upload
+        if: matrix.python-version == 3.10
+        run: coverage lcov -i
       - name: upload to Coveralls
         if: matrix.python-version == 3.10
         uses: coverallsapp/github-action@master
