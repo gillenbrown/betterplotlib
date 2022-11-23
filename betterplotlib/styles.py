@@ -1,6 +1,8 @@
 import urllib
 import os
+from pathlib import Path
 
+import matplotlib
 from matplotlib import rcParams
 from matplotlib import font_manager
 from cycler import cycler
@@ -16,7 +18,6 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
 
     :return: None
     """
-
     _common_style()
 
     if style == "default":
@@ -41,6 +42,8 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
         rcParams["font.sans-serif"] = "Computer Modern Roman"
         rcParams["font.serif"] = "Computer Modern Roman"
         rcParams["text.usetex"] = True
+    else:
+        raise ValueError("style not recognized")
 
 
 def _common_style():
@@ -98,6 +101,7 @@ def _set_font_settings(font, fontweight):
     # as a default since we currently don't know what family the requested
     # font is. And for our purposes it doesn't matter, since it works fine if
     # we tell matplotlib it's a sans-serif font, even if it's not.
+
     rcParams["font.family"] = "sans-serif"
     rcParams["font.sans-serif"] = font
 
@@ -114,23 +118,30 @@ def _set_font_settings(font, fontweight):
     # see if the found font is the default. If so, we'll download the font
     fm = font_manager.FontManager()
     default_font = fm.defaultFont["ttf"]
-    found_font = fm.findfont(font)
+    found_font = fm.findfont(font, rebuild_if_missing=True)
 
     if default_font == found_font:
         print("- Downloading font: {}".format(font))
         print("- You may need to rerun this script or restart this jupyter")
         print("  notebook for these changes to take effect.")
         print("- This only needs to be done once.")
-        font_dir = os.path.join(rcParams["datapath"], "fonts/ttf/")
+        font_dir = Path(matplotlib.get_data_path()) / "fonts/ttf/"
         download_font(font, font_dir)
 
-        # then rebuild the font cache
-        font_manager._rebuild()
+        # remove the font cache
+        cache_dir = Path(matplotlib.get_cachedir())
+        for item in cache_dir.iterdir():
+            if item.name.startswith("font"):
+                item.unlink()
+
+        # make sure it worked
+        fm = font_manager.FontManager()
+        assert fm.findfont(font, rebuild_if_missing=True) != fm.defaultFont["ttf"]
 
 
 def _download_file(url, local_dir):
     filename = url.split("/")[-1]
-    local_filename = os.path.join(local_dir, filename)
+    local_filename = local_dir / filename
     try:
         urllib.request.urlretrieve(url, filename=local_filename)
     except urllib.error.HTTPError:
@@ -140,8 +151,7 @@ def _download_file(url, local_dir):
 def download_font(fontname, dir):
     # https://github.com/google/fonts
     # format the font as it is in the github repo
-    fontname = fontname.lower()
-    fontname = fontname.replace(" ", "")
+    fontname = fontname.lower().replace(" ", "")
 
     base_url = "https://raw.githubusercontent.com/google/fonts/master/"
     # we don't know what license the font uses, so we need to search for it
@@ -165,12 +175,12 @@ def download_font(fontname, dir):
 
     # then get the filenames from the metadata file. We do need to watch out
     # for variable fonts.
-    metadata_path = os.path.join(dir, "METADATA.pb")
+    metadata_path = dir / "METADATA.pb"
     with open(metadata_path, "r") as metadata_file:
         metadata = [line.strip() for line in metadata_file]
 
     # remove the metadata file
-    os.remove(metadata_path)
+    metadata_path.unlink()
 
     # see if we have a variable font. This particular line will note one of the
     # variable font axes
@@ -189,8 +199,10 @@ def download_font(fontname, dir):
                 print("  - Downloading {}".format(filename))
 
     else:  # we do have a variable font
-        # the metadata file does not list all the files, as they are in the
-        # "static" subdirectory. We have to manually find those files
+        # the metadata file does not list all the files, as they may be in the
+        # "static" subdirectory. We have to manually find those files. But not every
+        # font has the static subdirectory. So we'll look for static, but if we don't
+        # find it just download the variable font files.
         # first get the name of the font as it will appear in the file
         for md in metadata:
             if md.startswith("filename:"):
@@ -216,6 +228,7 @@ def download_font(fontname, dir):
             "Black",
             "",
         ]
+        found_any = False
         for weight in weights:
             for italic in ["Italic", ""]:
                 ttf_name = "{}-{}{}.ttf".format(file_base_name, weight, italic)
@@ -226,5 +239,19 @@ def download_font(fontname, dir):
                 try:
                     _download_file(ttf_url, dir)
                     print("  - Downloading {}".format(ttf_name))
+                    found_any = True
                 except ValueError:
                     pass
+
+        # if we couldn't find any static files, just download the variable files
+        if not found_any:
+            # get all the filenames
+            for md in metadata:
+                if md.startswith("filename:"):
+                    filename = md.split()[-1]
+                    # this will have quotes, remove them
+                    filename = filename.replace('"', "")
+                    # then we can just download it
+                    ttf_url = os.path.join(font_dir_url, filename)
+                    _download_file(ttf_url, dir)
+                    print("  - Downloading {}".format(filename))
