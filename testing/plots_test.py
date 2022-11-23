@@ -96,8 +96,6 @@ percent_levels_duplicates_msg = (
 )
 percent_levels_range_msg = "Percentages must be between 0 and 1."
 
-colormap_msg_part = "is not a valid value for name; supported values are 'Accent'"
-
 data_not_all_same_msg = (
     "All points are identical. This breaks matplotlib "
     "contours for some reason. Try other data, or smooth."
@@ -541,15 +539,6 @@ def test_density_contour_error_checking_smoothing(smoothing, err, msg):
     assert str(err_msg.value) == msg
 
 
-def test_density_contour_error_checking_colormap():
-    fig, ax = bpl.subplots()
-    with pytest.raises(ValueError) as err_msg:
-        ax.density_contour(
-            xs_uniform_10, ys_uniform_10, cmap="sdfsd", percent_levels=0.5
-        )
-    assert colormap_msg_part in str(err_msg.value)
-
-
 @pytest.mark.parametrize(
     "weights,err,msg",
     [
@@ -714,15 +703,6 @@ def test_density_contourf_error_checking_smoothing(smoothing, err, msg):
     with pytest.raises(err) as err_msg:
         ax.density_contourf(xs_uniform_10, ys_uniform_10, smoothing=smoothing)
     assert str(err_msg.value) == msg
-
-
-def test_density_contourf_error_checking_colormap():
-    fig, ax = bpl.subplots()
-    with pytest.raises(ValueError) as err_msg:
-        ax.density_contourf(
-            xs_uniform_10, ys_uniform_10, cmap="sdfsd", percent_levels=0.5
-        )
-    assert colormap_msg_part in str(err_msg.value)
 
 
 @pytest.mark.parametrize(
@@ -896,13 +876,6 @@ def test_contour_scatter_error_checking_smoothing(smoothing, err, msg):
     with pytest.raises(err) as err_msg:
         ax.contour_scatter(xs_normal_10000, ys_normal_10000, smoothing=smoothing)
     assert str(err_msg.value) == msg
-
-
-def test_contour_scatter_error_checking_colormap():
-    fig, ax = bpl.subplots()
-    with pytest.raises(ValueError) as err_msg:
-        ax.contour_scatter(xs_normal_10000, ys_normal_10000, fill_cmap="sdfsd")
-    assert colormap_msg_part in str(err_msg.value)
 
 
 @pytest.mark.parametrize(
@@ -1225,13 +1198,6 @@ def test_shaded_density_error_checking_smoothing(smoothing, err, msg):
     with pytest.raises(err) as err_msg:
         ax.shaded_density(xs_uniform_10, ys_uniform_10, smoothing=smoothing)
     assert str(err_msg.value) == msg
-
-
-def test_shaded_density_error_checking_colormap():
-    fig, ax = bpl.subplots()
-    with pytest.raises(ValueError) as err_msg:
-        ax.shaded_density(xs_uniform_10, ys_uniform_10, cmap="sdfsd")
-    assert colormap_msg_part in str(err_msg.value)
 
 
 @pytest.mark.parametrize(
