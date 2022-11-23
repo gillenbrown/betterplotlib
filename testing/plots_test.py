@@ -80,12 +80,10 @@ empty_data_msg = "Empty list is not valid for data."
 xy_length_msg = "x and y data must be the same length."
 
 bin_size_positive_msg = "Bin size must be positive."
-bin_size_typing_msg = "Bin_size must be either a scalar or " "two element numeric list."
+bin_size_typing_msg = "Bin_size must be either a scalar or two element numeric list."
 
 smoothing_nonnegative_msg = "Smoothing must be nonnegative."
-smoothing_typing_msg = (
-    "Smoothing must be either a scalar or " "two element numeric list."
-)
+smoothing_typing_msg = "Smoothing must be either a scalar or two element numeric list."
 
 weights_nonnegative_msg = "Weights must be non-negative."
 weights_wrong_length = "Weights and data need to have the same length."
@@ -93,12 +91,12 @@ weights_typing_msg = "Weights must be a numerical array."
 
 percent_levels_typing_msg = "Percent_levels needs to be a numeric list."
 percent_levels_duplicates_msg = (
-    "The percent levels chosen lead to duplicate "
-    "levels.\nContour levels must be increasing."
+    "The percent levels chosen lead to duplicate levels.\n"
+    "Contour levels must be increasing."
 )
 percent_levels_range_msg = "Percentages must be between 0 and 1."
 
-colormap_msg_part = "is not recognized. Possible values are: Accent"
+colormap_msg_part = "is not a valid value for name; supported values are 'Accent'"
 
 data_not_all_same_msg = (
     "All points are identical. This breaks matplotlib "
@@ -106,7 +104,7 @@ data_not_all_same_msg = (
 )
 
 levels_contour_err_msg = (
-    "The levels parameter is set by this function. " "Do not pass it in. "
+    "The levels parameter is set by this function. Do not pass it in. "
 )
 
 # ------------------------------------------------------------------------------
