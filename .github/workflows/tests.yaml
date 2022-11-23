@@ -18,13 +18,13 @@ jobs:
       - name: download fonts
         run: python -c "import betterplotlib as bpl; bpl.set_style()"
       - name: run pytest
-        if: ${{ matrix.python-version }} != "3.10"
+        if: matrix.python-version != "3.10"
         run: python -m pytest
       - name: run pytest with coverage
-        if: ${{ matrix.python-version }} == "3.10"
+        if: matrix.python-version == "3.10"
         run: coverage run -m pytest
       - name: upload to Coveralls
-        if: ${{ matrix.python-version }} == "3.10"
+        if: matrix.python-version == "3.10"
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
