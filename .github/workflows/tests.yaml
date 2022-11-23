@@ -1,0 +1,28 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  tests:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install bpl
+        run: pip install -e .[test]
+      - name: download fonts
+        run: python -c "import betterplotlib as bpl; bpl.set_style()"
+      - name: run pytest
+        run: python -m pytest
+#      - name: upload failures
+#        if: ${{ failure() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: failed_tests
+#          path: testing/temporary_images
+
