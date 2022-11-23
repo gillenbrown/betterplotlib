@@ -11,8 +11,6 @@ from . import colors
 from . import tools
 from . import type_checking
 
-mpl_1 = __version__[0] == "1"
-
 
 class Axes_bpl(Axes):
 
@@ -49,10 +47,7 @@ class Axes_bpl(Axes):
 
 
         """
-        if not mpl_1:
-            self.set_facecolor(colors.light_gray)
-        else:
-            self.set_axis_bgcolor(colors.light_gray)
+        self.set_facecolor(colors.light_gray)
         if grid:
             self.grid(which="major", color="w", linestyle="-", linewidth=0.5)
             if minor_ticks:
@@ -241,17 +236,6 @@ class Axes_bpl(Axes):
         # set other parameters, if they haven't been set already
         # I use setdefault to do that, which puts the values in if they don't
         # already exist, but won't overwrite anything.
-        # first set the edge color for the points
-        # only do this for large datasets in mpl 1.x
-        if mpl_1 and len(args[0]) > 30:
-            kwargs.setdefault("linewidth", 0.25)
-            # we also need to set the edge color of the markers
-            # edgecolor is a weird case, since it shouldn't be set if the user
-            # specifies 'color', since that refers to the whole point, not just
-            # the color of the point. It includes the edge color.
-            if "color" not in kwargs:
-                kwargs.setdefault("edgecolor", kwargs["c"])
-
         # use the function we defined to get the proper alpha value.
         try:
             kwargs.setdefault("alpha", tools._alpha(len(args[0])))
@@ -698,8 +682,6 @@ class Axes_bpl(Axes):
             # turn the background into whatever color it needs to be
             frame = leg.get_frame()
             frame.set_linewidth(linewidth)
-            if mpl_1:
-                frame.set_alpha(0.6)
 
         return leg
 
