@@ -310,7 +310,6 @@ functions = [
     "twin_axis_simple",
     "twin_axis",
     "shaded_density",
-    "format_labels",
 ]
 
 # then create the list of tests to run
