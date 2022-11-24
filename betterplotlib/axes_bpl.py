@@ -37,7 +37,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             fig, (ax0, ax1) = bpl.subplots(figsize=[12, 5], ncols=2)
             ax1.make_ax_dark()
@@ -79,7 +79,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             fig, (ax0, ax1) = bpl.subplots(ncols=2, figsize=[10, 5])
 
@@ -147,7 +147,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             fig, (ax0, ax1) = bpl.subplots(ncols=2, figsize=[10, 5])
 
@@ -203,7 +203,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             import matplotlib.pyplot as plt
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             x = np.random.normal(0, scale=0.5, size=500)
             y = np.random.normal(0, scale=0.5, size=500)
@@ -306,7 +306,7 @@ class Axes_bpl(Axes):
             import matplotlib.pyplot as plt
             import numpy as np
 
-            bpl.default_style()
+            bpl.set_style()
 
             data = np.random.normal(0, 2, 10000)
 
@@ -328,7 +328,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             data1 = np.random.normal(-6, 1, size=10000)
             data2 = np.random.normal(-2, 1, size=10000)
@@ -419,7 +419,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.arange(0, 10, 0.1)
             ys = xs**2
@@ -460,7 +460,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.arange(0, 10, 0.01)
             ys = np.cos(xs)
@@ -516,7 +516,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.arange(0, 7, 0.1)
             ys = xs**2
@@ -574,7 +574,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.arange(0, 5, 0.1)
             ys = xs**2
@@ -628,7 +628,7 @@ class Axes_bpl(Axes):
             import numpy as np
             import betterplotlib as bpl
             import matplotlib.pyplot as plt
-            bpl.default_style()
+            bpl.set_style()
 
             x = np.arange(0, 5, 0.1)
 
@@ -653,7 +653,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             import numpy as np
 
-            bpl.default_style()
+            bpl.set_style()
 
             x = np.arange(0, 5, 0.1)
 
@@ -708,7 +708,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             import numpy as np
 
-            bpl.default_style()
+            bpl.set_style()
 
             # make a Gaussian with more spread in y direction
             xs = np.random.normal(0, 1, 10000)
@@ -733,7 +733,7 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             import numpy as np
 
-            bpl.default_style()
+            bpl.set_style()
 
             # make a Gaussian with more spread in y direction
             xs = np.random.normal(0, 1, 10000)
@@ -794,7 +794,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             bpl.easy_add_text("1", 1)
             bpl.easy_add_text("2", 2)
@@ -810,7 +810,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             bpl.easy_add_text("upper left", "upper left")
             bpl.easy_add_text("upper center", "upper center")
@@ -1263,7 +1263,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.concatenate([np.random.normal(0, 1, 100000),
                                  np.random.normal(3, 1, 100000),
@@ -1287,7 +1287,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.concatenate([np.random.normal(0, 1, 10000),
                                  np.random.normal(3, 1, 10000),
@@ -1314,7 +1314,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.concatenate([np.random.normal(0, 1, 10000),
                                  np.random.normal(3, 1, 10000),
@@ -1339,7 +1339,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = [1, 2, 3, 4]
             ys = [1, 2, 3, 4]
@@ -1365,7 +1365,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.concatenate([np.random.normal(0, 1, 10000),
                                  np.random.normal(3, 1, 10000),
@@ -1435,7 +1435,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             rad1 = np.random.normal(10, 0.75, 10000)
             theta1 = np.random.uniform(0, 2 * np.pi, 10000)
@@ -1681,7 +1681,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.random.normal(0, 1, 100)
             ys = np.random.normal(0, 1, 100)
@@ -1722,7 +1722,7 @@ class Axes_bpl(Axes):
             import numpy as np
             import betterplotlib as bpl
             import matplotlib.pyplot as plt
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.arange(0, 1, 0.01)
             ys_1 = xs
@@ -1765,7 +1765,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             left_xs = np.arange(-20, 1, 0.01)
             right_xs = np.arange(1.001, 20, 0.01)
@@ -1805,7 +1805,7 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
-            bpl.default_style()
+            bpl.set_style()
 
             left_xs = np.arange(-20, 1, 0.01)
             right_xs = np.arange(1.001, 20, 0.01)
@@ -1844,7 +1844,7 @@ class Axes_bpl(Axes):
             import numpy as np
             import betterplotlib as bpl
             import matplotlib.pyplot as plt
-            bpl.default_style()
+            bpl.set_style()
 
             xs = np.random.normal(0, 1, 100)
             ys = np.random.normal(0, 1, 100)
