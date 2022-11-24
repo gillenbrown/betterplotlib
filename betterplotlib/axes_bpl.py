@@ -333,20 +333,22 @@ class Axes_bpl(Axes):
             import numpy as np
             bpl.set_style()
 
+            fig, ax = bpl.subplots()
+
             data1 = np.random.normal(-6, 1, size=10000)
             data2 = np.random.normal(-2, 1, size=10000)
             data3 = np.random.normal(2, 1, size=10000)
             data4 = np.random.normal(6, 1, size=10000)
             bin_size = 0.5
-            bpl.hist(data1, rel_freq=True, bin_size=bin_size)
-            bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
-                     linewidth=5)
-            bpl.hist(data3, rel_freq=True, bin_size=bin_size,
-                     histtype="stepfilled", hatch="o", alpha=0.8)
-            bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
-                     hatch="x", linewidth=4)
+            ax.hist(data1, rel_freq=True, bin_size=bin_size)
+            ax.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
+                    linewidth=5)
+            ax.hist(data3, rel_freq=True, bin_size=bin_size,
+                    histtype="stepfilled", hatch="o", alpha=0.8)
+            ax.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
+                    hatch="x", linewidth=4)
 
-            bpl.add_labels(y_label="Relative Frequency")
+            ax.add_labels(y_label="Relative Frequency")
 
         """
         # TODO: Add documentatino for examples of bin_size
@@ -427,8 +429,9 @@ class Axes_bpl(Axes):
             xs = np.arange(0, 10, 0.1)
             ys = xs**2
 
-            bpl.plot(xs, ys)
-            bpl.add_labels("X value", "Y value", "Title")
+            fig, ax = bpl.subplots()
+            ax.plot(xs, ys)
+            ax.add_labels("X value", "Y value", "Title")
         """
         if x_label is not None:
             self.set_xlabel(x_label, *args, **kwargs)
@@ -741,8 +744,8 @@ class Axes_bpl(Axes):
             bpl.set_style()
 
             # make a Gaussian with more spread in y direction
-            xs = np.random.normal(0, 1, 10000)
-            ys = np.random.normal(0, 2, 10000)
+            xs = np.random.normal(0, 1, 1000)
+            ys = np.random.normal(0, 2, 1000)
 
             fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
@@ -801,15 +804,17 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             bpl.set_style()
 
-            bpl.easy_add_text("1", 1)
-            bpl.easy_add_text("2", 2)
-            bpl.easy_add_text("3", 3)
-            bpl.easy_add_text("4", 4)
-            bpl.easy_add_text("5", 5)
-            bpl.easy_add_text("6", 6)
-            bpl.easy_add_text("7", 7)
-            bpl.easy_add_text("8", 8)
-            bpl.easy_add_text("9", 9)
+            fig, ax = bpl.subplots()
+
+            ax.easy_add_text("1", 1)
+            ax.easy_add_text("2", 2)
+            ax.easy_add_text("3", 3)
+            ax.easy_add_text("4", 4)
+            ax.easy_add_text("5", 5)
+            ax.easy_add_text("6", 6)
+            ax.easy_add_text("7", 7)
+            ax.easy_add_text("8", 8)
+            ax.easy_add_text("9", 9)
 
         .. plot::
             :include-source:
@@ -817,15 +822,17 @@ class Axes_bpl(Axes):
             import betterplotlib as bpl
             bpl.set_style()
 
-            bpl.easy_add_text("upper left", "upper left")
-            bpl.easy_add_text("upper center", "upper center")
-            bpl.easy_add_text("upper right", "upper right")
-            bpl.easy_add_text("center left", "center left")
-            bpl.easy_add_text("center", "center")
-            bpl.easy_add_text("center right", "center right")
-            bpl.easy_add_text("lower left", "lower left")
-            bpl.easy_add_text("lower center", "lower center")
-            bpl.easy_add_text("lower right", "lower right")
+            fig, ax = bpl.subplots()
+
+            ax.easy_add_text("upper left", "upper left")
+            ax.easy_add_text("upper center", "upper center")
+            ax.easy_add_text("upper right", "upper right")
+            ax.easy_add_text("center left", "center left")
+            ax.easy_add_text("center", "center")
+            ax.easy_add_text("center right", "center right")
+            ax.easy_add_text("lower left", "lower left")
+            ax.easy_add_text("lower center", "lower center")
+            ax.easy_add_text("lower right", "lower right")
 
 
         """
@@ -1911,7 +1918,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.presentation_style()
+            bpl.set_style()
 
             fig, ax = bpl.subplots(tight_layout=True)
             ax.set_limits(0, 10, 0, 5)
@@ -1964,7 +1971,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.presentation_style()
+            bpl.set_style()
 
             def square(x):
                 return x**2
@@ -1999,7 +2006,7 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            bpl.presentation_style()
+            bpl.set_style()
 
             def cube_root(x):
                 return x**(1.0/3.0)
@@ -2022,7 +2029,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.presentation_style()
+            bpl.set_style()
 
             xs = np.logspace(0, 3, 100)
 
@@ -2176,7 +2183,7 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
-            bpl.presentation_style()
+            bpl.set_style()
 
             xs = np.random.uniform(0, 10, 100)
             ys = np.random.uniform(0, 10, 100)
