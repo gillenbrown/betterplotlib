@@ -797,7 +797,7 @@ def test_density_contourf_weights_image():
         bin_size=0.01,
         percent_levels=[0.4, 0.95],
         smoothing=0.3,
-        cmap="ocean",
+        cmap="cividis",
     )
     ax.equal_scale()
     assert image_similarity_full(fig, "density_contourf_weights.png")
