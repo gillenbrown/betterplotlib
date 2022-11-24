@@ -88,7 +88,7 @@ for function_args in axes_functions_args:
         + '    """'
         + func_docstring
         + '"""\n'
-        + "    ax = plt.gca(projection='bpl')\n"
+        + '    ax = plt.gca(projection="bpl")\n'
         + "    return ax.{}\n".format(func_args_no_defauts)
     )
     if function_args != axes_functions_args[-1]:

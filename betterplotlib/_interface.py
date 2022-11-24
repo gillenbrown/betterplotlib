@@ -33,7 +33,7 @@ def make_ax_dark(grid=True, minor_ticks=False):
 
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.make_ax_dark(grid, minor_ticks)
 
 
@@ -72,7 +72,7 @@ def remove_ticks(ticks_to_remove):
         ax0.set_title("removed top/right ticks")
         ax1.set_title("removed all ticks")
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.remove_ticks(ticks_to_remove)
 
 
@@ -120,7 +120,7 @@ def remove_spines(spines_to_remove):
         ax1.set_title("removed all spines")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.remove_spines(spines_to_remove)
 
 
@@ -170,7 +170,7 @@ def scatter(*args, **kwargs):
         ax2.add_labels(title="betterplotlib")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.scatter(*args, **kwargs)
 
 
@@ -237,23 +237,25 @@ def hist(*args, **kwargs):
         import numpy as np
         bpl.set_style()
 
+        fig, ax = bpl.subplots()
+
         data1 = np.random.normal(-6, 1, size=10000)
         data2 = np.random.normal(-2, 1, size=10000)
         data3 = np.random.normal(2, 1, size=10000)
         data4 = np.random.normal(6, 1, size=10000)
         bin_size = 0.5
-        bpl.hist(data1, rel_freq=True, bin_size=bin_size)
-        bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
-             linewidth=5)
-        bpl.hist(data3, rel_freq=True, bin_size=bin_size,
-             histtype="stepfilled", hatch="o", alpha=0.8)
-        bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
-             hatch="x", linewidth=4)
+        ax.hist(data1, rel_freq=True, bin_size=bin_size)
+        ax.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
+            linewidth=5)
+        ax.hist(data3, rel_freq=True, bin_size=bin_size,
+            histtype="stepfilled", hatch="o", alpha=0.8)
+        ax.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
+            hatch="x", linewidth=4)
 
-        bpl.add_labels(y_label="Relative Frequency")
+        ax.add_labels(y_label="Relative Frequency")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.hist(*args, **kwargs)
 
 
@@ -289,10 +291,11 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
         xs = np.arange(0, 10, 0.1)
         ys = xs**2
 
-        bpl.plot(xs, ys)
-        bpl.add_labels("X value", "Y value", "Title")
+        fig, ax = bpl.subplots()
+        ax.plot(xs, ys)
+        ax.add_labels("X value", "Y value", "Title")
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.add_labels(x_label, y_label, title, *args, **kwargs)
 
 
@@ -334,7 +337,7 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
         ax2.plot(xs, ys)
         ax2.set_limits(0, 2*np.pi, -1.1, 1.1)
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.set_limits(x_min, x_max, y_min, y_max, **kwargs)
 
 
@@ -389,7 +392,7 @@ def add_text(x, y, text, coords="data", **kwargs):
         ax.add_text(2, 30, "(2, 30) data", ha="center", va="center")
         ax.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.add_text(x, y, text, coords, **kwargs)
 
 
@@ -431,7 +434,7 @@ def remove_labels(labels_to_remove):
         ax.add_labels("Conceptual plot", "Axes labels still work")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.remove_labels(labels_to_remove)
 
 
@@ -495,7 +498,7 @@ def legend(linewidth=0, *args, **kwargs):
         ax.plot(x, 3*x, label="3x")
         ax.legend(fontsize=20, loc=6, title="Title")
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.legend(linewidth, *args, **kwargs)
 
 
@@ -552,8 +555,8 @@ def equal_scale(self):
         bpl.set_style()
 
         # make a Gaussian with more spread in y direction
-        xs = np.random.normal(0, 1, 10000)
-        ys = np.random.normal(0, 2, 10000)
+        xs = np.random.normal(0, 1, 1000)
+        ys = np.random.normal(0, 2, 1000)
 
         fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
@@ -567,7 +570,7 @@ def equal_scale(self):
         ax2.set_limits(-5, 5, -10, 10)
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.equal_scale(self)
 
 
@@ -614,15 +617,17 @@ def easy_add_text(text, location, **kwargs):
         import betterplotlib as bpl
         bpl.set_style()
 
-        bpl.easy_add_text("1", 1)
-        bpl.easy_add_text("2", 2)
-        bpl.easy_add_text("3", 3)
-        bpl.easy_add_text("4", 4)
-        bpl.easy_add_text("5", 5)
-        bpl.easy_add_text("6", 6)
-        bpl.easy_add_text("7", 7)
-        bpl.easy_add_text("8", 8)
-        bpl.easy_add_text("9", 9)
+        fig, ax = bpl.subplots()
+
+        ax.easy_add_text("1", 1)
+        ax.easy_add_text("2", 2)
+        ax.easy_add_text("3", 3)
+        ax.easy_add_text("4", 4)
+        ax.easy_add_text("5", 5)
+        ax.easy_add_text("6", 6)
+        ax.easy_add_text("7", 7)
+        ax.easy_add_text("8", 8)
+        ax.easy_add_text("9", 9)
 
     .. plot::
         :include-source:
@@ -630,19 +635,21 @@ def easy_add_text(text, location, **kwargs):
         import betterplotlib as bpl
         bpl.set_style()
 
-        bpl.easy_add_text("upper left", "upper left")
-        bpl.easy_add_text("upper center", "upper center")
-        bpl.easy_add_text("upper right", "upper right")
-        bpl.easy_add_text("center left", "center left")
-        bpl.easy_add_text("center", "center")
-        bpl.easy_add_text("center right", "center right")
-        bpl.easy_add_text("lower left", "lower left")
-        bpl.easy_add_text("lower center", "lower center")
-        bpl.easy_add_text("lower right", "lower right")
+        fig, ax = bpl.subplots()
+
+        ax.easy_add_text("upper left", "upper left")
+        ax.easy_add_text("upper center", "upper center")
+        ax.easy_add_text("upper right", "upper right")
+        ax.easy_add_text("center left", "center left")
+        ax.easy_add_text("center", "center")
+        ax.easy_add_text("center right", "center right")
+        ax.easy_add_text("lower left", "lower left")
+        ax.easy_add_text("lower center", "lower center")
+        ax.easy_add_text("lower right", "lower right")
 
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.easy_add_text(text, location, **kwargs)
 
 
@@ -672,20 +679,20 @@ def _density_contour_core(
     :param kwargs:
     :return:
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax._density_contour_core(
-              self,
-              xs,
-              ys,
-              bin_size,
-              percent_levels,
-              smoothing,
-              weights,
-              log,
-              labels,
-              filled,
-              **kwargs
-          )
+        self,
+        xs,
+        ys,
+        bin_size,
+        percent_levels,
+        smoothing,
+        weights,
+        log,
+        labels,
+        filled,
+        **kwargs
+    )
 
 
 def density_contour(
@@ -755,19 +762,19 @@ def density_contour(
                matplotlib contour function.
     :return: output of the matplotlib.contour function.
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.density_contour(
-              self,
-              xs,
-              ys,
-              bin_size,
-              percent_levels,
-              smoothing,
-              weights,
-              log,
-              labels,
-              **kwargs
-          )
+        self,
+        xs,
+        ys,
+        bin_size,
+        percent_levels,
+        smoothing,
+        weights,
+        log,
+        labels,
+        **kwargs
+    )
 
 
 def density_contourf(
@@ -833,18 +840,10 @@ def density_contourf(
                matplotlib contour function.
     :return: output of the matplotlib.contourf function.
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.density_contourf(
-              self,
-              xs,
-              ys,
-              bin_size,
-              percent_levels,
-              smoothing,
-              weights,
-              log,
-              **kwargs
-          )
+        self, xs, ys, bin_size, percent_levels, smoothing, weights, log, **kwargs
+    )
 
 
 def contour_scatter(
@@ -1155,21 +1154,21 @@ def contour_scatter(
         ax.contour_scatter(xs, ys, smoothing=0.5, bin_size=0.5)
         ax.equal_scale()
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.contour_scatter(
-              self,
-              xs,
-              ys,
-              bin_size,
-              percent_levels,
-              smoothing,
-              weights,
-              labels,
-              fill_cmap,
-              scatter_kwargs,
-              contour_kwargs,
-              contourf_kwargs,
-          )
+        self,
+        xs,
+        ys,
+        bin_size,
+        percent_levels,
+        smoothing,
+        weights,
+        labels,
+        fill_cmap,
+        scatter_kwargs,
+        contour_kwargs,
+        contourf_kwargs,
+    )
 
 
 def contour_all(
@@ -1189,21 +1188,21 @@ def contour_all(
     """
     empty
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.contour_all(
-              self,
-              xs,
-              ys,
-              x_smoothing,
-              y_smoothing,
-              bin_size,
-              percent_levels,
-              weights,
-              angles,
-              labels,
-              filled,
-              **kwargs
-          )
+        self,
+        xs,
+        ys,
+        x_smoothing,
+        y_smoothing,
+        bin_size,
+        percent_levels,
+        weights,
+        angles,
+        labels,
+        filled,
+        **kwargs
+    )
 
 
 def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
@@ -1248,7 +1247,7 @@ def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
         ax.scatter(xs, ys)
         ax.data_ticks(xs, ys)
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.data_ticks(x_data, y_data, extent, *args, **kwargs)
 
 
@@ -1292,7 +1291,7 @@ def plot(*args, **kwargs):
         ax2.set_title("betterplotlib")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.plot(*args, **kwargs)
 
 
@@ -1329,7 +1328,7 @@ def axvline(x=0, *args, **kwargs):
         ax.set_limits(-10, 10, -10, 10)
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.axvline(x, *args, **kwargs)
 
 
@@ -1366,7 +1365,7 @@ def axhline(y=0, *args, **kwargs):
         ax.set_limits(-10, 10, -10, 10)
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.axhline(y, *args, **kwargs)
 
 
@@ -1405,7 +1404,7 @@ def errorbar(*args, **kwargs):
         ax2.set_title("betterplotlib")
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.errorbar(*args, **kwargs)
 
 
@@ -1437,7 +1436,7 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.presentation_style()
+        bpl.set_style()
 
         fig, ax = bpl.subplots(tight_layout=True)
         ax.set_limits(0, 10, 0, 5)
@@ -1453,13 +1452,11 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
 
 
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.twin_axis_simple(axis, lower_lim, upper_lim, label, log)
 
 
-def twin_axis(
-    self, axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
-):
+def twin_axis(self, axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None):
     """
     Create a twin axis, where the new axis values are an arbitrary function
     of the old values.
@@ -1476,7 +1473,7 @@ def twin_axis(
         :include-source:
 
         import betterplotlib as bpl
-        bpl.presentation_style()
+        bpl.set_style()
 
         def square(x):
         return x**2
@@ -1511,7 +1508,7 @@ def twin_axis(
         :include-source:
 
         import betterplotlib as bpl
-        bpl.presentation_style()
+        bpl.set_style()
 
         def cube_root(x):
         return x**(1.0/3.0)
@@ -1534,7 +1531,7 @@ def twin_axis(
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.presentation_style()
+        bpl.set_style()
 
         xs = np.logspace(0, 3, 100)
 
@@ -1572,9 +1569,8 @@ def twin_axis(
     :return: New axis object that was created, containing the newly
          created labels.
     """
-    ax = plt.gca(projection='bpl')
-    return ax.twin_axis(
-              self, axis, new_ticks, label, old_to_new_func, new_to_old_func)
+    ax = plt.gca(projection="bpl")
+    return ax.twin_axis(self, axis, new_ticks, label, old_to_new_func, new_to_old_func)
 
 
 def shaded_density(
@@ -1599,7 +1595,7 @@ def shaded_density(
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.presentation_style()
+        bpl.set_style()
 
         xs = np.random.uniform(0, 10, 100)
         ys = np.random.uniform(0, 10, 100)
@@ -1627,23 +1623,23 @@ def shaded_density(
     :param cmap: colormap used for the density.
     :return: output of the pcolormesh function call.
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.shaded_density(
-              self,
-              xs,
-              ys,
-              bin_size,
-              smoothing,
-              cmap,
-              weights,
-              log_xy,
-              log_hist,
-          )
+        self,
+        xs,
+        ys,
+        bin_size,
+        smoothing,
+        cmap,
+        weights,
+        log_xy,
+        log_hist,
+    )
 
 
 def format_labels(axis, labels):
     """
     empty
     """
-    ax = plt.gca(projection='bpl')
+    ax = plt.gca(projection="bpl")
     return ax.format_labels(axis, labels)
