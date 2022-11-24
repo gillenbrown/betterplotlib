@@ -16,7 +16,8 @@ class Axes_bpl(Axes):
     name = "bpl"
 
     def make_ax_dark(self, grid=True, minor_ticks=False):
-        """Turns an axis into one with a dark background with white gridlines.
+        """
+        Turns an axis into one with a dark background with white gridlines.
 
         This will turn an axis into one with a slightly light gray background,
         and with solid white gridlines. All the axes spines are removed (so
@@ -59,7 +60,8 @@ class Axes_bpl(Axes):
         self.remove_spines(["all"])
 
     def remove_ticks(self, ticks_to_remove):
-        """Removes ticks from the given locations.
+        """
+        Removes ticks from the given locations.
 
         In some situations, ticks aren't needed or wanted. Note that this
         doesn't remove the spine itself, or the labels on that axis.
@@ -119,7 +121,8 @@ class Axes_bpl(Axes):
             self.xaxis.set_ticks_position("top")
 
     def remove_spines(self, spines_to_remove):
-        """Remove spines from the axis.
+        """
+        Remove spines from the axis.
 
         Spines are the lines on the side of the axes. In many situations, these
         are not needed, and are just junk. Calling this function will remove
@@ -213,9 +216,9 @@ class Axes_bpl(Axes):
             ax2 = fig.add_subplot(122, projection="bpl")
 
             for ax in [ax1, ax2]:
-                ax.scatter(x,     y)
-                ax.scatter(x+0.5, y+0.5)
-                ax.scatter(x+1,   y+1)
+                ax.scatter(x,       y)
+                ax.scatter(x + 0.5, y + 0.5)
+                ax.scatter(x + 1,   y + 1)
 
             ax1.set_title("matplotlib")
             ax2.add_labels(title="betterplotlib")
@@ -606,7 +609,8 @@ class Axes_bpl(Axes):
         )
 
     def legend(self, linewidth=0, *args, **kwargs):
-        """Create a nice looking legend.
+        """
+        Create a nice looking legend.
 
         Works by calling the ax.legend() function with the given args and
         kwargs. If some are not specified, they will be filled with values that
@@ -685,7 +689,8 @@ class Axes_bpl(Axes):
         return leg
 
     def equal_scale(self):
-        """Makes the x and y axes have the same scale.
+        """
+        Makes the x and y axes have the same scale.
 
         Useful for plotting things like ra and dec, something with the same
         quantity on both axes, or anytime the x and y axis have the same scale.
@@ -711,8 +716,8 @@ class Axes_bpl(Axes):
             bpl.set_style()
 
             # make a Gaussian with more spread in y direction
-            xs = np.random.normal(0, 1, 10000)
-            ys = np.random.normal(0, 2, 10000)
+            xs = np.random.normal(0, 1, 1000)
+            ys = np.random.normal(0, 2, 1000)
 
             fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
@@ -1565,6 +1570,9 @@ class Axes_bpl(Axes):
         filled=False,
         **kwargs
     ):
+        """
+        empty
+        """
         # TEST ME, TEST ME, TEST ME
 
         # levels is set by this function, so it can't be in there
@@ -1704,7 +1712,8 @@ class Axes_bpl(Axes):
             self.axhline(y, xmin=0, xmax=h_extent, *args, **kwargs)
 
     def plot(self, *args, **kwargs):
-        """A slightly improved plot function.
+        """
+        A slightly improved plot function.
 
         This is best used for plotting lines, while the `scatter()` function
         is best used for plotting points.
@@ -1750,7 +1759,8 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).plot(*args, **kwargs)
 
     def axvline(self, x=0, *args, **kwargs):
-        """Place a vertical line at some point on the axes.
+        """
+        Place a vertical line at some point on the axes.
 
         :param x: Data value on the x-axis to place the line.
         :type x: float
@@ -1790,7 +1800,8 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).axvline(x, *args, **kwargs)
 
     def axhline(self, y=0, *args, **kwargs):
-        """Place a horizontal line at some point on the axes.
+        """
+        Place a horizontal line at some point on the axes.
 
         :param y: Data value on the y-axis to place the line.
         :type y: float
@@ -1830,7 +1841,8 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).axhline(y, *args, **kwargs)
 
     def errorbar(self, *args, **kwargs):
-        """Wrapper for the plt.errorbar() function.
+        """
+        Wrapper for the plt.errorbar() function.
 
         Style changes: capsize is automatically zero, and the format is
         automatically a scatter plot, rather than the connected lines that
@@ -1872,7 +1884,8 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).errorbar(*args, **kwargs)
 
     def twin_axis_simple(self, axis, lower_lim, upper_lim, label="", log=False):
-        """Creates a differently scaled axis on either the top or the left.
+        """
+        Creates a differently scaled axis on either the top or the left.
 
         This can be used to put multiple scales on one plot for easier
         comparison. Some examples might be distance/time, redshift/age, or
@@ -2217,6 +2230,9 @@ class Axes_bpl(Axes):
         )
 
     def format_labels(self, axis, labels):
+        """
+        empty
+        """
         if axis == "x":
             get_ticks = self.get_xticks
             set_ticklabels = self.set_xticklabels

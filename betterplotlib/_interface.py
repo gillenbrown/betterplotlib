@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 
 
 def make_ax_dark(grid=True, minor_ticks=False):
-    """Turns an axis into one with a dark background with white gridlines.
+    """
+    Turns an axis into one with a dark background with white gridlines.
 
     This will turn an axis into one with a slightly light gray background,
     and with solid white gridlines. All the axes spines are removed (so
@@ -23,7 +24,7 @@ def make_ax_dark(grid=True, minor_ticks=False):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         fig, (ax0, ax1) = bpl.subplots(figsize=[12, 5], ncols=2)
         ax1.make_ax_dark()
@@ -32,12 +33,13 @@ def make_ax_dark(grid=True, minor_ticks=False):
 
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.make_ax_dark(grid, minor_ticks)
 
 
 def remove_ticks(ticks_to_remove):
-    """Removes ticks from the given locations.
+    """
+    Removes ticks from the given locations.
 
     In some situations, ticks aren't needed or wanted. Note that this
     doesn't remove the spine itself, or the labels on that axis.
@@ -57,7 +59,7 @@ def remove_ticks(ticks_to_remove):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         fig, (ax0, ax1) = bpl.subplots(ncols=2, figsize=[10, 5])
 
@@ -70,12 +72,13 @@ def remove_ticks(ticks_to_remove):
         ax0.set_title("removed top/right ticks")
         ax1.set_title("removed all ticks")
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.remove_ticks(ticks_to_remove)
 
 
 def remove_spines(spines_to_remove):
-    """Remove spines from the axis.
+    """
+    Remove spines from the axis.
 
     Spines are the lines on the side of the axes. In many situations, these
     are not needed, and are just junk. Calling this function will remove
@@ -103,7 +106,7 @@ def remove_spines(spines_to_remove):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         fig, (ax0, ax1) = bpl.subplots(ncols=2, figsize=[10, 5])
 
@@ -117,7 +120,7 @@ def remove_spines(spines_to_remove):
         ax1.set_title("removed all spines")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.remove_spines(spines_to_remove)
 
 
@@ -149,7 +152,7 @@ def scatter(*args, **kwargs):
         import betterplotlib as bpl
         import matplotlib.pyplot as plt
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         x = np.random.normal(0, scale=0.5, size=500)
         y = np.random.normal(0, scale=0.5, size=500)
@@ -159,15 +162,15 @@ def scatter(*args, **kwargs):
         ax2 = fig.add_subplot(122, projection="bpl")
 
         for ax in [ax1, ax2]:
-        ax.scatter(x,     y)
-        ax.scatter(x+0.5, y+0.5)
-        ax.scatter(x+1,   y+1)
+        ax.scatter(x,       y)
+        ax.scatter(x + 0.5, y + 0.5)
+        ax.scatter(x + 1,   y + 1)
 
         ax1.set_title("matplotlib")
         ax2.add_labels(title="betterplotlib")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.scatter(*args, **kwargs)
 
 
@@ -210,7 +213,7 @@ def hist(*args, **kwargs):
         import matplotlib.pyplot as plt
         import numpy as np
 
-        bpl.default_style()
+        bpl.set_style()
 
         data = np.random.normal(0, 2, 10000)
 
@@ -232,7 +235,7 @@ def hist(*args, **kwargs):
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         data1 = np.random.normal(-6, 1, size=10000)
         data2 = np.random.normal(-2, 1, size=10000)
@@ -250,7 +253,7 @@ def hist(*args, **kwargs):
         bpl.add_labels(y_label="Relative Frequency")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.hist(*args, **kwargs)
 
 
@@ -281,7 +284,7 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.arange(0, 10, 0.1)
         ys = xs**2
@@ -289,7 +292,7 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
         bpl.plot(xs, ys)
         bpl.add_labels("X value", "Y value", "Title")
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.add_labels(x_label, y_label, title, *args, **kwargs)
 
 
@@ -319,7 +322,7 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.arange(0, 10, 0.01)
         ys = np.cos(xs)
@@ -331,7 +334,7 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
         ax2.plot(xs, ys)
         ax2.set_limits(0, 2*np.pi, -1.1, 1.1)
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.set_limits(x_min, x_max, y_min, y_max, **kwargs)
 
 
@@ -375,7 +378,7 @@ def add_text(x, y, text, coords="data", **kwargs):
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.arange(0, 7, 0.1)
         ys = xs**2
@@ -386,7 +389,7 @@ def add_text(x, y, text, coords="data", **kwargs):
         ax.add_text(2, 30, "(2, 30) data", ha="center", va="center")
         ax.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.add_text(x, y, text, coords, **kwargs)
 
 
@@ -414,7 +417,7 @@ def remove_labels(labels_to_remove):
 
         import betterplotlib as bpl
         import numpy as np
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.arange(0, 5, 0.1)
         ys = xs**2
@@ -428,12 +431,13 @@ def remove_labels(labels_to_remove):
         ax.add_labels("Conceptual plot", "Axes labels still work")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.remove_labels(labels_to_remove)
 
 
 def legend(linewidth=0, *args, **kwargs):
-    """Create a nice looking legend.
+    """
+    Create a nice looking legend.
 
     Works by calling the ax.legend() function with the given args and
     kwargs. If some are not specified, they will be filled with values that
@@ -455,7 +459,7 @@ def legend(linewidth=0, *args, **kwargs):
         import numpy as np
         import betterplotlib as bpl
         import matplotlib.pyplot as plt
-        bpl.default_style()
+        bpl.set_style()
 
         x = np.arange(0, 5, 0.1)
 
@@ -480,7 +484,7 @@ def legend(linewidth=0, *args, **kwargs):
         import betterplotlib as bpl
         import numpy as np
 
-        bpl.default_style()
+        bpl.set_style()
 
         x = np.arange(0, 5, 0.1)
 
@@ -491,12 +495,13 @@ def legend(linewidth=0, *args, **kwargs):
         ax.plot(x, 3*x, label="3x")
         ax.legend(fontsize=20, loc=6, title="Title")
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.legend(linewidth, *args, **kwargs)
 
 
 def equal_scale(self):
-    """Makes the x and y axes have the same scale.
+    """
+    Makes the x and y axes have the same scale.
 
     Useful for plotting things like ra and dec, something with the same
     quantity on both axes, or anytime the x and y axis have the same scale.
@@ -519,11 +524,11 @@ def equal_scale(self):
         import betterplotlib as bpl
         import numpy as np
 
-        bpl.default_style()
+        bpl.set_style()
 
         # make a Gaussian with more spread in y direction
-        xs = np.random.normal(0, 1, 10000)
-        ys = np.random.normal(0, 2, 10000)
+        xs = np.random.normal(0, 1, 1000)
+        ys = np.random.normal(0, 2, 1000)
 
         fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)
 
@@ -544,7 +549,7 @@ def equal_scale(self):
         import betterplotlib as bpl
         import numpy as np
 
-        bpl.default_style()
+        bpl.set_style()
 
         # make a Gaussian with more spread in y direction
         xs = np.random.normal(0, 1, 10000)
@@ -562,7 +567,7 @@ def equal_scale(self):
         ax2.set_limits(-5, 5, -10, 10)
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.equal_scale(self)
 
 
@@ -607,7 +612,7 @@ def easy_add_text(text, location, **kwargs):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         bpl.easy_add_text("1", 1)
         bpl.easy_add_text("2", 2)
@@ -623,7 +628,7 @@ def easy_add_text(text, location, **kwargs):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         bpl.easy_add_text("upper left", "upper left")
         bpl.easy_add_text("upper center", "upper center")
@@ -637,7 +642,7 @@ def easy_add_text(text, location, **kwargs):
 
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.easy_add_text(text, location, **kwargs)
 
 
@@ -649,6 +654,7 @@ def _density_contour_core(
     percent_levels=None,
     smoothing=0,
     weights=None,
+    log=False,
     labels=False,
     filled=False,
     **kwargs
@@ -660,24 +666,26 @@ def _density_contour_core(
     :param percent_levels:
     :param smoothing:
     :param weights:
+    :param log:
     :param labels:
     :param filled:
     :param kwargs:
     :return:
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax._density_contour_core(
-        self,
-        xs,
-        ys,
-        bin_size,
-        percent_levels,
-        smoothing,
-        weights,
-        labels,
-        filled,
-        **kwargs
-    )
+              self,
+              xs,
+              ys,
+              bin_size,
+              percent_levels,
+              smoothing,
+              weights,
+              log,
+              labels,
+              filled,
+              **kwargs
+          )
 
 
 def density_contour(
@@ -688,6 +696,7 @@ def density_contour(
     percent_levels=None,
     smoothing=0,
     weights=None,
+    log=False,
     labels=False,
     **kwargs
 ):
@@ -734,6 +743,11 @@ def density_contour(
             are not passed, all data points will be weighted
             equally.
     :type weights: list, np.ndarray
+    :param log: Whether or not to do the smoothing and contour creation in log
+            space. This should be used if the plot will be done on log-scaled
+            axes. If this is used, the bin_size and smoothing parameters will
+            be interpreted as dex, rather than raw values.
+    :type log: bool
     :param labels: Whether or not to label the individual contour lines
                with their percentage level.
     :type labels: bool
@@ -741,10 +755,19 @@ def density_contour(
                matplotlib contour function.
     :return: output of the matplotlib.contour function.
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.density_contour(
-        self, xs, ys, bin_size, percent_levels, smoothing, weights, labels, **kwargs
-    )
+              self,
+              xs,
+              ys,
+              bin_size,
+              percent_levels,
+              smoothing,
+              weights,
+              log,
+              labels,
+              **kwargs
+          )
 
 
 def density_contourf(
@@ -755,6 +778,7 @@ def density_contourf(
     percent_levels=None,
     smoothing=0,
     weights=None,
+    log=False,
     **kwargs
 ):
     """
@@ -800,14 +824,27 @@ def density_contourf(
             are not passed, all data points will be weighted
             equally.
     :type weights: list, np.ndarray
+    :param log: Whether or not to do the smoothing and contour creation in log
+            space. This should be used if the plot will be done on log-scaled
+            axes. If this is used, the bin_size and smoothing parameters will
+            be interpreted as dex, rather than raw values.
+    :type log: bool
     :param kwargs: Additional keyword arguments to pass on to the original
                matplotlib contour function.
     :return: output of the matplotlib.contourf function.
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.density_contourf(
-        self, xs, ys, bin_size, percent_levels, smoothing, weights, **kwargs
-    )
+              self,
+              xs,
+              ys,
+              bin_size,
+              percent_levels,
+              smoothing,
+              weights,
+              log,
+              **kwargs
+          )
 
 
 def contour_scatter(
@@ -916,7 +953,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.concatenate([np.random.normal(0, 1, 100000),
                  np.random.normal(3, 1, 100000),
@@ -940,7 +977,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.concatenate([np.random.normal(0, 1, 10000),
                  np.random.normal(3, 1, 10000),
@@ -967,7 +1004,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.concatenate([np.random.normal(0, 1, 10000),
                  np.random.normal(3, 1, 10000),
@@ -992,7 +1029,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         xs = [1, 2, 3, 4]
         ys = [1, 2, 3, 4]
@@ -1018,7 +1055,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         xs = np.concatenate([np.random.normal(0, 1, 10000),
                  np.random.normal(3, 1, 10000),
@@ -1088,7 +1125,7 @@ def contour_scatter(
 
         import numpy as np
         import betterplotlib as bpl
-        bpl.default_style()
+        bpl.set_style()
 
         rad1 = np.random.normal(10, 0.75, 10000)
         theta1 = np.random.uniform(0, 2 * np.pi, 10000)
@@ -1118,18 +1155,495 @@ def contour_scatter(
         ax.contour_scatter(xs, ys, smoothing=0.5, bin_size=0.5)
         ax.equal_scale()
     """
-    ax = plt.gca(projection="bpl")
+    ax = plt.gca(projection='bpl')
     return ax.contour_scatter(
-        self,
-        xs,
-        ys,
-        bin_size,
-        percent_levels,
-        smoothing,
-        weights,
-        labels,
-        fill_cmap,
-        scatter_kwargs,
-        contour_kwargs,
-        contourf_kwargs,
-    )
+              self,
+              xs,
+              ys,
+              bin_size,
+              percent_levels,
+              smoothing,
+              weights,
+              labels,
+              fill_cmap,
+              scatter_kwargs,
+              contour_kwargs,
+              contourf_kwargs,
+          )
+
+
+def contour_all(
+    self,
+    xs,
+    ys,
+    x_smoothing,
+    y_smoothing,
+    bin_size=None,
+    percent_levels=None,
+    weights=None,
+    angles=None,
+    labels=False,
+    filled=False,
+    **kwargs
+):
+    """
+    empty
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.contour_all(
+              self,
+              xs,
+              ys,
+              x_smoothing,
+              y_smoothing,
+              bin_size,
+              percent_levels,
+              weights,
+              angles,
+              labels,
+              filled,
+              **kwargs
+          )
+
+
+def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
+    """
+    Puts tiny ticks on the axis borders making the location of each point.
+
+    :param x_data: list of values to mark on the x-axis.
+    :type x_data: list
+    :param y_data: list of values to mark on the y-axis. This doesn't have
+               to be the same length as `x-data`, necessarily.
+    :type y_data: list
+    :param extent: How far the ticks go up from the x-axis. The default is
+               0.02, meaning the ticks go 2% of the way to the top of
+               the plot. Note that the ticks created by this function
+               will have the same physical size on both axes. Since in
+               general the x and y axes aren't the same physical size,
+               the ticks on the y-axis will be scaled to match the
+               physical size of the x ticks. This means that in the
+               default case, the y ticks won't cover 2% of the axis, but
+               again will be the same physical size as the x ticks.
+    :type extent: float
+    :param args: Additional arguments to pass to the `axvline` and `axhline`
+             functions, which is what is used to make each tick.
+    :param kwargs: Additional keyword arguments to pass to the `axvline` and
+               `axhline` functions. `color` is an important one here,
+               and it defaults to `almost_black` here.
+
+
+    Example
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import betterplotlib as bpl
+        bpl.set_style()
+
+        xs = np.random.normal(0, 1, 100)
+        ys = np.random.normal(0, 1, 100)
+
+        fig, ax = bpl.subplots()
+        ax.scatter(xs, ys)
+        ax.data_ticks(xs, ys)
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.data_ticks(x_data, y_data, extent, *args, **kwargs)
+
+
+def plot(*args, **kwargs):
+    """
+    A slightly improved plot function.
+
+    This is best used for plotting lines, while the `scatter()` function
+    is best used for plotting points.
+
+    Currently all this does is make the lines thicker, which looks better.
+    There isn't any added functionality.
+
+    The parameters here are the exact same as they are for the regular
+    `plt.plot()` or `ax.plot()` functions, so I don't think any
+    documentation would be helpful.
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        bpl.set_style()
+
+        xs = np.arange(0, 1, 0.01)
+        ys_1 = xs
+        ys_2 = xs**2
+
+        fig = plt.figure(figsize=[15, 7])
+        ax1 = fig.add_subplot(121)
+        ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
+
+        ax1.plot(xs, ys_1)
+        ax1.plot(xs, ys_2)
+
+        ax2.plot(xs, ys_1)
+        ax2.plot(xs, ys_2)
+
+        ax1.set_title("matplotlib")
+        ax2.set_title("betterplotlib")
+
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.plot(*args, **kwargs)
+
+
+def axvline(x=0, *args, **kwargs):
+    """
+    Place a vertical line at some point on the axes.
+
+    :param x: Data value on the x-axis to place the line.
+    :type x: float
+    :param args: Additional parameters that will be passed on the the
+             regular `plt.axvline` function. See it's documentation
+             for details.
+    :param kwargs: Similarly, additional keyword arguments that will be
+               passed on to the regular `plt.axvline` function.
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import betterplotlib as bpl
+        bpl.set_style()
+
+        left_xs = np.arange(-20, 1, 0.01)
+        right_xs = np.arange(1.001, 20, 0.01)
+        left_ys = left_xs / (left_xs - 1)
+        right_ys = right_xs / (right_xs - 1)
+
+        fig, ax = bpl.subplots()
+        ax.make_ax_dark()
+        ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+        ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+        ax.axvline(1.0, linestyle="--")
+        ax.axhline(1.0, linestyle="--")
+        ax.set_limits(-10, 10, -10, 10)
+
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.axvline(x, *args, **kwargs)
+
+
+def axhline(y=0, *args, **kwargs):
+    """
+    Place a horizontal line at some point on the axes.
+
+    :param y: Data value on the y-axis to place the line.
+    :type y: float
+    :param args: Additional parameters that will be passed on the the
+             regular `plt.axhline` function. See it's documentation
+             for details.
+    :param kwargs: Similarly, additional keyword arguments that will be
+               passed on to the regular `plt.axhline` function.
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import betterplotlib as bpl
+        bpl.set_style()
+
+        left_xs = np.arange(-20, 1, 0.01)
+        right_xs = np.arange(1.001, 20, 0.01)
+        left_ys = left_xs / (left_xs - 1)
+        right_ys = right_xs / (right_xs - 1)
+
+        fig, ax = bpl.subplots()
+        ax.make_ax_dark()
+        ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+        ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+        ax.axvline(1.0, linestyle="--")
+        ax.axhline(1.0, linestyle="--")
+        ax.set_limits(-10, 10, -10, 10)
+
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.axhline(y, *args, **kwargs)
+
+
+def errorbar(*args, **kwargs):
+    """
+    Wrapper for the plt.errorbar() function.
+
+    Style changes: capsize is automatically zero, and the format is
+    automatically a scatter plot, rather than the connected lines that
+    are used by default otherwise. It also adds a black marker edge to
+    distinguish the markers when there are lots of data poitns. Otherwise
+    everything blends together.
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import betterplotlib as bpl
+        import matplotlib.pyplot as plt
+        bpl.set_style()
+
+        xs = np.random.normal(0, 1, 100)
+        ys = np.random.normal(0, 1, 100)
+        yerr = np.random.uniform(0.3, 0.8, 100)
+        xerr = np.random.uniform(0.3, 0.8, 100)
+
+        fig = plt.figure(figsize=[15, 7])
+        ax1 = fig.add_subplot(121)
+        ax2 = fig.add_subplot(122, projection="bpl")  # bpl subplot.
+
+        for ax in [ax1, ax2]:
+        ax.errorbar(xs,   ys,   xerr=xerr, yerr=yerr, label="set 1")
+        ax.errorbar(xs+1, ys+1, xerr=xerr, yerr=yerr, label="set 2")
+        ax.legend()
+        ax1.set_title("matplotlib")
+        ax2.set_title("betterplotlib")
+
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.errorbar(*args, **kwargs)
+
+
+def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
+    """
+    Creates a differently scaled axis on either the top or the left.
+
+    This can be used to put multiple scales on one plot for easier
+    comparison. Some examples might be distance/time, redshift/age, or
+    any two related quantities.
+
+    Note that this only does simple scalings of the new axes, which will
+    still only be linear or log scaled axes. If you want a function that
+    smartly places labels based on a function that takes one set of axes
+    values to another (in a potentially nonlinear way), the other function
+    I haven't made will do that.
+
+    :param axis: Where the new scaled axis will be placed. Must
+             either be "x" or "y".
+    :param lower_lim: Value to be put on the left/bottom of the newly
+              created axis.
+    :param upper_lim: Value to be put on the right/top of the newly
+              created axis.
+    :param label: The label to put on this new axis.
+    :param log: Whether or not to log scale this axis.
+    :returns: the new axes
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.presentation_style()
+
+        fig, ax = bpl.subplots(tight_layout=True)
+        ax.set_limits(0, 10, 0, 5)
+        ax.add_labels("x", "y")
+        ax.twin_axis_simple("x", 0, 100, r"$10 x$")
+        ax.twin_axis_simple("y", 1, 10**5, r"$10^y$", log=True)
+
+    Note that for a slightly more complicated version of this plot, say if
+    we wanted the top x axis to be x^2 rather than 10x, the limits would
+    still be the same, but since the new axis will always be a linear or log
+    scale the new axis won't represent the true relationship between the
+    variables on the twin axes. See the other function for that.
+
+
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.twin_axis_simple(axis, lower_lim, upper_lim, label, log)
+
+
+def twin_axis(
+    self, axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
+):
+    """
+    Create a twin axis, where the new axis values are an arbitrary function
+    of the old values.
+
+    This is used when you want to put two related quantities on the axis,
+    for example distance/redshift in astronomy, where one isn't a simple
+    scaling of the other. If you want a simple linear or log scale, use the
+    `twin_axis_simple` function. This one will create a new axis that is
+    an arbitrary scale.
+
+    Here is a way this can be used.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.presentation_style()
+
+        def square(x):
+        return x**2
+
+        def cubed(x):
+        return x**3
+
+        fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
+        ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
+        ax.add_labels("x", "y")
+        ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$", square)
+        ax.twin_axis("x", [0, 10, 100, 400, 1000], "$x^3$", cubed)
+
+    Note that we had to be careful with floating point errors when one of
+    the markers we want is exactly on the edge. Make the borders slightly
+    larger to ensure that all labels fit on the plot.
+
+    There are two ways to give the funtion that transforms the values from
+    one axis to the other. The parameter `old_to_new_func` (used as the
+    last parameter in the plot above) takes values on the original axis and
+    transforms them to values on the newly created axis. However, the
+    parameter `new_to_old_func` does the inverse, taking values on the
+    new axis and transforming them to the currently existing one. Only one
+    of these two parameters can be provided. Identical plots can be created
+    with either function, but due to specifics of the implementation, using
+    the `new_to_old_func` parameter is slightly more computationally
+    efficient. Here's an example of an identical plot to the first created
+    with `new_to_old_func` instead.
+
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.presentation_style()
+
+        def cube_root(x):
+        return x**(1.0/3.0)
+
+        fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
+        ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
+        ax.add_labels("x", "y")
+        ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$",
+             new_to_old_func=np.sqrt)
+        ax.twin_axis("x", [0, 10, 100, 400, 1000], "$x^3$",
+             new_to_old_func=cube_root)
+
+    This function will ignore values for the ticks that are outside the
+    limits of the plot. The following plot isn't the most useful, since
+    it could be done with the `axis_twin_simple`, but it gets the idea
+    across.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.presentation_style()
+
+        xs = np.logspace(0, 3, 100)
+
+        fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
+        ax.plot(xs, xs)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.add_labels("x", "y")
+        # extraneous values are ignored.
+        ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
+        ax.twin_axis("y", [-1, 0, 1, 2, 3, 4, 5], "log(y)", np.log10)
+
+    :param axis: Whether the new axis labels will be on the "x" or "y" axis.
+             If "x" is chosen this will place the markers on the top
+             botder of the plot, while "y" will place the values on the
+             left border of the plot. "x" and "y" are the only
+             allowed values.
+    :type axis: str
+    :param new_ticks: List of of locations (in the new data values) to place
+              ticks. Any values outside the range of the plot
+              will be ignored.
+    :type new_ticks: list, np.ndarray
+    :param label: The label given to the newly created axis.
+    :type label: str
+    :param old_to_new_func: Function that takes values on the original axis
+                and transforms them to corresponding values
+                on the soon-to-be created axis. Either this
+                parameter or `new_to_old_func` can be used, but
+                not both.
+    :param new_to_old_func: Function that takes values on the
+                soon-to-be-created axis and transforms them to
+                corresponding values on the original axis.
+                Either this parameter or `old_to_new_func` can
+                be used, but not both.
+    :return: New axis object that was created, containing the newly
+         created labels.
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.twin_axis(
+              self, axis, new_ticks, label, old_to_new_func, new_to_old_func)
+
+
+def shaded_density(
+    self,
+    xs,
+    ys,
+    bin_size=None,
+    smoothing=0,
+    cmap="Greys",
+    weights=None,
+    log_xy=False,
+    log_hist=False,
+):
+    """
+    Creates shaded regions showing the density.
+
+    Is essentially a 2D histogram, but supports smoothing. Under the hood,
+    this uses the  pcolormesh function in matplotlib.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.presentation_style()
+
+        xs = np.random.uniform(0, 10, 100)
+        ys = np.random.uniform(0, 10, 100)
+
+        fig, ax = bpl.subplots()
+        ax.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
+                  cmap="inferno")
+        ax.set_limits(0, 10, 0, 10)
+        ax.equal_scale()
+
+    :param xs: list of x values
+    :param ys: list of y values
+    :param bin_size: bin size for the 2D histogram. If not passed in, an
+             appropriate bin size will be automatically found.
+             If you are using smoothing, a smaller bin size is
+             often useful as it can make for a better looking plot.
+    :param smoothing: The size of the Gaussian smoothing kernel for the
+              data. Currently is the same in both dimensions.
+              Pass None for no smoothing.
+    :param log: Whether or not to do the smoothing and contour creation in log
+            space. This should be used if the plot will be done on log-scaled
+            axes. If this is used, the bin_size and smoothing parameters will
+            be interpreted as dex, rather than raw values.
+    :type log: bool, list
+    :param cmap: colormap used for the density.
+    :return: output of the pcolormesh function call.
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.shaded_density(
+              self,
+              xs,
+              ys,
+              bin_size,
+              smoothing,
+              cmap,
+              weights,
+              log_xy,
+              log_hist,
+          )
+
+
+def format_labels(axis, labels):
+    """
+    empty
+    """
+    ax = plt.gca(projection='bpl')
+    return ax.format_labels(axis, labels)
