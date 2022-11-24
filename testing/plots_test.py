@@ -133,31 +133,30 @@ levels_contour_err_msg = (
 # contained there to test against.
 
 
-def check_examples(func_name):
+def check_examples(func_name, idx):
     """
     Test the examples for a given function
 
     :param func_name: the function to get the examples from
     :type func_name: str
-    :return: number of images compared
-    :rtype: int
+    :param idx: index into the list of examples to check
+    :type idx: int
+    :return: result of the comparison
+    :rtype: bool
     """
-    example_codes = get_examples(func_name)
+    code = get_examples(func_name)[idx]
 
     # then run the figures and check the image similarity
-    for idx, code in enumerate(example_codes, start=1):
-        # I need to make some changes behind the scenes, to make random numbers work
-        # correctly. I'll create a random rng object, then use that instead of the
-        # common np.random.whatever
-        code = code.replace("np.random", "rng")
-        code = "rng = np.random.default_rng(314159)\n" + code
-        exec(code)
-        # the `fig` variable will be defined in this code. For some reason I can't
-        # figure out how to just call `fig` to get that, so instead I have to get it
-        # from the locals dictionary
-        assert image_similarity_full(locals()["fig"], f"{func_name}_example_{idx}.png")
-
-    return len(example_codes)
+    # I need to make some changes behind the scenes, to make random numbers work
+    # correctly. I'll create a random rng object, then use that instead of the
+    # common np.random.whatever
+    code = code.replace("np.random", "rng")
+    code = "rng = np.random.default_rng(314159)\n" + code
+    exec(code)
+    # the `fig` variable will be defined in this code. For some reason I can't
+    # figure out how to just call `fig` to get that, so instead I have to get it
+    # from the locals dictionary
+    return image_similarity_full(locals()["fig"], f"{func_name}_example_{idx + 1}.png")
 
 
 def get_examples(func_name):
@@ -282,39 +281,53 @@ def test_get_example_loop():
     )
 
 
+# ------------------------------------------------------------------------------
+#
+# Actually make the tests for example images
+#
+# ------------------------------------------------------------------------------
+functions = [
+    "make_ax_dark",
+    "remove_ticks",
+    "remove_spines",
+    "scatter",
+    "hist",
+    "add_labels",
+    "set_limits",
+    "add_text",
+    "remove_labels",
+    "legend",
+    "equal_scale",
+    "easy_add_text",
+    "density_contour",
+    "density_contourf",
+    "contour_scatter",
+    "contour_all",
+    "data_ticks",
+    "plot",
+    "axvline",
+    "axhline",
+    "errorbar",
+    "twin_axis_simple",
+    "twin_axis",
+    "shaded_density",
+    "format_labels",
+]
+
+# then create the list of tests to run
+params = []
+for f in functions:
+    for i in range(len(get_examples(f))):
+        params.append((f, i))
+
+
 @pass_local_fail_remote
 @pytest.mark.parametrize(
     "name,number",
-    [
-        ("make_ax_dark", 1),
-        ("remove_ticks", 1),
-        ("remove_spines", 1),
-        ("scatter", 1),
-        ("hist", 2),
-        ("add_labels", 1),
-        ("set_limits", 1),
-        ("add_text", 1),
-        ("remove_labels", 1),
-        ("legend", 2),
-        ("equal_scale", 2),
-        ("easy_add_text", 2),
-        ("density_contour", 0),
-        ("density_contourf", 0),
-        ("contour_scatter", 6),
-        ("contour_all", 0),
-        ("data_ticks", 1),
-        ("plot", 1),
-        ("axvline", 1),
-        ("axhline", 1),
-        ("errorbar", 1),
-        ("twin_axis_simple", 1),
-        ("twin_axis", 3),
-        ("shaded_density", 1),
-        ("format_labels", 0),
-    ],
+    params,
 )
 def test_all_examples(name, number):
-    assert check_examples(name) == number
+    assert check_examples(name, number)
 
 
 # ------------------------------------------------------------------------------
