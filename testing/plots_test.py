@@ -18,10 +18,13 @@ new_im_dir = this_dir / "temporary_images"
 # machines. Therefore, an exact compariosn does not work. Also, I don't like doing
 # similarity within a given threshold, since often we're interested in checking some
 # small differences (i.e. ticks). The threshold needed to cover system differences is
-# often enough to allow substantive differences to still pass. So what I do is make
-# the tests pass on my local machine, but not on GitHub actions where the tests run
-# on multiple python versions. I use decorators to enforce that the tests pass locally,
-# but mark that they're expected to fail on the remote
+# often enough to allow substantive differences to still pass. I tried matplotlib's
+# testing framework, where you can remove text, but still found differences. In short,
+# I could not find a way to make the tests fail for only substantive differences with
+# no false negatives or false positives. So what I do is make the tests pass on my
+# local machine, but not on GitHub actions where the tests run on multiple python
+# versions. I use decorators to enforce that the tests pass locally, but mark that
+# they're expected to fail on the remote
 if str(Path.home()) == "/Users/gillenbrown":  # pragma: no cover
     pass_local_fail_remote = lambda x: x
 else:  # pragma: no cover
