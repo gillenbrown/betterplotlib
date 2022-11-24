@@ -156,7 +156,7 @@ def check_examples(func_name, idx):
     # the `fig` variable will be defined in this code. For some reason I can't
     # figure out how to just call `fig` to get that, so instead I have to get it
     # from the locals dictionary
-    return image_similarity_full(locals()["fig"], f"{func_name}_example_{idx + 1}.png")
+    return image_similarity_full(locals()["fig"], f"{func_name}_example_{idx}.png")
 
 
 def get_examples(func_name):
