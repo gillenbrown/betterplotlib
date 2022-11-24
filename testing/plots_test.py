@@ -302,7 +302,6 @@ functions = [
     "density_contour",
     "density_contourf",
     "contour_scatter",
-    "contour_all",
     "data_ticks",
     "plot",
     "axvline",
