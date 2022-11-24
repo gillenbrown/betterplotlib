@@ -35,7 +35,7 @@ def image_similarity(im_1_path, im_2_path):
     return abs(np.sum(im_1 - im_2)) < 1
 
 
-def image_similarity_full(fig, image_name):  # pragma: no cover
+def image_similarity_full(fig, image_name):
     new_img = new_im_dir / image_name
     baseline_img = baseline_im_dir / image_name
 
@@ -43,7 +43,7 @@ def image_similarity_full(fig, image_name):  # pragma: no cover
 
     try:
         matched = image_similarity(new_img, baseline_img)
-    except OSError:
+    except OSError:  # pragma: no cover
         raise IOError("Baseline image does not exist.")
     if matched:
         new_img.unlink()
