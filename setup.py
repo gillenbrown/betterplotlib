@@ -16,11 +16,11 @@ setup(
         "matplotlib",
         "numpy",
         "palettable",
-        "pytest>=3.3",
         "imageio",
         "scipy",
         "numpy>=1.16.0",
         "cycler",
         "astropy",
     ],
+    extras_require={"test": ["pytest>=3.3", "coverage"]},
 )

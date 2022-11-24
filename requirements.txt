@@ -1,9 +1,9 @@
-matplotlib
+matplotlib > 3.0
 nbsphinx
 ipykernel
 scipy
 numpy
-pytest>=3.3
+pytest >= 3.3
 cycler
 imageio
 astropy
