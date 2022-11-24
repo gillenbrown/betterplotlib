@@ -5,7 +5,6 @@ from scipy import optimize
 from astropy import convolution
 import numpy as np
 import sys
-from matplotlib import __version__
 
 from . import colors
 from . import tools

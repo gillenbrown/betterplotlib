@@ -12,9 +12,19 @@ this_dir = Path(__file__).parent
 baseline_im_dir = this_dir / "baseline_images"
 new_im_dir = this_dir / "temporary_images"
 
+
+# I do some image comparison tests. However, these are very difficult to do well. There
+# are slight differences in font rendering or general plot rendering on different
+# machines. Therefore, an exact compariosn does not work. Also, I don't like doing
+# similarity within a given threshold, since often we're interested in checking some
+# small differences (i.e. ticks). The threshold needed to cover system differences is
+# often enough to allow substantive differences to still pass. So what I do is make
+# the tests pass on my local machine, but not on GitHub actions where the tests run
+# on multiple python versions. I use decorators to enforce that the tests pass locally,
+# but mark that they're expected to fail on the remote
 if str(Path.home()) == "/Users/gillenbrown":  # pragma: no cover
     pass_local_fail_remote = lambda x: x
-else:
+else:  # pragma: no cover
     pass_local_fail_remote = pytest.mark.xfail
 
 
