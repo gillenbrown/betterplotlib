@@ -1889,8 +1889,8 @@ class Axes_bpl(Axes):
             fig, ax = bpl.subplots(tight_layout=True)
             ax.set_limits(0, 10, 0, 5)
             ax.add_labels("x", "y")
-            ax.twin_axis_simple("x", 0, 100, r"$10 x$")
-            ax.twin_axis_simple("y", 1, 10**5, r"$10^y$", log=True)
+            ax.twin_axis_simple("x", 0, 100, "$10 x$")
+            ax.twin_axis_simple("y", 1, 10**5, "$10^y$", log=True)
 
         Note that for a slightly more complicated version of this plot, say if
         we wanted the top x axis to be x^2 rather than 10x, the limits would

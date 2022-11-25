@@ -432,6 +432,16 @@ def test_hist_not_binsize_and_bins():
 # Testing add_text
 #
 # ------------------------------------------------------------------------------
+def test_add_text_cant_use_transform():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.add_text(0, 0, "text", transform=None)
+
+
+def test_add_text_bad_coords():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.add_text(0, 0, "text", coords="lklkj")
 
 
 # ------------------------------------------------------------------------------
@@ -439,6 +449,10 @@ def test_hist_not_binsize_and_bins():
 # Testing remove labels
 #
 # ------------------------------------------------------------------------------
+def test_remove_labels_validate_labels_passed_in():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.remove_labels("lkjlk")
 
 
 # ------------------------------------------------------------------------------
@@ -460,6 +474,24 @@ def test_hist_not_binsize_and_bins():
 # Testing easy add text
 #
 # ------------------------------------------------------------------------------
+def test_easy_add_text_cant_control_alignment():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", "upper left", ha="left")
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", "upper left", va="bottom")
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", "upper left", horizontalalignment="left")
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", "upper left", verticalalignment="bottom")
+
+
+def test_easy_add_text_validate_location():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", "upper left wrong")
+    with pytest.raises(ValueError):
+        ax.easy_add_text("text", 10)
 
 
 # ------------------------------------------------------------------------------
@@ -765,6 +797,22 @@ def test_contour_scatter_scatter_outside_contours_image():
 # Testing twin axis simple
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_twin_axis_simple_opposite_of_example():
+    # have the log on different axis to get full coverage
+    fig, ax = bpl.subplots(tight_layout=True)
+    ax.set_limits(0, 5, 0, 10)
+    ax.add_labels("x", "y")
+    ax.twin_axis_simple("x", 1, 10**5, "$10^x$", log=True)
+    ax.twin_axis_simple("y", 0, 100, "$10 y$")
+    assert image_similarity_full(fig, "twin_axis_simple_example_0_opp.png")
+
+
+def test_twin_axis_simple_axis_error_checking():
+    # have the log on different axis to get full coverage
+    fig, ax = bpl.subplots(tight_layout=True)
+    with pytest.raises(ValueError):
+        ax.twin_axis_simple("z", 1, 10**5, "$10^x$", log=True)
 
 
 # ------------------------------------------------------------------------------
@@ -772,6 +820,22 @@ def test_contour_scatter_scatter_outside_contours_image():
 # Testing twin axis
 #
 # ------------------------------------------------------------------------------
+def test_twin_axis_no_func_error_checking():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)")
+
+
+def test_twin_axis_double_func_error_checking():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10, np.log10)
+
+
+def test_twin_axis_axis_error_checking():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.twin_axis("z", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
 
 
 # ------------------------------------------------------------------------------
@@ -935,3 +999,18 @@ def test_shaded_density_weights_image():
     ax.equal_scale()
     ax.set_limits(0, 1, 0, 1)
     assert image_similarity_full(fig, "shaded_density_weights.png")
+
+
+@pass_local_fail_remote
+def test_shaded_density_log_hist():
+    fig, axs = bpl.subplots(ncols=2)
+    axs[0].shaded_density(
+        xs_normal_10000, ys_normal_10000, bin_size=0.1, smoothing=0.5, log_hist=True
+    )
+    axs[1].shaded_density(
+        xs_normal_10000, ys_normal_10000, bin_size=0.1, smoothing=0.5, log_hist=False
+    )
+    for ax in axs:
+        ax.equal_scale()
+        ax.set_limits(-2, 2, -2, 2)
+    assert image_similarity_full(fig, "shaded_density_log.png")
