@@ -455,8 +455,6 @@ def smart_hist_2d(
     if log_y:
         y_edges = 10**y_edges
 
-    # TODO: test this log functionality
-
     return hist, x_edges, y_edges
 
 

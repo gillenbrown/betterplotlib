@@ -1119,6 +1119,25 @@ class Axes_bpl(Axes):
                               cmap="inferno")
             ax.set_limits(0, 10, 0, 10)
             ax.equal_scale()
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.set_style()
+
+            xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
+                                      np.random.normal(7, 2, 1000)])
+            ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
+                                       np.random.normal(3, 2, 1000)])
+
+            fig, ax = bpl.subplots()
+            ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
+                               log=[True, True], cmap="inferno")
+            ax.set_xscale("log")
+            ax.set_yscale("log")
+            ax.set_limits(1, 1e10, 1, 1e10)
         """
         return self._density_contour_core(
             xs,
@@ -1213,6 +1232,25 @@ class Axes_bpl(Axes):
                               cmap="inferno")
             ax.set_limits(0, 10, 0, 10)
             ax.equal_scale()
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.set_style()
+
+            xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
+                                      np.random.normal(7, 2, 1000)])
+            ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
+                                       np.random.normal(3, 2, 1000)])
+
+            fig, ax = bpl.subplots()
+            ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
+                                log=[True, True], cmap="inferno")
+            ax.set_xscale("log")
+            ax.set_yscale("log")
+            ax.set_limits(1, 1e10, 1, 1e10)
         """
         # don't let user use the labels param here like they can in contour
         if "labels" in kwargs:
