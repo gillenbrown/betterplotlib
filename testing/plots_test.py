@@ -656,6 +656,18 @@ def test_density_contour_levels_not_in_kwargs():
     assert str(err_msg.value) == levels_contour_err_msg
 
 
+def test_density_log_is_right_length():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax._density_contour_core(xs_uniform_10, ys_uniform_10, log=[True, True, False])
+
+
+def test_density_log_is_right_type():
+    fig, ax = bpl.subplots()
+    with pytest.raises(TypeError):
+        ax._density_contour_core(xs_uniform_10, ys_uniform_10, log=["yes", "no"])
+
+
 # ------------------------------------------------------------------------------
 #
 # Testing density contour
