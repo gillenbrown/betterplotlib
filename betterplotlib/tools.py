@@ -8,30 +8,6 @@ import numbers
 from . import type_checking
 
 
-def _get_ax(**kwargs):
-    """
-    Get an axis object to plot stuff on.
-
-    This will take the axis from kwargs if the user specified `ax`. If not, it
-    will get the current axis, as defined by matplotlib. That may be a
-    crapshoot if there are multiple axes, I don't know.
-
-    This function is to be used in the rest of my functions, where we need
-    to get an axis.
-
-    :param kwargs: keyword arguments from whatever function call this is used
-                   in.
-    :return: the axes object. If `ax` is in kwargs, they will be changed
-             (since `ax` will be removed), but it is modified in place, and
-             any changes will be reflected in the original one too.
-    """
-    if "ax" in kwargs:
-        ax = kwargs.pop("ax")
-    else:
-        ax = plt.gca(projection="bpl")
-    return ax, kwargs
-
-
 def _alpha(n, threshold=30, scale=2000):
     """
     Calculate a rough guess for the best alpha value for a default scatterplot.

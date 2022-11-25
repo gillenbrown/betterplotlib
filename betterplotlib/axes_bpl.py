@@ -832,9 +832,7 @@ class Axes_bpl(Axes):
             or "horizontalalignment" in kwargs
             or "verticalalignment" in kwargs
         ):
-            raise ValueError(
-                "This function controls the alignment. Do not" "pass it in."
-            )
+            raise ValueError("This function controls the alignment. Do not pass it in.")
 
         # then check each different case, and set the parameters we want to use.
         if location == 1 or location == "lower left":
