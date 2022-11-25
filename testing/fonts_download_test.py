@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-
+import matplotlib
 import betterplotlib as bpl
 
 temp_dir = Path(__file__).parent / "temp_font_dir"
@@ -70,3 +70,17 @@ def test_download_variable_font_into_directory(make_temp_dir):
 def test_download_variable_font_static_into_directory(make_temp_dir):
     bpl.download_font("Roboto", temp_dir)
     assert sorted(roboto_files) == sorted([i.name for i in temp_dir.iterdir()])
+
+
+def test_set_style_downloads_fonts():
+    bpl.set_style(font="Lobster")
+    font_files = [
+        i.name for i in (Path(matplotlib.get_data_path()) / "fonts/ttf/").iterdir()
+    ]
+    assert "Lobster-Regular.ttf" in font_files
+
+
+def test_error_with_bad_font_name(make_temp_dir):
+    with pytest.raises(ValueError):
+        bpl.download_font("sldkfjsldkfjlskedfj", temp_dir)
+    assert len([f.name for f in temp_dir.iterdir()]) == 0
