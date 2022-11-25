@@ -291,10 +291,16 @@ def test_get_example_different_file():
     code = get_examples("colors", "fade_color")
     assert len(code) == 1
     assert code[0] == (
-        'color = "#9bcfb3"\n'
+        'c = "#ac4649"\n'
         "fig, ax = bpl.subplots()\n"
-        'ax.axhline(1, c=color, label="Original")\n'
-        'ax.axhline(0, c=bpl.fade_color(color), label="Faded")\n'
+        "ax.axhline(2, lw=20, c=c)\n"
+        "ax.axhline(1, lw=20, c=bpl.fade_color(c))\n"
+        "ax.axhline(0, lw=20, c=bpl.unfade_color(bpl.fade_color(c)))\n"
+        'ax.add_text(0.5, 2.1, "Original", va="bottom", ha="center")\n'
+        'ax.add_text(0.5, 1.1, "Faded", va="bottom", ha="center")\n'
+        'ax.add_text(0.5, 0.1, "Faded then Unfaded", va="bottom", ha="center")\n'
+        "ax.set_limits(0, 1, -1, 3)\n"
+        'ax.remove_labels("both")\n'
     )
 
 
@@ -327,6 +333,8 @@ functions = [
     ("axes_bpl", "twin_axis_simple"),
     ("axes_bpl", "twin_axis"),
     ("axes_bpl", "shaded_density"),
+    ("colors", "fade_color"),
+    ("colors", "unfade_color"),
 ]
 
 # then create the list of tests to run
@@ -1031,3 +1039,14 @@ def test_shaded_density_log_hist():
         ax.equal_scale()
         ax.set_limits(-2, 2, -2, 2)
     assert image_similarity_full(fig, "shaded_density_log.png")
+
+
+# ------------------------------------------------------------------------------
+#
+# Testing color
+#
+# ------------------------------------------------------------------------------
+def test_cant_unfade_something_too_saturated():
+    bpl.unfade_color("#FFF1AB")  # works fine
+    with pytest.raises(ValueError):
+        bpl.unfade_color("#FFF1A8")  # slightly more saturated
