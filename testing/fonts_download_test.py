@@ -78,6 +78,8 @@ def test_set_style_downloads_fonts():
         i.name for i in (Path(matplotlib.get_data_path()) / "fonts/ttf/").iterdir()
     ]
     assert "Lobster-Regular.ttf" in font_files
+    # reset to normal style so as to not mess up other tests
+    bpl.set_style()
 
 
 def test_error_with_bad_font_name(make_temp_dir):

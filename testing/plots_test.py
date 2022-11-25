@@ -213,13 +213,13 @@ def get_examples(file_name, func_name):
                 code_blocks.append(this_code_block)
                 this_code_block = ""
                 continue
-            # this is a normal line. Ignore comments, imports, style set, blank lines
+            # this is a normal line. Ignore comments, imports, blank lines
+            # don't ignore setting style, since that I use that in some tests
             line_deindent = line.replace(" " * indent_spaces, "", 1)
             if (
                 line_deindent.strip() == ""
                 or line_deindent.startswith("#")
                 or line_deindent.startswith("import")
-                or line_deindent == "bpl.set_style()"
             ):
                 continue
             # this is something to add
@@ -236,6 +236,7 @@ def test_get_examples_single():
     code = get_examples("axes_bpl", "make_ax_dark")
     assert len(code) == 1
     assert code[0] == (
+        "bpl.set_style()\n"
         "fig, (ax0, ax1) = bpl.subplots(figsize=[12, 5], ncols=2)\n"
         "ax1.make_ax_dark()\n"
         'ax0.set_title("Regular")\n'
@@ -247,6 +248,7 @@ def test_get_examples_multiple():
     code = get_examples("axes_bpl", "equal_scale")
     assert len(code) == 2
     assert code[0] == (
+        "bpl.set_style()\n"
         "xs = np.random.normal(0, 1, 1000)\n"
         "ys = np.random.normal(0, 2, 1000)\n"
         "fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)\n"
@@ -257,6 +259,7 @@ def test_get_examples_multiple():
         'ax2.add_labels(title="Shows true shape")\n'
     )
     assert code[1] == (
+        "bpl.set_style()\n"
         "xs = np.random.normal(0, 1, 1000)\n"
         "ys = np.random.normal(0, 2, 1000)\n"
         "fig, [ax1, ax2] = bpl.subplots(figsize=[12, 5], ncols=2)\n"
@@ -273,6 +276,7 @@ def test_get_example_loop():
     code = get_examples("axes_bpl", "scatter")
     assert len(code) == 1
     assert code[0] == (
+        "bpl.set_style()\n"
         "x = np.random.normal(0, scale=0.5, size=500)\n"
         "y = np.random.normal(0, scale=0.5, size=500)\n"
         "fig = plt.figure(figsize=[15, 7])\n"
@@ -291,6 +295,7 @@ def test_get_example_different_file():
     code = get_examples("colors", "fade_color")
     assert len(code) == 1
     assert code[0] == (
+        "bpl.set_style()\n"
         'c = "#ac4649"\n'
         "fig, ax = bpl.subplots()\n"
         "ax.axhline(2, lw=20, c=c)\n"
@@ -310,6 +315,9 @@ def test_get_example_different_file():
 #
 # ------------------------------------------------------------------------------
 functions = [
+    ("styles", "set_style"),
+    ("colors", "fade_color"),
+    ("colors", "unfade_color"),
     ("axes_bpl", "make_ax_dark"),
     ("axes_bpl", "remove_ticks"),
     ("axes_bpl", "remove_spines"),
@@ -333,8 +341,6 @@ functions = [
     ("axes_bpl", "twin_axis_simple"),
     ("axes_bpl", "twin_axis"),
     ("axes_bpl", "shaded_density"),
-    ("colors", "fade_color"),
-    ("colors", "unfade_color"),
 ]
 
 # then create the list of tests to run

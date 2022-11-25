@@ -12,11 +12,70 @@ from . import colors
 
 def set_style(style="default", font="Lato", fontweight="semibold"):
     """
-    Same as default_style, but with larger text.
+    Set style settings that will apply to all plots after this function call.
 
-    Useful for powerpoint presentations where large font is nice.
-
+    :param style: I have three predefined styles: "default", "white"", and "latex".
+                  On the whole, they're all pretty similar. The default style is
+                  appropriate for presentations and paper figures. "white" takes the
+                  default style and turns the axes white, so that it can be used in
+                  a presentation with a dark slide background. When using the "white"
+                  style, you'll probably want to save the figure with the
+                  "transparent=True" keyword so that the slide background shows through.
+                  Finally, the "latex" style uses LaTeX to render all text. Note that
+                  all styles can fully render LaTeX equations in axis labels and other
+                  text, but the "latex"theme uses the Computer Modern LaTeX font.
+    :type style: str
+    :param font: For the default and white styles, the font to use. Must be the name
+                 of a font available through Google fonts. The font will be
+                 automatically downloaded if not currently present on your system.
+    :type font: str
+    :param fontweight: The weight of the font
+    :type fontweight: str
     :return: None
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style() # default
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style(font="Lobster") # default
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style("white")
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style("latex")
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
     """
     _common_style()
 
@@ -25,6 +84,7 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
     elif style == "white":
         _set_font_settings(font, fontweight)
         # override some of the colors
+        rcParams["savefig.transparent"] = True
         rcParams["patch.edgecolor"] = "w"
         rcParams["text.color"] = "w"
         rcParams["axes.edgecolor"] = "w"
@@ -54,6 +114,7 @@ def _common_style():
     rcParams["legend.numpoints"] = 1
     # ^ these two needed for matplotlib 1.x
     rcParams["savefig.format"] = "pdf"
+    rcParams["savefig.transparent"] = False
     rcParams["savefig.dpi"] = 300
     rcParams["savefig.facecolor"] = "w"
     rcParams["axes.formatter.useoffset"] = False
@@ -88,7 +149,7 @@ def _common_style():
 
 def _set_font_settings(font, fontweight):
     """
-    Sets the Helvetica Neue font settings, used by most styles.
+    Sets the font settings, used by most styles.
 
     :return: None
     """
@@ -104,6 +165,7 @@ def _set_font_settings(font, fontweight):
 
     rcParams["font.family"] = "sans-serif"
     rcParams["font.sans-serif"] = font
+    rcParams["text.usetex"] = False
 
     # change math font too
     rcParams["mathtext.fontset"] = "custom"
