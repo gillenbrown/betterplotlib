@@ -64,7 +64,7 @@ def image_similarity_full(fig, image_name):
         matched = image_similarity(new_img, baseline_img)
     except OSError:  # pragma: no cover
         raise IOError(f"Baseline image {image_name} does not exist.")
-    if matched:
+    if matched:  # pragma: no cover
         new_img.unlink()
     return matched
 
@@ -395,6 +395,16 @@ def test_scatter_legend_alpha():
 # Testing hist
 #
 # ------------------------------------------------------------------------------
+def test_hist_not_relfreq_and_weights():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.hist(xs_normal_500, rel_freq=True, weights=xs_normal_500)
+
+
+def test_hist_not_binsize_and_bins():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.hist(xs_normal_500, bin_size=1, bins=np.arange(-10, 10, 0.5))
 
 
 # ------------------------------------------------------------------------------

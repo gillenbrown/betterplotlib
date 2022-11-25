@@ -356,9 +356,6 @@ class Axes_bpl(Axes):
                     "`rel_freq`, since `rel_freq` works by "
                     "modifying the weights."
                 )
-            # normed doesn't work either.
-            if "normed" in kwargs and kwargs["normed"] is True:
-                raise ValueError("Normed does not work properly with rel_freq.")
 
             # the data will be the first arg.
             data = args[0]
