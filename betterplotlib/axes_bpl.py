@@ -356,6 +356,8 @@ class Axes_bpl(Axes):
                     "`rel_freq`, since `rel_freq` works by "
                     "modifying the weights."
                 )
+            if "density" in kwargs:
+                raise ValueError("The `weights` keyword can't be used with `density`")
 
             # the data will be the first arg.
             data = args[0]

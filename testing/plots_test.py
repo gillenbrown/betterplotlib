@@ -401,6 +401,12 @@ def test_hist_not_relfreq_and_weights():
         ax.hist(xs_normal_500, rel_freq=True, weights=xs_normal_500)
 
 
+def test_hist_not_relfreq_and_density():
+    fig, ax = bpl.subplots()
+    with pytest.raises(ValueError):
+        ax.hist(xs_normal_500, rel_freq=True, density=False)
+
+
 def test_hist_not_binsize_and_bins():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError):
