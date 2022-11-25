@@ -397,10 +397,12 @@ def smart_hist_2d(
     :type xs: list, ndarray
     :param ys: list of y values
     :type ys: list, ndarray
-    :param bin_size: Size of the bins that will be used to make the 2D
-                     histogram. Can either be a scalar, in which case the x and
-                     y bin sizes will be the same, or a two element array,
-                     where the first is x bin size, and the second is y bin size
+    :param bin_size: Bin size to use for the underlying 2D histogram. This
+                     can either be a scalar, in which case the bin size will
+                     be the same in both the x dimensions, or else a two
+                     element list, where the first element will be the
+                     bin size in the x dimension, and the second will be
+                     the bin size in the y dimension.
     :type bin_size: int, float, list
     :param padding: How much extra space to extend the contours past the min
                     and max values on the x axis. This is useful for smoothed
@@ -408,9 +410,10 @@ def smart_hist_2d(
                     minimum and maximum data values. This has the same format
                     as bin_size.
     :type padding: int, float, list
-    :param weights: List of weights to go into the underlying histogram
-                    function. Should be the same length as xs and ys.
-    :type weights: list, ndarray
+    :param weights: A list containing weights for each data point. If these
+                    are not passed, all data points will be weighted
+                    equally.
+    :type weights: list, np.ndarray
     :param smoothing: Optional parameter that will allow the contours to be
                       smoothed. Pass in a nonzero value, which will be the
                       standard deviation of the Gaussian kernel use to smooth
@@ -420,9 +423,12 @@ def smart_hist_2d(
                       smoothing kernels are possible in the x and y directions.
     :type smoothing: int, float, list
     :param log: Whether or not to do the smoothing and bin creation in log
-                space. This should be used if the plot will be done on log-scaled
-                axes. If this is used, the bin_size and smoothing parameters will
-                be interpreted as dex, rather than raw values.
+                space. Can either be a single bool, in which case the x and y scales
+                will be the same, or a two element array, where the first is whether
+                the x axis is log, and the second is y. This should be used if the
+                plot will be done on log-scaled axes. If this is used, the bin_size
+                and smoothing parameters will be interpreted as dex, rather than
+                raw values.
     :type log: bool, list
     :return: the 2d histogram values, list of x bin edges, list of y bin edges.
              These can be passed on to the contour functions after turning bin

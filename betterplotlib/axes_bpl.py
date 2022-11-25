@@ -351,8 +351,6 @@ class Axes_bpl(Axes):
             ax.add_labels(y_label="Relative Frequency")
 
         """
-        # TODO: Add documentatino for examples of bin_size
-
         # I like white as an edgecolor if we use bars.
         if "histtype" not in kwargs or kwargs["histtype"] != "step":
             kwargs.setdefault("edgecolor", "white")
@@ -913,17 +911,55 @@ class Axes_bpl(Axes):
         **kwargs
     ):
         """
-        :param xs:
-        :param ys:
-        :param bin_size:
-        :param percent_levels:
-        :param smoothing:
-        :param weights:
-        :param log:
-        :param labels:
-        :param filled:
-        :param kwargs:
-        :return:
+        The underlying function to do both filled and unfilled contours. Call
+        `density_contour` or `density_contourf` instead of this.
+
+        :param xs: List of x values
+        :type xs: list, np.ndarray
+        :param ys: List of y values
+        :type ys: list, np.ndarray
+        :param bin_size: Bin size to use for the underlying 2D histogram. This
+                         can either be a scalar, in which case the bin size will
+                         be the same in both the x dimensions, or else a two
+                         element list, where the first element will be the
+                         bin size in the x dimension, and the second will be
+                         the bin size in the y dimension.
+        :type bin_size: int, float, list
+        :param percent_levels: A list describing the levels of the contours that
+                               will be drawn. Each value in this list contains
+                               a float between zero and 1 (inclusive) that
+                               describes how much of that data will be enclosed
+                               by a contour. So if you pass [0.25, 0.5, 0.75],
+                               there will be three contours drawn, that enclose
+                               25%, 50%, and 75% of the data. If this is not
+                               passed in, the default is
+                               [0.25, 0.5, 0.75, 0.95].
+        :type percent_levels: float, list
+        :param smoothing: Optional parameter that will allow the contours to be
+                          smoothed. Pass in a nonzero value, which will be the
+                          standard deviation of the Gaussian kernel use to smooth
+                          the histogram. When using this, often choosing smaller
+                          bin sizes is advantageous to make a less grainy plot.
+                          Has the same format as padding and bin_size, so different
+                          smoothing kernels are possible in the x and y directions.
+        :type smoothing: int, float, list
+        :param weights: A list containing weights for each data point. If these
+                        are not passed, all data points will be weighted
+                        equally.
+        :type weights: list, np.ndarray
+        :param log: Whether or not to do the smoothing and contour creation in log
+                    space. This should be used if the plot will be done on log-scaled
+                    axes. If this is used, the bin_size and smoothing parameters will
+                    be interpreted as dex, rather than raw values.
+        :type log: bool
+        :param labels: Whether or not to label the individual contour lines
+                       with their percentage level.
+        :type labels: bool
+        :param filled: True will use filled contours, or False to use hollow ones.
+        :type filled: bool
+        :param kwargs: Additional keyword arguments to pass on to the original
+                       matplotlib contour function.
+        :return: output of the matplotlib.contour function.
         """
         # error check weird error matplotlib has when all x and y data are same.
         if len(set(xs)) == len(set(ys)) == 1 and smoothing == 0:
@@ -1032,10 +1068,10 @@ class Axes_bpl(Axes):
         These contours are just lines, not filled regions. Check out
         `density_contourf()` for that.
 
-        :param xs: X values of the data.
-        :type xs: list, np.ndarray
-        :param ys: Y values of the data.
-        :type ys: list, np.ndarray
+        :param xs: list of x values
+        :type xs: list, ndarray
+        :param ys: list of y values
+        :type ys: list, ndarray
         :param bin_size: Bin size to use for the underlying 2D histogram. This
                          can either be a scalar, in which case the bin size will
                          be the same in both the x dimensions, or else a two
@@ -1052,14 +1088,14 @@ class Axes_bpl(Axes):
                                25%, 50%, and 75% of the data. If this is not
                                passed in, the default is
                                [0.25, 0.5, 0.75, 0.95].
-        :type param_levels: float, list
-        :param smoothing: How much to smooth the underlying 2D histogram. Like
-                          `bin_size`, this parameter can be a scalar or two
-                          element list. The values here will be the sigma of
-                          a Gaussian kernel in the x and y directions. Off
-                          diagonal elements of the covariance matrix is not
-                          currently supported. If you are smoothing, it often
-                          pays to choose a small bin size.
+        :type percent_levels: float, list
+        :param smoothing: Optional parameter that will allow the contours to be
+                          smoothed. Pass in a nonzero value, which will be the
+                          standard deviation of the Gaussian kernel use to smooth
+                          the histogram. When using this, often choosing smaller
+                          bin sizes is advantageous to make a less grainy plot.
+                          Has the same format as padding and bin_size, so different
+                          smoothing kernels are possible in the x and y directions.
         :type smoothing: int, float, list
         :param weights: A list containing weights for each data point. If these
                         are not passed, all data points will be weighted
@@ -1111,10 +1147,10 @@ class Axes_bpl(Axes):
         These contours are just filled regions with no lines. Check out
         `density_contour()` for that.
 
-        :param xs: X values of the data.
-        :type xs: list, np.ndarray
-        :param ys: Y values of the data.
-        :type ys: list, np.ndarray
+        :param xs: list of x values
+        :type xs: list, ndarray
+        :param ys: list of y values
+        :type ys: list, ndarray
         :param bin_size: Bin size to use for the underlying 2D histogram. This
                          can either be a scalar, in which case the bin size will
                          be the same in both the x dimensions, or else a two
@@ -1131,14 +1167,14 @@ class Axes_bpl(Axes):
                                25%, 50%, and 75% of the data. If this is not
                                passed in, the default is
                                [0.25, 0.5, 0.75, 0.95].
-        :type param_levels: float, list
-        :param smoothing: How much to smooth the underlying 2D histogram. Like
-                          `bin_size`, this parameter can be a scalar or two
-                          element list. The values here will be the sigma of
-                          a Gaussian kernel in the x and y directions. Off
-                          diagonal elements of the covariance matrix is not
-                          currently supported. If you are smoothing, it often
-                          pays to choose a small bin size.
+        :type percent_levels: float, list
+        :param smoothing: Optional parameter that will allow the contours to be
+                          smoothed. Pass in a nonzero value, which will be the
+                          standard deviation of the Gaussian kernel use to smooth
+                          the histogram. When using this, often choosing smaller
+                          bin sizes is advantageous to make a less grainy plot.
+                          Has the same format as padding and bin_size, so different
+                          smoothing kernels are possible in the x and y directions.
         :type smoothing: int, float, list
         :param weights: A list containing weights for each data point. If these
                         are not passed, all data points will be weighted
@@ -1205,10 +1241,10 @@ class Axes_bpl(Axes):
         check which of the points are outside of this contour. Only the points
         that are outside are plotted.
 
-        :param xs: X values of the data.
-        :type xs: list, np.ndarray
-        :param ys: Y values of the data.
-        :type ys: list, np.ndarray
+        :param xs: list of x values
+        :type xs: list, ndarray
+        :param ys: list of y values
+        :type ys: list, ndarray
         :param bin_size: Bin size to use for the underlying 2D histogram. This
                          can either be a scalar, in which case the bin size will
                          be the same in both the x dimensions, or else a two
@@ -1225,14 +1261,14 @@ class Axes_bpl(Axes):
                                25%, 50%, and 75% of the data. If this is not
                                passed in, the default is
                                [0.25, 0.5, 0.75, 0.95].
-        :type param_levels: float, list
-        :param smoothing: How much to smooth the underlying 2D histogram. Like
-                          `bin_size`, this parameter can be a scalar or two
-                          element list. The values here will be the sigma of
-                          a Gaussian kernel in the x and y directions. Off
-                          diagonal elements of the covariance matrix is not
-                          currently supported. If you are smoothing, it often
-                          pays to choose a small bin size.
+        :type percent_levels: float, list
+        :param smoothing: Optional parameter that will allow the contours to be
+                          smoothed. Pass in a nonzero value, which will be the
+                          standard deviation of the Gaussian kernel use to smooth
+                          the histogram. When using this, often choosing smaller
+                          bin sizes is advantageous to make a less grainy plot.
+                          Has the same format as padding and bin_size, so different
+                          smoothing kernels are possible in the x and y directions.
         :type smoothing: int, float, list
         :param weights: A list containing weights for each data point. If these
                         are not passed, all data points will be weighted
@@ -1629,8 +1665,10 @@ class Axes_bpl(Axes):
         There isn't any added functionality.
 
         The parameters here are the exact same as they are for the regular
-        `plt.plot()` or `ax.plot()` functions, so I don't think any
-        documentation would be helpful.
+        `plt.plot()` or `ax.plot()` functions.
+
+        :param args: Additional arguments to pass to the `plot` function
+        :param kwargs: Additional keyword arguments to pass to the `plot` function
 
         .. plot::
             :include-source:
@@ -1756,6 +1794,9 @@ class Axes_bpl(Axes):
         are used by default otherwise. It also adds a black marker edge to
         distinguish the markers when there are lots of data poitns. Otherwise
         everything blends together.
+
+        :param args: Additional arguments to pass to the `errorbar` function
+        :param kwargs: Additional keyword arguments to pass to the `errorbar` function
 
         .. plot::
             :include-source:
@@ -2095,15 +2136,25 @@ class Axes_bpl(Axes):
             ax.equal_scale()
 
         :param xs: list of x values
+        :type xs: list, ndarray
         :param ys: list of y values
-        :param bin_size: bin size for the 2D histogram. If not passed in, an
-                         appropriate bin size will be automatically found.
-                         If you are using smoothing, a smaller bin size is
-                         often useful as it can make for a better looking plot.
-        :param smoothing: The size of the Gaussian smoothing kernel for the
-                          data. Currently is the same in both dimensions.
-                          Pass None for no smoothing.
-        :param log: Whether or not to do the smoothing and contour creation in log
+        :type ys: list, ndarray
+        :param bin_size: Bin size to use for the underlying 2D histogram. This
+                         can either be a scalar, in which case the bin size will
+                         be the same in both the x dimensions, or else a two
+                         element list, where the first element will be the
+                         bin size in the x dimension, and the second will be
+                         the bin size in the y dimension.
+        :type bin_size: int, float, list
+        :param smoothing: Optional parameter that will smooth the shaded density.
+                          Pass in a nonzero value, which will be the
+                          standard deviation of the Gaussian kernel use to smooth
+                          the histogram. When using this, often choosing smaller
+                          bin sizes is advantageous to make a less grainy plot.
+                          Has the same format as padding and bin_size, so different
+                          smoothing kernels are possible in the x and y directions.
+        :type smoothing: int, float, list
+        :param log: Whether or not to do the smoothing and histogram creation in log
                     space. This should be used if the plot will be done on log-scaled
                     axes. If this is used, the bin_size and smoothing parameters will
                     be interpreted as dex, rather than raw values.
