@@ -347,6 +347,20 @@ def test_ax_dark_image():
 # Testing remove ticks
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_remove_ticks_all_sides():
+    fig, axs = bpl.subplots(ncols=5, figsize=[20, 5])
+    # set ticks on all axes before we remove them
+    for ax in axs:
+        ax.xaxis.set_ticks_position("both")
+        ax.yaxis.set_ticks_position("both")
+
+    # then remove the ticks we want to check
+    for ax, to_remove in zip(axs, ["top", "bottom", "left", "right", "all"]):
+        ax.remove_ticks(to_remove)
+        ax.add_labels("x_label", "y_label", to_remove)
+
+    assert image_similarity_full(fig, "remove_ticks_all_sides.png")
 
 
 # ------------------------------------------------------------------------------

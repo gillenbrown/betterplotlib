@@ -59,7 +59,7 @@ class Axes_bpl(Axes):
         # remove all outer splines
         self.remove_spines(["all"])
 
-    def remove_ticks(self, ticks_to_remove):
+    def remove_ticks(self, *args):
         """
         Removes ticks from the given locations.
 
@@ -71,10 +71,9 @@ class Axes_bpl(Axes):
         with the way matplotlib works under the hood. Mess around with it if
         you're having trouble.
 
-        :param ticks_to_remove: locations where ticks need to be removed from.
-                                Pass in a list, and choose from: "all, "top",
-                                "bottom", "left", or "right".
-        :type ticks_to_remove: list
+        :param args: locations where ticks need to be removed from. choose from: "all,
+                     "top", "bottom", "left", or "right", and pass in as many as you'd
+                     like
         :return: None
 
         .. plot::
@@ -88,16 +87,14 @@ class Axes_bpl(Axes):
             ax0.plot([0, 1, 2], [0, 1, 2])
             ax1.plot([0, 1, 2], [0, 1, 2])
 
-            ax0.remove_ticks(["top", "right"])
-            ax1.remove_ticks(["all"])
+            ax0.remove_ticks("top", "right")
+            ax1.remove_ticks("all")
 
             ax0.set_title("removed top/right ticks")
             ax1.set_title("removed all ticks")
         """
-        # TODO: doesn't work if they pass in a string, rather than a list
-
         # If they want to remove all spines, turn that into workable infomation
-        ticks_to_remove = set(ticks_to_remove)  # to remove duplicates
+        ticks_to_remove = set(args)  # to remove duplicates
         if "all" in ticks_to_remove:
             # have to do weirdness since its a set
             ticks_to_remove.remove("all")
@@ -176,7 +173,7 @@ class Axes_bpl(Axes):
             self.spines[spine].set_visible(False)
 
         # remove the ticks that correspond the the splines removed
-        self.remove_ticks(list(spines_to_remove))
+        self.remove_ticks(*spines_to_remove)
 
     def scatter(self, *args, **kwargs):
         """
@@ -588,7 +585,7 @@ class Axes_bpl(Axes):
             ax.plot(xs, ys)
 
             ax.remove_labels("y")
-            ax.remove_ticks(["top"])
+            ax.remove_ticks("top")
             ax.add_labels("Conceptual plot", "Axes labels still work")
 
         """

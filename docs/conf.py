@@ -71,7 +71,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "betterplotlib"
-copyright = "2015-2017, Gillen Brown"
+copyright = "2015-2022, Gillen Brown"
 author = "Gillen Brown"
 
 # The version info for the project you're documenting, acts as replacement for
