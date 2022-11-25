@@ -1112,6 +1112,24 @@ class Axes_bpl(Axes):
         :param kwargs: Additional keyword arguments to pass on to the original
                        matplotlib contour function.
         :return: output of the matplotlib.contour function.
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.set_style()
+
+            xs = np.concatenate([np.random.normal(3, 2, 1000),
+                                 np.random.normal(7, 2, 1000)])
+            ys = np.concatenate([np.random.normal(7, 2, 1000),
+                                 np.random.normal(3, 2, 1000)])
+
+            fig, ax = bpl.subplots()
+            ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
+                              cmap="inferno")
+            ax.set_limits(0, 10, 0, 10)
+            ax.equal_scale()
         """
         return self._density_contour_core(
             xs,
@@ -1188,6 +1206,24 @@ class Axes_bpl(Axes):
         :param kwargs: Additional keyword arguments to pass on to the original
                        matplotlib contour function.
         :return: output of the matplotlib.contourf function.
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+            bpl.set_style()
+
+            xs = np.concatenate([np.random.normal(3, 2, 1000),
+                                 np.random.normal(7, 2, 1000)])
+            ys = np.concatenate([np.random.normal(7, 2, 1000),
+                                 np.random.normal(3, 2, 1000)])
+
+            fig, ax = bpl.subplots()
+            ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
+                              cmap="inferno")
+            ax.set_limits(0, 10, 0, 10)
+            ax.equal_scale()
         """
         # don't let user use the labels param here like they can in contour
         if "labels" in kwargs:
@@ -2126,8 +2162,10 @@ class Axes_bpl(Axes):
             import numpy as np
             bpl.set_style()
 
-            xs = np.random.uniform(0, 10, 100)
-            ys = np.random.uniform(0, 10, 100)
+            xs = np.concatenate([np.random.normal(3, 2, 1000),
+                                 np.random.normal(7, 2, 1000)])
+            ys = np.concatenate([np.random.normal(7, 2, 1000),
+                                 np.random.normal(3, 2, 1000)])
 
             fig, ax = bpl.subplots()
             ax.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
