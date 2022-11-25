@@ -57,9 +57,9 @@ class Axes_bpl(Axes):
         self.set_axisbelow(True)  # moves gridlines below the points
 
         # remove all outer splines
-        self.remove_spines(["all"])
+        self.remove_spines("all")
 
-    def remove_ticks(self, *args):
+    def remove_ticks(self, *ticks_to_remove):
         """
         Removes ticks from the given locations.
 
@@ -71,9 +71,9 @@ class Axes_bpl(Axes):
         with the way matplotlib works under the hood. Mess around with it if
         you're having trouble.
 
-        :param args: locations where ticks need to be removed from. choose from: "all,
-                     "top", "bottom", "left", or "right", and pass in as many as you'd
-                     like
+        :param ticks_to_remove: locations where ticks need to be removed from. choose
+                                from: "all, "top", "bottom", "left", or "right",
+                                and pass in as many as you'd like
         :return: None
 
         .. plot::
@@ -94,7 +94,7 @@ class Axes_bpl(Axes):
             ax1.set_title("removed all ticks")
         """
         # If they want to remove all spines, turn that into workable infomation
-        ticks_to_remove = set(args)  # to remove duplicates
+        ticks_to_remove = set(ticks_to_remove)  # to remove duplicates
         if "all" in ticks_to_remove:
             # have to do weirdness since its a set
             ticks_to_remove.remove("all")
@@ -117,7 +117,7 @@ class Axes_bpl(Axes):
         elif "bottom" in ticks_to_remove:
             self.xaxis.set_ticks_position("top")
 
-    def remove_spines(self, spines_to_remove):
+    def remove_spines(self, *spines_to_remove):
         """
         Remove spines from the axis.
 
@@ -137,10 +137,9 @@ class Axes_bpl(Axes):
         the  various `remove_*()` functions. Order matters with these calls,
         for some reason.
 
-        :param spines_to_remove: List of the desired spines to remove. Can
+        :param spines_to_remove: The desired spines to remove. Can
                                  choose from "all", "top", "bottom", "left",
                                  or "right".
-        :type spines_to_remove: list
         :return: None
 
         .. plot::
@@ -154,8 +153,8 @@ class Axes_bpl(Axes):
             ax0.plot([0, 1, 2], [0, 1, 2])
             ax1.plot([0, 1, 2], [0, 1, 2])
 
-            ax0.remove_spines(["top", "right"])
-            ax1.remove_spines(["all"])
+            ax0.remove_spines("top", "right")
+            ax1.remove_spines("all")
 
             ax0.set_title("removed top/right spines")
             ax1.set_title("removed all spines")
