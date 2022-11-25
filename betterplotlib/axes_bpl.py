@@ -220,25 +220,21 @@ class Axes_bpl(Axes):
             ax2.add_labels(title="betterplotlib")
 
         """
-
+        # put x and y in args if they're not already there
+        if len(args) == 0:
+            args = kwargs.pop("x"), kwargs.pop("y")
         # get the color, if it hasn't already been set. I don't need to do this
         # in mpl 2.0 technically, but I do it anyway so I can use this color
         # for the invisible label below.
         if "color" not in kwargs and "c" not in kwargs:
             # get the default color cycle, and get the next color.
-            if sys.version_info.major == 2:
-                kwargs["c"] = self._get_lines.prop_cycler.next()["color"]
-            elif sys.version_info.major == 3:
-                kwargs["c"] = next(self._get_lines.prop_cycler)["color"]
+            kwargs["c"] = next(self._get_lines.prop_cycler)["color"]
 
         # set other parameters, if they haven't been set already
         # I use setdefault to do that, which puts the values in if they don't
         # already exist, but won't overwrite anything.
         # use the function we defined to get the proper alpha value.
-        try:
-            kwargs.setdefault("alpha", tools._alpha(len(args[0])))
-        except TypeError:
-            kwargs.setdefault("alpha", 1.0)
+        kwargs.setdefault("alpha", tools._alpha(len(args[0])))
 
         # we want to make the points in the legend opaque always. To do this
         # we plot nans with all the same parameters, but with alpha of one.

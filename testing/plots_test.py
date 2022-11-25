@@ -375,6 +375,19 @@ def test_remove_ticks_all_sides():
 # Testing scatter
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_scatter_use_kwargs():
+    fig, ax = bpl.subplots()
+    ax.scatter(x=xs_uniform_10, y=ys_uniform_10)
+    assert image_similarity_full(fig, "scatter_kwargs.png")
+
+
+@pass_local_fail_remote
+def test_scatter_legend_alpha():
+    fig, ax = bpl.subplots()
+    ax.scatter(x=xs_normal_10000, y=ys_normal_10000, alpha=0.1, label="Test")
+    ax.legend()
+    assert image_similarity_full(fig, "scatter_legend_alpha.png")
 
 
 # ------------------------------------------------------------------------------
