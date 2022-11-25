@@ -133,10 +133,13 @@ levels_contour_err_msg = (
 # contained there to test against.
 
 
-def check_examples(func_name, idx):
+def check_examples(file_name, func_name, idx):
     """
     Test the examples for a given function
 
+    :param file_name: The name of the file where the function is defined. Do not include
+                      the ".py" suffix
+    :type file_name: str
     :param func_name: the function to get the examples from
     :type func_name: str
     :param idx: index into the list of examples to check
@@ -144,7 +147,7 @@ def check_examples(func_name, idx):
     :return: result of the comparison
     :rtype: bool
     """
-    code = get_examples(func_name)[idx]
+    code = get_examples(file_name, func_name)[idx]
 
     # then run the figures and check the image similarity
     # I need to make some changes behind the scenes, to make random numbers work
@@ -159,16 +162,19 @@ def check_examples(func_name, idx):
     return image_similarity_full(locals()["fig"], f"{func_name}_example_{idx}.png")
 
 
-def get_examples(func_name):
+def get_examples(file_name, func_name):
     """
     Get all the code used to make the example plots, which can then be directly tested
 
+    :param file_name: The name of the file where the function is defined. Do not include
+                      the ".py" suffix
+    :type file_name: str
     :param func_name: The function name that we want to grab plotting code from
     :type func_name: str
     :return: tuple of strings with the code to execute to create a given plot
     :rtype: tuple(str)
     """
-    bpl_file = Path(__file__).parent.parent / "betterplotlib" / "axes_bpl.py"
+    bpl_file = Path(__file__).parent.parent / "betterplotlib" / f"{file_name}.py"
     docstring = ""
     in_func = False
     in_docstring = False
@@ -227,7 +233,7 @@ def get_examples(func_name):
 
 # and test these functions
 def test_get_examples_single():
-    code = get_examples("make_ax_dark")
+    code = get_examples("axes_bpl", "make_ax_dark")
     assert len(code) == 1
     assert code[0] == (
         "fig, (ax0, ax1) = bpl.subplots(figsize=[12, 5], ncols=2)\n"
@@ -238,7 +244,7 @@ def test_get_examples_single():
 
 
 def test_get_examples_multiple():
-    code = get_examples("equal_scale")
+    code = get_examples("axes_bpl", "equal_scale")
     assert len(code) == 2
     assert code[0] == (
         "xs = np.random.normal(0, 1, 1000)\n"
@@ -264,7 +270,7 @@ def test_get_examples_multiple():
 
 
 def test_get_example_loop():
-    code = get_examples("scatter")
+    code = get_examples("axes_bpl", "scatter")
     assert len(code) == 1
     assert code[0] == (
         "x = np.random.normal(0, scale=0.5, size=500)\n"
@@ -281,51 +287,62 @@ def test_get_example_loop():
     )
 
 
+def test_get_example_different_file():
+    code = get_examples("colors", "fade_color")
+    assert len(code) == 1
+    assert code[0] == (
+        'color = "#9bcfb3"\n'
+        "fig, ax = bpl.subplots()\n"
+        'ax.axhline(1, c=color, label="Original")\n'
+        'ax.axhline(0, c=bpl.fade_color(color), label="Faded")\n'
+    )
+
+
 # ------------------------------------------------------------------------------
 #
 # Actually make the tests for example images
 #
 # ------------------------------------------------------------------------------
 functions = [
-    "make_ax_dark",
-    "remove_ticks",
-    "remove_spines",
-    "scatter",
-    "hist",
-    "add_labels",
-    "set_limits",
-    "add_text",
-    "remove_labels",
-    "legend",
-    "equal_scale",
-    "easy_add_text",
-    "density_contour",
-    "density_contourf",
-    "contour_scatter",
-    "data_ticks",
-    "plot",
-    "axvline",
-    "axhline",
-    "errorbar",
-    "twin_axis_simple",
-    "twin_axis",
-    "shaded_density",
+    ("axes_bpl", "make_ax_dark"),
+    ("axes_bpl", "remove_ticks"),
+    ("axes_bpl", "remove_spines"),
+    ("axes_bpl", "scatter"),
+    ("axes_bpl", "hist"),
+    ("axes_bpl", "add_labels"),
+    ("axes_bpl", "set_limits"),
+    ("axes_bpl", "add_text"),
+    ("axes_bpl", "remove_labels"),
+    ("axes_bpl", "legend"),
+    ("axes_bpl", "equal_scale"),
+    ("axes_bpl", "easy_add_text"),
+    ("axes_bpl", "density_contour"),
+    ("axes_bpl", "density_contourf"),
+    ("axes_bpl", "contour_scatter"),
+    ("axes_bpl", "data_ticks"),
+    ("axes_bpl", "plot"),
+    ("axes_bpl", "axvline"),
+    ("axes_bpl", "axhline"),
+    ("axes_bpl", "errorbar"),
+    ("axes_bpl", "twin_axis_simple"),
+    ("axes_bpl", "twin_axis"),
+    ("axes_bpl", "shaded_density"),
 ]
 
 # then create the list of tests to run
 params = []
-for f in functions:
-    for i in range(len(get_examples(f))):
-        params.append((f, i))
+for f_file, f_name in functions:
+    for i in range(len(get_examples(f_file, f_name))):
+        params.append((f_file, f_name, i))
 
 
 @pass_local_fail_remote
 @pytest.mark.parametrize(
-    "name,number",
+    "file,name,number",
     params,
 )
-def test_all_examples(name, number):
-    assert check_examples(name, number)
+def test_all_examples(file, name, number):
+    assert check_examples(file, name, number)
 
 
 # ------------------------------------------------------------------------------

@@ -29,6 +29,25 @@ color_cycle = [
 # Some functions to fade and unfade colors, which can be helpful when plotting
 # two lines with similar meaning
 def fade_color(color):
+    """
+    Create a faded version of a different color
+
+    :param color: the original color. Can be in any format
+    :return: the hex color of the faded version
+    :rtype: str
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.set_style()
+
+        color = "#9bcfb3"
+        fig, ax = bpl.subplots()
+        ax.axhline(1, c=color, label="Original")
+        ax.axhline(0, c=bpl.fade_color(color), label="Faded")
+    """
     rgb = mpl_colors.to_rgb(color)
     hsv = mpl_colors.rgb_to_hsv(rgb)
     h = hsv[0]
