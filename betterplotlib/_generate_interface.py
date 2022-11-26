@@ -40,8 +40,11 @@ def get_functions(loc, definition):
                         this_def += "\n"
             if in_def and ":" in line:
                 in_def = False
+                # now that we're done, get rid of self
                 this_def = this_def.replace("self,", "").replace("self", "")
-                func_args.append(this_def)
+                # I don't want to include any functions that start with an underscore
+                if not this_def.startswith("def _"):
+                    func_args.append(this_def)
 
     return func_args
 
