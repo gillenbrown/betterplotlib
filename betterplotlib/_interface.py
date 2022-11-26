@@ -149,24 +149,15 @@ def scatter(*args, **kwargs):
         :include-source:
 
         import betterplotlib as bpl
-        import matplotlib.pyplot as plt
         import numpy as np
         bpl.set_style()
 
         x = np.random.normal(0, scale=0.5, size=500)
         y = np.random.normal(0, scale=0.5, size=500)
 
-        fig = plt.figure(figsize=[15, 7])
-        ax1 = fig.add_subplot(121)
-        ax2 = fig.add_subplot(122, projection="bpl")
-
-        for ax in [ax1, ax2]:
-        ax.scatter(x,       y)
-        ax.scatter(x + 0.5, y + 0.5)
-        ax.scatter(x + 1,   y + 1)
-
-        ax1.set_title("matplotlib")
-        ax2.add_labels(title="betterplotlib")
+        for dx in [0, 0.5, 1]:
+        bpl.scatter(x + dx, y + dx)
+        bpl.equal_scale()
 
     """
     ax = get_axis()
@@ -236,22 +227,21 @@ def hist(*args, **kwargs):
         import numpy as np
         bpl.set_style()
 
-        fig, ax = bpl.subplots()
 
         data1 = np.random.normal(-6, 1, size=10000)
         data2 = np.random.normal(-2, 1, size=10000)
         data3 = np.random.normal(2, 1, size=10000)
         data4 = np.random.normal(6, 1, size=10000)
         bin_size = 0.5
-        ax.hist(data1, rel_freq=True, bin_size=bin_size)
-        ax.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
+        bpl.hist(data1, rel_freq=True, bin_size=bin_size)
+        bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
             linewidth=5)
-        ax.hist(data3, rel_freq=True, bin_size=bin_size,
+        bpl.hist(data3, rel_freq=True, bin_size=bin_size,
             histtype="stepfilled", hatch="o", alpha=0.8)
-        ax.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
+        bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
             hatch="x", linewidth=4)
 
-        ax.add_labels(y_label="Relative Frequency")
+        bpl.add_labels(y_label="Relative Frequency")
 
     """
     ax = get_axis()
@@ -501,7 +491,7 @@ def legend(linewidth=0, *args, **kwargs):
     return ax.legend(linewidth, *args, **kwargs)
 
 
-def equal_scale(self):
+def equal_scale():
     """
     Makes the x and y axes have the same scale.
 
@@ -570,7 +560,7 @@ def equal_scale(self):
 
     """
     ax = get_axis()
-    return ax.equal_scale(self)
+    return ax.equal_scale()
 
 
 def easy_add_text(text, location, **kwargs):
@@ -616,17 +606,15 @@ def easy_add_text(text, location, **kwargs):
         import betterplotlib as bpl
         bpl.set_style()
 
-        fig, ax = bpl.subplots()
-
-        ax.easy_add_text("1", 1)
-        ax.easy_add_text("2", 2)
-        ax.easy_add_text("3", 3)
-        ax.easy_add_text("4", 4)
-        ax.easy_add_text("5", 5)
-        ax.easy_add_text("6", 6)
-        ax.easy_add_text("7", 7)
-        ax.easy_add_text("8", 8)
-        ax.easy_add_text("9", 9)
+        bpl.easy_add_text("1", 1)
+        bpl.easy_add_text("2", 2)
+        bpl.easy_add_text("3", 3)
+        bpl.easy_add_text("4", 4)
+        bpl.easy_add_text("5", 5)
+        bpl.easy_add_text("6", 6)
+        bpl.easy_add_text("7", 7)
+        bpl.easy_add_text("8", 8)
+        bpl.easy_add_text("9", 9)
 
     .. plot::
         :include-source:
@@ -634,17 +622,15 @@ def easy_add_text(text, location, **kwargs):
         import betterplotlib as bpl
         bpl.set_style()
 
-        fig, ax = bpl.subplots()
-
-        ax.easy_add_text("upper left", "upper left")
-        ax.easy_add_text("upper center", "upper center")
-        ax.easy_add_text("upper right", "upper right")
-        ax.easy_add_text("center left", "center left")
-        ax.easy_add_text("center", "center")
-        ax.easy_add_text("center right", "center right")
-        ax.easy_add_text("lower left", "lower left")
-        ax.easy_add_text("lower center", "lower center")
-        ax.easy_add_text("lower right", "lower right")
+        bpl.easy_add_text("upper left", "upper left")
+        bpl.easy_add_text("upper center", "upper center")
+        bpl.easy_add_text("upper right", "upper right")
+        bpl.easy_add_text("center left", "center left")
+        bpl.easy_add_text("center", "center")
+        bpl.easy_add_text("center right", "center right")
+        bpl.easy_add_text("lower left", "lower left")
+        bpl.easy_add_text("lower center", "lower center")
+        bpl.easy_add_text("lower right", "lower right")
 
 
     """
@@ -653,7 +639,6 @@ def easy_add_text(text, location, **kwargs):
 
 
 def _density_contour_core(
-    self,
     xs,
     ys,
     bin_size=None,
@@ -718,7 +703,6 @@ def _density_contour_core(
     """
     ax = get_axis()
     return ax._density_contour_core(
-        self,
         xs,
         ys,
         bin_size,
@@ -733,7 +717,6 @@ def _density_contour_core(
 
 
 def density_contour(
-    self,
     xs,
     ys,
     bin_size=None,
@@ -811,11 +794,10 @@ def density_contour(
         ys = np.concatenate([np.random.normal(7, 2, 1000),
                  np.random.normal(3, 2, 1000)])
 
-        fig, ax = bpl.subplots()
-        ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
-                  cmap="inferno")
-        ax.set_limits(0, 10, 0, 10)
-        ax.equal_scale()
+        bpl.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
+                cmap="inferno")
+        bpl.set_limits(0, 10, 0, 10)
+        bpl.equal_scale()
 
     .. plot::
         :include-source:
@@ -838,21 +820,11 @@ def density_contour(
     """
     ax = get_axis()
     return ax.density_contour(
-        self,
-        xs,
-        ys,
-        bin_size,
-        percent_levels,
-        smoothing,
-        weights,
-        log,
-        labels,
-        **kwargs
+        xs, ys, bin_size, percent_levels, smoothing, weights, log, labels, **kwargs
     )
 
 
 def density_contourf(
-    self,
     xs,
     ys,
     bin_size=None,
@@ -926,11 +898,10 @@ def density_contourf(
         ys = np.concatenate([np.random.normal(7, 2, 1000),
                  np.random.normal(3, 2, 1000)])
 
-        fig, ax = bpl.subplots()
-        ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
-                  cmap="inferno")
-        ax.set_limits(0, 10, 0, 10)
-        ax.equal_scale()
+        bpl.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
+                 cmap="inferno")
+        bpl.set_limits(0, 10, 0, 10)
+        bpl.equal_scale()
 
     .. plot::
         :include-source:
@@ -953,12 +924,11 @@ def density_contourf(
     """
     ax = get_axis()
     return ax.density_contourf(
-        self, xs, ys, bin_size, percent_levels, smoothing, weights, log, **kwargs
+        xs, ys, bin_size, percent_levels, smoothing, weights, log, **kwargs
     )
 
 
 def contour_scatter(
-    self,
     xs,
     ys,
     bin_size=None,
@@ -1144,15 +1114,14 @@ def contour_scatter(
         xs = [1, 2, 3, 4]
         ys = [1, 2, 3, 4]
         weights = [1, 2, 3, 4]
-        fig, ax = bpl.subplots()
-        ax.contour_scatter(xs, ys,
-                   weights=weights,
-                   bin_size=0.01,
-                   smoothing=[0.8, 0.3],
-                   fill_cmap="Blues",
-                   labels=True,
-                   contour_kwargs={"colors":"k"})
-        ax.equal_scale()
+        bpl.contour_scatter(xs, ys,
+                weights=weights,
+                bin_size=0.01,
+                smoothing=[0.8, 0.3],
+                fill_cmap="Blues",
+                labels=True,
+                contour_kwargs={"colors":"k"})
+        bpl.equal_scale()
 
     Now we can mess with the fun stuff, which is the `fill_cmap` param and
     the kwargs that get passed to the `scatter`, `contour`, and `contourf`
@@ -1267,7 +1236,6 @@ def contour_scatter(
     """
     ax = get_axis()
     return ax.contour_scatter(
-        self,
         xs,
         ys,
         bin_size,
@@ -1320,9 +1288,8 @@ def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
         xs = np.random.normal(0, 1, 100)
         ys = np.random.normal(0, 1, 100)
 
-        fig, ax = bpl.subplots()
-        ax.scatter(xs, ys)
-        ax.data_ticks(xs, ys)
+        bpl.scatter(xs, ys)
+        bpl.data_ticks(xs, ys)
     """
     ax = get_axis()
     return ax.data_ticks(x_data, y_data, extent, *args, **kwargs)
@@ -1398,13 +1365,12 @@ def axvline(x=0, *args, **kwargs):
         left_ys = left_xs / (left_xs - 1)
         right_ys = right_xs / (right_xs - 1)
 
-        fig, ax = bpl.subplots()
-        ax.make_ax_dark()
-        ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
-        ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
-        ax.axvline(1.0, linestyle="--")
-        ax.axhline(1.0, linestyle="--")
-        ax.set_limits(-10, 10, -10, 10)
+        bpl.make_ax_dark()
+        bpl.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+        bpl.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+        bpl.axvline(1.0, linestyle="--")
+        bpl.axhline(1.0, linestyle="--")
+        bpl.set_limits(-10, 10, -10, 10)
 
     """
     ax = get_axis()
@@ -1435,13 +1401,12 @@ def axhline(y=0, *args, **kwargs):
         left_ys = left_xs / (left_xs - 1)
         right_ys = right_xs / (right_xs - 1)
 
-        fig, ax = bpl.subplots()
-        ax.make_ax_dark()
-        ax.plot(left_xs, left_ys, c=bpl.color_cycle[2])
-        ax.plot(right_xs, right_ys, c=bpl.color_cycle[2])
-        ax.axvline(1.0, linestyle="--")
-        ax.axhline(1.0, linestyle="--")
-        ax.set_limits(-10, 10, -10, 10)
+        bpl.make_ax_dark()
+        bpl.plot(left_xs, left_ys, c=bpl.color_cycle[2])
+        bpl.plot(right_xs, right_ys, c=bpl.color_cycle[2])
+        bpl.axvline(1.0, linestyle="--")
+        bpl.axhline(1.0, linestyle="--")
+        bpl.set_limits(-10, 10, -10, 10)
 
     """
     ax = get_axis()
@@ -1520,11 +1485,10 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
         import betterplotlib as bpl
         bpl.set_style()
 
-        fig, ax = bpl.subplots(tight_layout=True)
-        ax.set_limits(0, 10, 0, 5)
-        ax.add_labels("x", "y")
-        ax.twin_axis_simple("x", 0, 100, "$10 x$")
-        ax.twin_axis_simple("y", 1, 10**5, "$10^y$", log=True)
+        bpl.set_limits(0, 10, 0, 5)
+        bpl.add_labels("x", "y")
+        bpl.twin_axis_simple("x", 0, 100, "$10 x$")
+        bpl.twin_axis_simple("y", 1, 10**5, "$10^y$", log=True)
 
     Note that for a slightly more complicated version of this plot, say if
     we wanted the top x axis to be x^2 rather than 10x, the limits would
@@ -1538,7 +1502,7 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
     return ax.twin_axis_simple(axis, lower_lim, upper_lim, label, log)
 
 
-def twin_axis(self, axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None):
+def twin_axis(axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None):
     """
     Create a twin axis, where the new axis values are an arbitrary function
     of the old values.
@@ -1652,11 +1616,10 @@ def twin_axis(self, axis, new_ticks, label, old_to_new_func=None, new_to_old_fun
          created labels.
     """
     ax = get_axis()
-    return ax.twin_axis(self, axis, new_ticks, label, old_to_new_func, new_to_old_func)
+    return ax.twin_axis(axis, new_ticks, label, old_to_new_func, new_to_old_func)
 
 
 def shaded_density(
-    self,
     xs,
     ys,
     bin_size=None,
@@ -1684,11 +1647,10 @@ def shaded_density(
         ys = np.concatenate([np.random.normal(7, 2, 1000),
                  np.random.normal(3, 2, 1000)])
 
-        fig, ax = bpl.subplots()
-        ax.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
-                  cmap="inferno")
-        ax.set_limits(0, 10, 0, 10)
-        ax.equal_scale()
+        bpl.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
+                   cmap="inferno")
+        bpl.set_limits(0, 10, 0, 10)
+        bpl.equal_scale()
 
     :param xs: list of x values
     :type xs: list, ndarray
@@ -1719,7 +1681,6 @@ def shaded_density(
     """
     ax = get_axis()
     return ax.shaded_density(
-        self,
         xs,
         ys,
         bin_size,

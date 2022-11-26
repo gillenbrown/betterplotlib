@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt  # for some tests
 from pathlib import Path
 import pytest
+from tools_test import clear_all_open_figures
 
 import betterplotlib as bpl
 
@@ -59,6 +60,9 @@ def image_similarity_full(fig, image_name):
     baseline_img = baseline_im_dir / image_name
 
     fig.savefig(new_img)
+
+    # clear open figures to prepare for next text
+    clear_all_open_figures()
 
     try:
         matched = image_similarity(new_img, baseline_img)
@@ -158,7 +162,11 @@ def check_examples(file_name, func_name, idx):
     exec(code)
     # the `fig` variable will be defined in this code. For some reason I can't
     # figure out how to just call `fig` to get that, so instead I have to get it
-    # from the locals dictionary
+    # from the locals dictionary. If it's not there, get it
+    try:
+        fig = locals()["fig"]
+    except KeyError:
+        fig = plt.gcf()
     return image_similarity_full(locals()["fig"], f"{func_name}_example_{idx}.png")
 
 
@@ -279,15 +287,9 @@ def test_get_example_loop():
         "bpl.set_style()\n"
         "x = np.random.normal(0, scale=0.5, size=500)\n"
         "y = np.random.normal(0, scale=0.5, size=500)\n"
-        "fig = plt.figure(figsize=[15, 7])\n"
-        "ax1 = fig.add_subplot(121)\n"
-        'ax2 = fig.add_subplot(122, projection="bpl")\n'
-        "for ax in [ax1, ax2]:\n"
-        "    ax.scatter(x,       y)\n"
-        "    ax.scatter(x + 0.5, y + 0.5)\n"
-        "    ax.scatter(x + 1,   y + 1)\n"
-        'ax1.set_title("matplotlib")\n'
-        'ax2.add_labels(title="betterplotlib")\n'
+        "for dx in [0, 0.5, 1]:\n"
+        "    bpl.scatter(x + dx, y + dx)\n"
+        "bpl.equal_scale()\n"
     )
 
 
