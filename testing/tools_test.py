@@ -1,11 +1,41 @@
+import matplotlib.pyplot as plt
 import pytest
 from pytest import approx
 import numpy as np
 from matplotlib import path
-from betterplotlib import tools
+from betterplotlib import tools, get_axis, subplots
 
 np.random.seed(19680801)
 random_x = np.random.normal(0, 1, 1000)
+
+# ------------------------------------------------------------------------------
+#
+# test get axis
+#
+# ------------------------------------------------------------------------------
+def test_get_axis_nothing_previously_set():
+    ax = get_axis()
+    assert ax is not None
+
+
+def test_get_axis_figure_only_set():
+    fig = plt.figure()
+    ax = get_axis()
+    assert fig == ax.figure
+
+
+def test_get_axis_fig_and_ax_already_set():
+    fig, ax = subplots()
+    ax2 = get_axis()
+    assert ax2 == ax
+    assert ax2.figure == fig
+
+
+def test_get_axis_non_bpl_axis_only():
+    fig = plt.figure()
+    fig.add_subplot(projection="polar")
+    with pytest.raises(ValueError):
+        get_axis()
 
 
 # ------------------------------------------------------------------------------

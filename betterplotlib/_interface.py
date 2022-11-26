@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from .manage_axes import get_axis
 
 
 def make_ax_dark(grid=True, minor_ticks=False):
@@ -33,11 +34,11 @@ def make_ax_dark(grid=True, minor_ticks=False):
 
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.make_ax_dark(grid, minor_ticks)
 
 
-def remove_ticks(ticks_to_remove):
+def remove_ticks(*ticks_to_remove):
     """
     Removes ticks from the given locations.
 
@@ -49,10 +50,9 @@ def remove_ticks(ticks_to_remove):
     with the way matplotlib works under the hood. Mess around with it if
     you're having trouble.
 
-    :param ticks_to_remove: locations where ticks need to be removed from.
-                Pass in a list, and choose from: "all, "top",
-                "bottom", "left", or "right".
-    :type ticks_to_remove: list
+    :param ticks_to_remove: locations where ticks need to be removed from. choose
+                from: "all, "top", "bottom", "left", or "right",
+                and pass in as many as you'd like
     :return: None
 
     .. plot::
@@ -66,17 +66,17 @@ def remove_ticks(ticks_to_remove):
         ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
 
-        ax0.remove_ticks(["top", "right"])
-        ax1.remove_ticks(["all"])
+        ax0.remove_ticks("top", "right")
+        ax1.remove_ticks("all")
 
         ax0.set_title("removed top/right ticks")
         ax1.set_title("removed all ticks")
     """
-    ax = plt.gca(projection="bpl")
-    return ax.remove_ticks(ticks_to_remove)
+    ax = get_axis()
+    return ax.remove_ticks(*ticks_to_remove)
 
 
-def remove_spines(spines_to_remove):
+def remove_spines(*spines_to_remove):
     """
     Remove spines from the axis.
 
@@ -96,10 +96,9 @@ def remove_spines(spines_to_remove):
     the  various `remove_*()` functions. Order matters with these calls,
     for some reason.
 
-    :param spines_to_remove: List of the desired spines to remove. Can
+    :param spines_to_remove: The desired spines to remove. Can
                  choose from "all", "top", "bottom", "left",
                  or "right".
-    :type spines_to_remove: list
     :return: None
 
     .. plot::
@@ -113,15 +112,15 @@ def remove_spines(spines_to_remove):
         ax0.plot([0, 1, 2], [0, 1, 2])
         ax1.plot([0, 1, 2], [0, 1, 2])
 
-        ax0.remove_spines(["top", "right"])
-        ax1.remove_spines(["all"])
+        ax0.remove_spines("top", "right")
+        ax1.remove_spines("all")
 
         ax0.set_title("removed top/right spines")
         ax1.set_title("removed all spines")
 
     """
-    ax = plt.gca(projection="bpl")
-    return ax.remove_spines(spines_to_remove)
+    ax = get_axis()
+    return ax.remove_spines(*spines_to_remove)
 
 
 def scatter(*args, **kwargs):
@@ -170,7 +169,7 @@ def scatter(*args, **kwargs):
         ax2.add_labels(title="betterplotlib")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.scatter(*args, **kwargs)
 
 
@@ -255,7 +254,7 @@ def hist(*args, **kwargs):
         ax.add_labels(y_label="Relative Frequency")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.hist(*args, **kwargs)
 
 
@@ -295,7 +294,7 @@ def add_labels(x_label=None, y_label=None, title=None, *args, **kwargs):
         ax.plot(xs, ys)
         ax.add_labels("X value", "Y value", "Title")
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.add_labels(x_label, y_label, title, *args, **kwargs)
 
 
@@ -337,7 +336,7 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
         ax2.plot(xs, ys)
         ax2.set_limits(0, 2*np.pi, -1.1, 1.1)
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.set_limits(x_min, x_max, y_min, y_max, **kwargs)
 
 
@@ -392,7 +391,7 @@ def add_text(x, y, text, coords="data", **kwargs):
         ax.add_text(2, 30, "(2, 30) data", ha="center", va="center")
         ax.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.add_text(x, y, text, coords, **kwargs)
 
 
@@ -430,11 +429,11 @@ def remove_labels(labels_to_remove):
         ax.plot(xs, ys)
 
         ax.remove_labels("y")
-        ax.remove_ticks(["top"])
+        ax.remove_ticks("top")
         ax.add_labels("Conceptual plot", "Axes labels still work")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.remove_labels(labels_to_remove)
 
 
@@ -498,7 +497,7 @@ def legend(linewidth=0, *args, **kwargs):
         ax.plot(x, 3*x, label="3x")
         ax.legend(fontsize=20, loc=6, title="Title")
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.legend(linewidth, *args, **kwargs)
 
 
@@ -570,7 +569,7 @@ def equal_scale(self):
         ax2.set_limits(-5, 5, -10, 10)
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.equal_scale(self)
 
 
@@ -649,7 +648,7 @@ def easy_add_text(text, location, **kwargs):
 
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.easy_add_text(text, location, **kwargs)
 
 
@@ -667,19 +666,57 @@ def _density_contour_core(
     **kwargs
 ):
     """
-    :param xs:
-    :param ys:
-    :param bin_size:
-    :param percent_levels:
-    :param smoothing:
-    :param weights:
-    :param log:
-    :param labels:
-    :param filled:
-    :param kwargs:
-    :return:
+    The underlying function to do both filled and unfilled contours. Call
+    `density_contour` or `density_contourf` instead of this.
+
+    :param xs: List of x values
+    :type xs: list, np.ndarray
+    :param ys: List of y values
+    :type ys: list, np.ndarray
+    :param bin_size: Bin size to use for the underlying 2D histogram. This
+             can either be a scalar, in which case the bin size will
+             be the same in both the x dimensions, or else a two
+             element list, where the first element will be the
+             bin size in the x dimension, and the second will be
+             the bin size in the y dimension.
+    :type bin_size: int, float, list
+    :param percent_levels: A list describing the levels of the contours that
+                   will be drawn. Each value in this list contains
+                   a float between zero and 1 (inclusive) that
+                   describes how much of that data will be enclosed
+                   by a contour. So if you pass [0.25, 0.5, 0.75],
+                   there will be three contours drawn, that enclose
+                   25%, 50%, and 75% of the data. If this is not
+                   passed in, the default is
+                   [0.25, 0.5, 0.75, 0.95].
+    :type percent_levels: float, list
+    :param smoothing: Optional parameter that will allow the contours to be
+              smoothed. Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
+    :type smoothing: int, float, list
+    :param weights: A list containing weights for each data point. If these
+            are not passed, all data points will be weighted
+            equally.
+    :type weights: list, np.ndarray
+    :param log: Whether or not to do the smoothing and contour creation in log
+            space. This should be used if the plot will be done on log-scaled
+            axes. If this is used, the bin_size and smoothing parameters will
+            be interpreted as dex, rather than raw values.
+    :type log: bool
+    :param labels: Whether or not to label the individual contour lines
+               with their percentage level.
+    :type labels: bool
+    :param filled: True will use filled contours, or False to use hollow ones.
+    :type filled: bool
+    :param kwargs: Additional keyword arguments to pass on to the original
+               matplotlib contour function.
+    :return: output of the matplotlib.contour function.
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax._density_contour_core(
         self,
         xs,
@@ -717,10 +754,10 @@ def density_contour(
     These contours are just lines, not filled regions. Check out
     `density_contourf()` for that.
 
-    :param xs: X values of the data.
-    :type xs: list, np.ndarray
-    :param ys: Y values of the data.
-    :type ys: list, np.ndarray
+    :param xs: list of x values
+    :type xs: list, ndarray
+    :param ys: list of y values
+    :type ys: list, ndarray
     :param bin_size: Bin size to use for the underlying 2D histogram. This
              can either be a scalar, in which case the bin size will
              be the same in both the x dimensions, or else a two
@@ -737,14 +774,14 @@ def density_contour(
                    25%, 50%, and 75% of the data. If this is not
                    passed in, the default is
                    [0.25, 0.5, 0.75, 0.95].
-    :type param_levels: float, list
-    :param smoothing: How much to smooth the underlying 2D histogram. Like
-              `bin_size`, this parameter can be a scalar or two
-              element list. The values here will be the sigma of
-              a Gaussian kernel in the x and y directions. Off
-              diagonal elements of the covariance matrix is not
-              currently supported. If you are smoothing, it often
-              pays to choose a small bin size.
+    :type percent_levels: float, list
+    :param smoothing: Optional parameter that will allow the contours to be
+              smoothed. Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
     :type smoothing: int, float, list
     :param weights: A list containing weights for each data point. If these
             are not passed, all data points will be weighted
@@ -761,8 +798,45 @@ def density_contour(
     :param kwargs: Additional keyword arguments to pass on to the original
                matplotlib contour function.
     :return: output of the matplotlib.contour function.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.set_style()
+
+        xs = np.concatenate([np.random.normal(3, 2, 1000),
+                 np.random.normal(7, 2, 1000)])
+        ys = np.concatenate([np.random.normal(7, 2, 1000),
+                 np.random.normal(3, 2, 1000)])
+
+        fig, ax = bpl.subplots()
+        ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
+                  cmap="inferno")
+        ax.set_limits(0, 10, 0, 10)
+        ax.equal_scale()
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.set_style()
+
+        xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
+                      np.random.normal(7, 2, 1000)])
+        ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
+                       np.random.normal(3, 2, 1000)])
+
+        fig, ax = bpl.subplots()
+        ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
+                   log=[True, True], cmap="inferno")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_limits(1, 1e10, 1, 1e10)
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.density_contour(
         self,
         xs,
@@ -798,10 +872,10 @@ def density_contourf(
     These contours are just filled regions with no lines. Check out
     `density_contour()` for that.
 
-    :param xs: X values of the data.
-    :type xs: list, np.ndarray
-    :param ys: Y values of the data.
-    :type ys: list, np.ndarray
+    :param xs: list of x values
+    :type xs: list, ndarray
+    :param ys: list of y values
+    :type ys: list, ndarray
     :param bin_size: Bin size to use for the underlying 2D histogram. This
              can either be a scalar, in which case the bin size will
              be the same in both the x dimensions, or else a two
@@ -818,14 +892,14 @@ def density_contourf(
                    25%, 50%, and 75% of the data. If this is not
                    passed in, the default is
                    [0.25, 0.5, 0.75, 0.95].
-    :type param_levels: float, list
-    :param smoothing: How much to smooth the underlying 2D histogram. Like
-              `bin_size`, this parameter can be a scalar or two
-              element list. The values here will be the sigma of
-              a Gaussian kernel in the x and y directions. Off
-              diagonal elements of the covariance matrix is not
-              currently supported. If you are smoothing, it often
-              pays to choose a small bin size.
+    :type percent_levels: float, list
+    :param smoothing: Optional parameter that will allow the contours to be
+              smoothed. Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
     :type smoothing: int, float, list
     :param weights: A list containing weights for each data point. If these
             are not passed, all data points will be weighted
@@ -839,8 +913,45 @@ def density_contourf(
     :param kwargs: Additional keyword arguments to pass on to the original
                matplotlib contour function.
     :return: output of the matplotlib.contourf function.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.set_style()
+
+        xs = np.concatenate([np.random.normal(3, 2, 1000),
+                 np.random.normal(7, 2, 1000)])
+        ys = np.concatenate([np.random.normal(7, 2, 1000),
+                 np.random.normal(3, 2, 1000)])
+
+        fig, ax = bpl.subplots()
+        ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
+                  cmap="inferno")
+        ax.set_limits(0, 10, 0, 10)
+        ax.equal_scale()
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+        bpl.set_style()
+
+        xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
+                      np.random.normal(7, 2, 1000)])
+        ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
+                       np.random.normal(3, 2, 1000)])
+
+        fig, ax = bpl.subplots()
+        ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
+                log=[True, True], cmap="inferno")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_limits(1, 1e10, 1, 1e10)
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.density_contourf(
         self, xs, ys, bin_size, percent_levels, smoothing, weights, log, **kwargs
     )
@@ -882,10 +993,10 @@ def contour_scatter(
     check which of the points are outside of this contour. Only the points
     that are outside are plotted.
 
-    :param xs: X values of the data.
-    :type xs: list, np.ndarray
-    :param ys: Y values of the data.
-    :type ys: list, np.ndarray
+    :param xs: list of x values
+    :type xs: list, ndarray
+    :param ys: list of y values
+    :type ys: list, ndarray
     :param bin_size: Bin size to use for the underlying 2D histogram. This
              can either be a scalar, in which case the bin size will
              be the same in both the x dimensions, or else a two
@@ -902,14 +1013,14 @@ def contour_scatter(
                    25%, 50%, and 75% of the data. If this is not
                    passed in, the default is
                    [0.25, 0.5, 0.75, 0.95].
-    :type param_levels: float, list
-    :param smoothing: How much to smooth the underlying 2D histogram. Like
-              `bin_size`, this parameter can be a scalar or two
-              element list. The values here will be the sigma of
-              a Gaussian kernel in the x and y directions. Off
-              diagonal elements of the covariance matrix is not
-              currently supported. If you are smoothing, it often
-              pays to choose a small bin size.
+    :type percent_levels: float, list
+    :param smoothing: Optional parameter that will allow the contours to be
+              smoothed. Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
     :type smoothing: int, float, list
     :param weights: A list containing weights for each data point. If these
             are not passed, all data points will be weighted
@@ -1154,7 +1265,7 @@ def contour_scatter(
         ax.contour_scatter(xs, ys, smoothing=0.5, bin_size=0.5)
         ax.equal_scale()
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.contour_scatter(
         self,
         xs,
@@ -1168,40 +1279,6 @@ def contour_scatter(
         scatter_kwargs,
         contour_kwargs,
         contourf_kwargs,
-    )
-
-
-def contour_all(
-    self,
-    xs,
-    ys,
-    x_smoothing,
-    y_smoothing,
-    bin_size=None,
-    percent_levels=None,
-    weights=None,
-    angles=None,
-    labels=False,
-    filled=False,
-    **kwargs
-):
-    """
-    empty
-    """
-    ax = plt.gca(projection="bpl")
-    return ax.contour_all(
-        self,
-        xs,
-        ys,
-        x_smoothing,
-        y_smoothing,
-        bin_size,
-        percent_levels,
-        weights,
-        angles,
-        labels,
-        filled,
-        **kwargs
     )
 
 
@@ -1247,7 +1324,7 @@ def data_ticks(x_data, y_data, extent=0.015, *args, **kwargs):
         ax.scatter(xs, ys)
         ax.data_ticks(xs, ys)
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.data_ticks(x_data, y_data, extent, *args, **kwargs)
 
 
@@ -1262,8 +1339,10 @@ def plot(*args, **kwargs):
     There isn't any added functionality.
 
     The parameters here are the exact same as they are for the regular
-    `plt.plot()` or `ax.plot()` functions, so I don't think any
-    documentation would be helpful.
+    `plt.plot()` or `ax.plot()` functions.
+
+    :param args: Additional arguments to pass to the `plot` function
+    :param kwargs: Additional keyword arguments to pass to the `plot` function
 
     .. plot::
         :include-source:
@@ -1291,7 +1370,7 @@ def plot(*args, **kwargs):
         ax2.set_title("betterplotlib")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.plot(*args, **kwargs)
 
 
@@ -1328,7 +1407,7 @@ def axvline(x=0, *args, **kwargs):
         ax.set_limits(-10, 10, -10, 10)
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.axvline(x, *args, **kwargs)
 
 
@@ -1365,7 +1444,7 @@ def axhline(y=0, *args, **kwargs):
         ax.set_limits(-10, 10, -10, 10)
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.axhline(y, *args, **kwargs)
 
 
@@ -1378,6 +1457,9 @@ def errorbar(*args, **kwargs):
     are used by default otherwise. It also adds a black marker edge to
     distinguish the markers when there are lots of data poitns. Otherwise
     everything blends together.
+
+    :param args: Additional arguments to pass to the `errorbar` function
+    :param kwargs: Additional keyword arguments to pass to the `errorbar` function
 
     .. plot::
         :include-source:
@@ -1404,7 +1486,7 @@ def errorbar(*args, **kwargs):
         ax2.set_title("betterplotlib")
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.errorbar(*args, **kwargs)
 
 
@@ -1441,8 +1523,8 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
         fig, ax = bpl.subplots(tight_layout=True)
         ax.set_limits(0, 10, 0, 5)
         ax.add_labels("x", "y")
-        ax.twin_axis_simple("x", 0, 100, r"$10 x$")
-        ax.twin_axis_simple("y", 1, 10**5, r"$10^y$", log=True)
+        ax.twin_axis_simple("x", 0, 100, "$10 x$")
+        ax.twin_axis_simple("y", 1, 10**5, "$10^y$", log=True)
 
     Note that for a slightly more complicated version of this plot, say if
     we wanted the top x axis to be x^2 rather than 10x, the limits would
@@ -1452,7 +1534,7 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
 
 
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.twin_axis_simple(axis, lower_lim, upper_lim, label, log)
 
 
@@ -1569,7 +1651,7 @@ def twin_axis(self, axis, new_ticks, label, old_to_new_func=None, new_to_old_fun
     :return: New axis object that was created, containing the newly
          created labels.
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.twin_axis(self, axis, new_ticks, label, old_to_new_func, new_to_old_func)
 
 
@@ -1597,8 +1679,10 @@ def shaded_density(
         import numpy as np
         bpl.set_style()
 
-        xs = np.random.uniform(0, 10, 100)
-        ys = np.random.uniform(0, 10, 100)
+        xs = np.concatenate([np.random.normal(3, 2, 1000),
+                 np.random.normal(7, 2, 1000)])
+        ys = np.concatenate([np.random.normal(7, 2, 1000),
+                 np.random.normal(3, 2, 1000)])
 
         fig, ax = bpl.subplots()
         ax.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
@@ -1607,15 +1691,25 @@ def shaded_density(
         ax.equal_scale()
 
     :param xs: list of x values
+    :type xs: list, ndarray
     :param ys: list of y values
-    :param bin_size: bin size for the 2D histogram. If not passed in, an
-             appropriate bin size will be automatically found.
-             If you are using smoothing, a smaller bin size is
-             often useful as it can make for a better looking plot.
-    :param smoothing: The size of the Gaussian smoothing kernel for the
-              data. Currently is the same in both dimensions.
-              Pass None for no smoothing.
-    :param log: Whether or not to do the smoothing and contour creation in log
+    :type ys: list, ndarray
+    :param bin_size: Bin size to use for the underlying 2D histogram. This
+             can either be a scalar, in which case the bin size will
+             be the same in both the x dimensions, or else a two
+             element list, where the first element will be the
+             bin size in the x dimension, and the second will be
+             the bin size in the y dimension.
+    :type bin_size: int, float, list
+    :param smoothing: Optional parameter that will smooth the shaded density.
+              Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
+    :type smoothing: int, float, list
+    :param log: Whether or not to do the smoothing and histogram creation in log
             space. This should be used if the plot will be done on log-scaled
             axes. If this is used, the bin_size and smoothing parameters will
             be interpreted as dex, rather than raw values.
@@ -1623,7 +1717,7 @@ def shaded_density(
     :param cmap: colormap used for the density.
     :return: output of the pcolormesh function call.
     """
-    ax = plt.gca(projection="bpl")
+    ax = get_axis()
     return ax.shaded_density(
         self,
         xs,
@@ -1635,11 +1729,3 @@ def shaded_density(
         log_xy,
         log_hist,
     )
-
-
-def format_labels(axis, labels):
-    """
-    empty
-    """
-    ax = plt.gca(projection="bpl")
-    return ax.format_labels(axis, labels)

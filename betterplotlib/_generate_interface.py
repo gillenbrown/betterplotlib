@@ -11,7 +11,9 @@ axes_loc = this_dir + os.sep + "axes_bpl.py"
 interface = open(interface_loc, "w")
 
 # write a header
-interface.write("import matplotlib.pyplot as plt\n\n\n")
+interface.write(
+    "import matplotlib.pyplot as plt\nfrom .manage_axes import get_axis\n\n\n"
+)
 
 
 def get_functions(loc, definition):
@@ -88,7 +90,7 @@ for function_args in axes_functions_args:
         + '    """'
         + func_docstring
         + '"""\n'
-        + '    ax = plt.gca(projection="bpl")\n'
+        + "    ax = get_axis()\n"
         + "    return ax.{}\n".format(func_args_no_defauts)
     )
     if function_args != axes_functions_args[-1]:
