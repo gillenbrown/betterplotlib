@@ -375,11 +375,9 @@ def add_text(x, y, text, coords="data", **kwargs):
         xs = np.arange(0, 7, 0.1)
         ys = xs**2
 
-        fig, ax = bpl.subplots()
-
-        ax.plot(xs, ys)
-        ax.add_text(2, 30, "(2, 30) data", ha="center", va="center")
-        ax.add_text(0.6, 0.2, "60% across, 20% up", "axes")
+        bpl.plot(xs, ys)
+        bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
+        bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
     """
     ax = get_axis()
     return ax.add_text(x, y, text, coords, **kwargs)
@@ -480,12 +478,10 @@ def legend(linewidth=0, *args, **kwargs):
 
         x = np.arange(0, 5, 0.1)
 
-        fig, ax = bpl.subplots()
-
-        ax.plot(x, x, label="x")
-        ax.plot(x, 2*x, label="2x")
-        ax.plot(x, 3*x, label="3x")
-        ax.legend(fontsize=20, loc=6, title="Title")
+        bpl.plot(x, x, label="x")
+        bpl.plot(x, 2*x, label="2x")
+        bpl.plot(x, 3*x, label="3x")
+        bpl.legend(fontsize=20, loc=6, title="Title")
     """
     ax = get_axis()
     return ax.legend(linewidth, *args, **kwargs)
