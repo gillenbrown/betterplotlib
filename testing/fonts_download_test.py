@@ -73,11 +73,18 @@ def test_download_variable_font_static_into_directory(make_temp_dir):
 
 
 def test_set_style_downloads_fonts():
+    font_dir = Path(matplotlib.get_data_path()) / "fonts/ttf/"
+    font_file_name = "Lobster-Regular.ttf"
+
+    # remove the font from the previous download (locally. on remote this does nothing)
+    for item in font_dir.iterdir():
+        if item.name == font_file_name:
+            item.unlink()
+    assert font_file_name not in [i.name for i in font_dir.iterdir()]
+
+    # then set this to download it
     bpl.set_style(font="Lobster")
-    font_files = [
-        i.name for i in (Path(matplotlib.get_data_path()) / "fonts/ttf/").iterdir()
-    ]
-    assert "Lobster-Regular.ttf" in font_files
+    assert font_file_name in [i.name for i in font_dir.iterdir()]
     # reset to normal style so as to not mess up other tests
     bpl.set_style()
 
