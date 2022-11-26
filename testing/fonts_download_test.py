@@ -77,7 +77,7 @@ def test_set_style_downloads_fonts():
     font_file_name = "Lobster-Regular.ttf"
 
     # remove the font from the previous download (locally. on remote this does nothing)
-    for item in font_dir.iterdir():
+    for item in font_dir.iterdir():  # pragma: no cover
         if item.name == font_file_name:
             item.unlink()
     assert font_file_name not in [i.name for i in font_dir.iterdir()]
