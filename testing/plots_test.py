@@ -406,11 +406,23 @@ def test_remove_ticks_all_sides():
     assert image_similarity_full(fig, "remove_ticks_all_sides.png")
 
 
+@pass_local_fail_remote
+def test_remove_ticks_imperative():
+    bpl.scatter(xs_uniform_10, ys_uniform_10)
+    bpl.remove_ticks("left", "right")
+    assert image_similarity_full(plt.gcf(), "remove_ticks_imperative.png")
+
+
 # ------------------------------------------------------------------------------
 #
 # Testing remove spines
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_remove_spines_imperative():
+    bpl.scatter(xs_uniform_10, ys_uniform_10)
+    bpl.remove_spines("left", "right")
+    assert image_similarity_full(plt.gcf(), "remove_spines_imperative.png")
 
 
 # ------------------------------------------------------------------------------
@@ -496,6 +508,13 @@ def test_remove_labels_validate_labels_passed_in():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError):
         ax.remove_labels("lkjlk")
+
+
+@pass_local_fail_remote
+def test_remove_labels_imperative():
+    bpl.scatter(xs_uniform_10, ys_uniform_10)
+    bpl.remove_labels("both")
+    assert image_similarity_full(plt.gcf(), "remove_labels_imperative.png")
 
 
 # ------------------------------------------------------------------------------
@@ -845,6 +864,12 @@ def test_contour_scatter_scatter_outside_contours_image():
 # Testing errorbar
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_errorbar_imperative():
+    bpl.errorbar(
+        x=xs_uniform_10, y=ys_uniform_10, xerr=xs_uniform_10, yerr=ys_uniform_10
+    )
+    assert image_similarity_full(plt.gcf(), "errorbar_imperative.png")
 
 
 # ------------------------------------------------------------------------------
@@ -891,6 +916,13 @@ def test_twin_axis_axis_error_checking():
     fig, ax = bpl.subplots()
     with pytest.raises(ValueError):
         ax.twin_axis("z", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
+
+
+@pass_local_fail_remote
+def test_twin_axis_imperative():
+    bpl.set_limits(0, 3, 0, 3)
+    bpl.twin_axis("x", [1, 10, 100, 1000], "label", lambda x: 10**x)
+    assert image_similarity_full(plt.gcf(), "twin_axis_imperative.png")
 
 
 # ------------------------------------------------------------------------------

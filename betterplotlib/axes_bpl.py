@@ -506,11 +506,9 @@ class Axes_bpl(Axes):
             xs = np.arange(0, 7, 0.1)
             ys = xs**2
 
-            fig, ax = bpl.subplots()
-
-            ax.plot(xs, ys)
-            ax.add_text(2, 30, "(2, 30) data", ha="center", va="center")
-            ax.add_text(0.6, 0.2, "60% across, 20% up", "axes")
+            bpl.plot(xs, ys)
+            bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
+            bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
         """
 
         # this function takes care of the transform keyword already, so don't
@@ -643,12 +641,10 @@ class Axes_bpl(Axes):
 
             x = np.arange(0, 5, 0.1)
 
-            fig, ax = bpl.subplots()
-
-            ax.plot(x, x, label="x")
-            ax.plot(x, 2*x, label="2x")
-            ax.plot(x, 3*x, label="3x")
-            ax.legend(fontsize=20, loc=6, title="Title")
+            bpl.plot(x, x, label="x")
+            bpl.plot(x, 2*x, label="2x")
+            bpl.plot(x, 3*x, label="3x")
+            bpl.legend(fontsize=20, loc=6, title="Title")
         """
 
         # push the legend a little farther away from the edge.
