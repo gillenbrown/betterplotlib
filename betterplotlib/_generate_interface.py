@@ -1,5 +1,6 @@
 # auto generates _interface.py
 import os
+import subprocess
 
 from betterplotlib.axes_bpl import Axes_bpl
 
@@ -99,3 +100,6 @@ for function_args in axes_functions_args:
         interface.write("\n\n")
 
 interface.close()
+
+# then run black code style
+subprocess.run(["black", str(interface_loc)])
