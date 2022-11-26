@@ -33,14 +33,14 @@ def get_functions(loc, definition):
             if in_def:
                 if "def" in line:
                     # replace self, both with comma and without
-                    this_def = line.strip()
-                    this_def = this_def.replace("self, ", "").replace("self", "") + "\n"
+                    this_def = line.strip() + "\n"
                 else:
                     this_def += line[4:]
                     if not line.endswith("\n"):
                         this_def += "\n"
             if in_def and ":" in line:
                 in_def = False
+                this_def = this_def.replace("self,", "").replace("self", "")
                 func_args.append(this_def)
 
     return func_args
