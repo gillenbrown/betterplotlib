@@ -13,18 +13,27 @@ random_x = np.random.normal(0, 1, 1000)
 # test get axis
 #
 # ------------------------------------------------------------------------------
+def clear_all_open_figures():
+    # needed to make sure things are fresh before starting
+    for i in plt.get_fignums():
+        plt.close(i)
+
+
 def test_get_axis_nothing_previously_set():
+    clear_all_open_figures()
     ax = get_axis()
     assert ax is not None
 
 
 def test_get_axis_figure_only_set():
+    clear_all_open_figures()
     fig = plt.figure()
     ax = get_axis()
     assert fig == ax.figure
 
 
 def test_get_axis_fig_and_ax_already_set():
+    clear_all_open_figures()
     fig, ax = subplots()
     ax2 = get_axis()
     assert ax2 == ax
@@ -32,6 +41,7 @@ def test_get_axis_fig_and_ax_already_set():
 
 
 def test_get_axis_non_bpl_axis_only():
+    clear_all_open_figures()
     fig = plt.figure()
     fig.add_subplot(projection="polar")
     with pytest.raises(ValueError):
