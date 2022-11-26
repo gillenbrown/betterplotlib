@@ -1,13 +1,13 @@
 # auto generates _interface.py
-import os
 import subprocess
+from pathlib import Path
 
 from betterplotlib.axes_bpl import Axes_bpl
 
 # get the locations of the files
-this_dir = os.path.realpath(os.path.split(__file__)[0])
-interface_loc = this_dir + os.sep + "_interface.py"
-axes_loc = this_dir + os.sep + "axes_bpl.py"
+this_dir = Path(__file__).parent
+interface_loc = this_dir / "_interface.py"
+axes_loc = this_dir / "axes_bpl.py"
 # open the new file for writing.
 interface = open(interface_loc, "w")
 
