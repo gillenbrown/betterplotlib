@@ -316,19 +316,39 @@ class Axes_bpl(Axes):
             import numpy as np
             bpl.set_style()
 
-
             data1 = np.random.normal(-6, 1, size=10000)
             data2 = np.random.normal(-2, 1, size=10000)
             data3 = np.random.normal(2, 1, size=10000)
             data4 = np.random.normal(6, 1, size=10000)
             bin_size = 0.5
-            bpl.hist(data1, rel_freq=True, bin_size=bin_size)
-            bpl.hist(data2, rel_freq=True, bin_size=bin_size, histtype="step",
-                    linewidth=5)
-            bpl.hist(data3, rel_freq=True, bin_size=bin_size,
-                    histtype="stepfilled", hatch="o", alpha=0.8)
-            bpl.hist(data4, rel_freq=True, bin_size=bin_size, histtype="step",
-                    hatch="x", linewidth=4)
+            bpl.hist(
+                data1,
+                rel_freq=True,
+                bin_size=bin_size,
+            )
+            bpl.hist(
+                data2,
+                rel_freq=True,
+                bin_size=bin_size,
+                histtype="step",
+                linewidth=5,
+            )
+            bpl.hist(
+                data3,
+                rel_freq=True,
+                bin_size=bin_size,
+                histtype="stepfilled",
+                hatch="o",
+                alpha=0.8,
+            )
+            bpl.hist(
+                data4,
+                rel_freq=True,
+                bin_size=bin_size,
+                histtype="step",
+                hatch="x",
+                linewidth=4,
+            )
 
             bpl.add_labels(y_label="Relative Frequency")
 
@@ -1096,15 +1116,23 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(3, 2, 1000),
-                                 np.random.normal(7, 2, 1000)])
-            ys = np.concatenate([np.random.normal(7, 2, 1000),
-                                 np.random.normal(3, 2, 1000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(3, 2, 1000),
+                    np.random.normal(7, 2, 1000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(7, 2, 1000),
+                    np.random.normal(3, 2, 1000),
+                ]
+            )
 
-            bpl.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
-                                cmap="inferno")
+            bpl.density_contour(xs, ys, bin_size=0.01, smoothing=0.5, cmap="inferno")
             bpl.set_limits(0, 10, 0, 10)
             bpl.equal_scale()
 
@@ -1113,16 +1141,26 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
+
             bpl.set_style()
 
-            xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
-                                      np.random.normal(7, 2, 1000)])
-            ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
-                                       np.random.normal(3, 2, 1000)])
+            xs = 10 ** np.concatenate(
+                [
+                    np.random.normal(3, 2, 1000),
+                    np.random.normal(7, 2, 1000),
+                ]
+            )
+            ys = 10 ** np.concatenate(
+                [
+                    np.random.normal(7, 2, 1000),
+                    np.random.normal(3, 2, 1000),
+                ]
+            )
 
             fig, ax = bpl.subplots()
-            ax.density_contour(xs, ys, bin_size=0.01, smoothing=0.5,
-                               log=[True, True], cmap="inferno")
+            ax.density_contour(
+                xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+            )
             ax.set_xscale("log")
             ax.set_yscale("log")
             ax.set_limits(1, 1e10, 1, 1e10)
@@ -1211,15 +1249,23 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(3, 2, 1000),
-                                 np.random.normal(7, 2, 1000)])
-            ys = np.concatenate([np.random.normal(7, 2, 1000),
-                                 np.random.normal(3, 2, 1000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(3, 2, 1000),
+                    np.random.normal(7, 2, 1000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(7, 2, 1000),
+                    np.random.normal(3, 2, 1000),
+                ]
+            )
 
-            bpl.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
-                                 cmap="inferno")
+            bpl.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5, cmap="inferno")
             bpl.set_limits(0, 10, 0, 10)
             bpl.equal_scale()
 
@@ -1228,16 +1274,26 @@ class Axes_bpl(Axes):
 
             import betterplotlib as bpl
             import numpy as np
+
             bpl.set_style()
 
-            xs = 10** np.concatenate([np.random.normal(3, 2, 1000),
-                                      np.random.normal(7, 2, 1000)])
-            ys = 10 ** np.concatenate([np.random.normal(7, 2, 1000),
-                                       np.random.normal(3, 2, 1000)])
+            xs = 10 ** np.concatenate(
+                [
+                    np.random.normal(3, 2, 1000),
+                    np.random.normal(7, 2, 1000),
+                ]
+            )
+            ys = 10 ** np.concatenate(
+                [
+                    np.random.normal(7, 2, 1000),
+                    np.random.normal(3, 2, 1000),
+                ]
+            )
 
             fig, ax = bpl.subplots()
-            ax.density_contourf(xs, ys, bin_size=0.01, smoothing=0.5,
-                                log=[True, True], cmap="inferno")
+            ax.density_contourf(
+                xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+            )
             ax.set_xscale("log")
             ax.set_yscale("log")
             ax.set_limits(1, 1e10, 1, 1e10)
@@ -1364,14 +1420,23 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(0, 1, 100000),
-                                 np.random.normal(3, 1, 100000),
-                                 np.random.normal(0, 1, 100000)])
-            ys = np.concatenate([np.random.normal(0, 1, 100000),
-                                 np.random.normal(3, 1, 100000),
-                                 np.random.normal(3, 1, 100000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(0, 1, 100000),
+                    np.random.normal(3, 1, 100000),
+                    np.random.normal(0, 1, 100000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(0, 1, 100000),
+                    np.random.normal(3, 1, 100000),
+                    np.random.normal(3, 1, 100000),
+                ]
+            )
 
             fig, (ax1, ax2) = bpl.subplots(ncols=2, figsize=[10, 5])
 
@@ -1388,14 +1453,23 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(0, 1, 10000)])
-            ys = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(3, 1, 10000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(0, 1, 10000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                ]
+            )
 
             fig, (ax1, ax2, ax3) = bpl.subplots(ncols=3, figsize=[15, 5])
 
@@ -1415,14 +1489,23 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(0, 1, 10000)])
-            ys = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(3, 1, 10000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(0, 1, 10000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                ]
+            )
 
             fig, (ax1, ax2, ax3) = bpl.subplots(ncols=3, figsize=[15, 5])
 
@@ -1438,20 +1521,23 @@ class Axes_bpl(Axes):
         .. plot::
             :include-source:
 
-            import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
             xs = [1, 2, 3, 4]
             ys = [1, 2, 3, 4]
             weights = [1, 2, 3, 4]
-            bpl.contour_scatter(xs, ys,
-                                weights=weights,
-                                bin_size=0.01,
-                                smoothing=[0.8, 0.3],
-                                fill_cmap="Blues",
-                                labels=True,
-                                contour_kwargs={"colors":"k"})
+            bpl.contour_scatter(
+                xs,
+                ys,
+                weights=weights,
+                bin_size=0.01,
+                smoothing=[0.8, 0.3],
+                fill_cmap="Blues",
+                labels=True,
+                contour_kwargs={"colors": "k"},
+            )
             bpl.equal_scale()
 
         Now we can mess with the fun stuff, which is the `fill_cmap` param and
@@ -1465,14 +1551,23 @@ class Axes_bpl(Axes):
 
             import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(0, 1, 10000)])
-            ys = np.concatenate([np.random.normal(0, 1, 10000),
-                                 np.random.normal(3, 1, 10000),
-                                 np.random.normal(3, 1, 10000)])
+            xs = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(0, 1, 10000),
+                ]
+            )
+            ys = np.concatenate(
+                [
+                    np.random.normal(0, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                    np.random.normal(3, 1, 10000),
+                ]
+            )
 
             fig, axs = bpl.subplots(nrows=2, ncols=2)
             [ax1, ax2], [ax3, ax4] = axs
@@ -1481,51 +1576,65 @@ class Axes_bpl(Axes):
             smoothing = 0.2
             bin_size = 0.1
 
-            ax1.contour_scatter(xs, ys,
-                                bin_size=bin_size,
-                                percent_levels=percent_levels,
-                                smoothing=smoothing,
-                                fill_cmap="background_grey",
-                                contour_kwargs={"cmap":"magma"},
-                                scatter_kwargs={"s":10,
-                                                "c":bpl.almost_black})
+            ax1.contour_scatter(
+                xs,
+                ys,
+                bin_size=bin_size,
+                percent_levels=percent_levels,
+                smoothing=smoothing,
+                fill_cmap="background_grey",
+                contour_kwargs={"cmap": "magma"},
+                scatter_kwargs={"s": 10, "c": bpl.almost_black},
+            )
             ax1.make_ax_dark()
 
             # or we can choose our own `fill_cmap`
-            ax2.contour_scatter(xs, ys,
-                                bin_size=bin_size,
-                                smoothing=smoothing,
-                                fill_cmap="viridis",
-                                percent_levels=percent_levels,
-                                contour_kwargs={"linewidths":1,
-                                                "colors":"white"},
-                                scatter_kwargs={"s":50,
-                                                "c":bpl.color_cycle[3],
-                                                "alpha":0.3})
+            ax2.contour_scatter(
+                xs,
+                ys,
+                bin_size=bin_size,
+                smoothing=smoothing,
+                fill_cmap="viridis",
+                percent_levels=percent_levels,
+                contour_kwargs={"linewidths": 1, "colors": "white"},
+                scatter_kwargs={"s": 50, "c": bpl.color_cycle[3], "alpha": 0.3},
+            )
 
             # There are also my colormaps that work with the dark axes
-            ax3.contour_scatter(xs, ys,
-                                bin_size=bin_size,
-                                smoothing=smoothing,
-                                fill_cmap="modified_greys",
-                                percent_levels=percent_levels,
-                                scatter_kwargs={"c": bpl.color_cycle[0]},
-                                contour_kwargs={"linewidths":[2,0,0,0,0,0,0],
-                                                "colors":bpl.almost_black})
+            ax3.contour_scatter(
+                xs,
+                ys,
+                bin_size=bin_size,
+                smoothing=smoothing,
+                fill_cmap="modified_greys",
+                percent_levels=percent_levels,
+                scatter_kwargs={"c": bpl.color_cycle[0]},
+                contour_kwargs={
+                    "linewidths": [2, 0, 0, 0, 0, 0, 0],
+                    "colors": bpl.almost_black,
+                },
+            )
             ax3.make_ax_dark()
 
             # the default `fill_cmap` is white.
             new_linestyles = ["solid", "dashed", "dashed", "dashed"]
-            ax4.contour_scatter(xs, ys,
-                                bin_size=bin_size,
-                                smoothing=smoothing,
-                                percent_levels=percent_levels,
-                                scatter_kwargs={"marker":"^",
-                                                "linewidth":0.2,
-                                                "c":bpl.color_cycle[1],
-                                                "s":20},
-                                contour_kwargs={"linestyles": new_linestyles,
-                                                "colors":bpl.almost_black})
+            ax4.contour_scatter(
+                xs,
+                ys,
+                bin_size=bin_size,
+                smoothing=smoothing,
+                percent_levels=percent_levels,
+                scatter_kwargs={
+                    "marker": "^",
+                    "linewidth": 0.2,
+                    "c": bpl.color_cycle[1],
+                    "s": 20,
+                },
+                contour_kwargs={
+                    "linestyles": new_linestyles,
+                    "colors": bpl.almost_black,
+                },
+            )
 
         Note that the contours will work appropriately for datasets with
         "holes", as demonstrated here.
@@ -1999,19 +2108,21 @@ class Axes_bpl(Axes):
         .. plot::
             :include-source:
 
+            import numpy as np
             import betterplotlib as bpl
+
             bpl.set_style()
 
             def cube_root(x):
-                return x**(1.0/3.0)
+                return x ** (1.0 / 3.0)
 
             fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
             ax.set_limits(0, 10, 0, 10.0001)  # to avoid floating point errors
             ax.add_labels("x", "y")
-            ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$",
-                         new_to_old_func=np.sqrt)
-            ax.twin_axis("x", [0, 10, 100, 400, 1000], "$x^3$",
-                         new_to_old_func=cube_root)
+            ax.twin_axis("y", [0, 10, 30, 60, 100], "$y^2$", new_to_old_func=np.sqrt)
+            ax.twin_axis(
+                "x", [0, 10, 100, 400, 1000], "$x^3$", new_to_old_func=cube_root
+            )
 
         This function will ignore values for the ticks that are outside the
         limits of the plot. The following plot isn't the most useful, since
@@ -2179,13 +2290,14 @@ class Axes_bpl(Axes):
             import numpy as np
             bpl.set_style()
 
-            xs = np.concatenate([np.random.normal(3, 2, 1000),
-                                 np.random.normal(7, 2, 1000)])
-            ys = np.concatenate([np.random.normal(7, 2, 1000),
-                                 np.random.normal(3, 2, 1000)])
+            xs = np.concatenate(
+                [np.random.normal(3, 2, 1000), np.random.normal(7, 2, 1000)]
+            )
+            ys = np.concatenate(
+                [np.random.normal(7, 2, 1000), np.random.normal(3, 2, 1000)]
+            )
 
-            bpl.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5,
-                               cmap="inferno")
+            bpl.shaded_density(xs, ys, bin_size=0.01, smoothing=0.5, cmap="inferno")
             bpl.set_limits(0, 10, 0, 10)
             bpl.equal_scale()
 
