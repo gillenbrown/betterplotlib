@@ -71,7 +71,7 @@ class Axes_bpl(Axes):
         with the way matplotlib works under the hood. Mess around with it if
         you're having trouble.
 
-        :param ticks_to_remove: locations where ticks need to be removed from. choose
+        :param ticks_to_remove: locations where ticks need to be removed from. Choose
                                 from: "all, "top", "bottom", "left", or "right",
                                 and pass in as many as you'd like
         :return: None
@@ -590,7 +590,7 @@ class Axes_bpl(Axes):
 
     def legend(self, linewidth=0, *args, **kwargs):
         """
-        Create a nice looking legend.
+        Create a nicer looking legend.
 
         Works by calling the ax.legend() function with the given args and
         kwargs. If some are not specified, they will be filled with values that
@@ -598,6 +598,7 @@ class Axes_bpl(Axes):
 
         :param linewidth: linewidth of the border of the legend. Defaults to
                           zero.
+        :type linewidth: float
         :param args: non-keyword arguments passed on to the ax.legend() fuction.
         :param kwargs: keyword arguments that will be passed on to the
                        ax.legend() function. This will be things like loc,
@@ -918,11 +919,14 @@ class Axes_bpl(Axes):
                         are not passed, all data points will be weighted
                         equally.
         :type weights: list, np.ndarray
-        :param log: Whether or not to do the smoothing and contour creation in log
-                    space. This should be used if the plot will be done on log-scaled
-                    axes. If this is used, the bin_size and smoothing parameters will
-                    be interpreted as dex, rather than raw values.
-        :type log: bool
+        :param log: Whether or not to do the smoothing and bin creation in log
+                    space. This should be used if the plot will be done on
+                    log-scaled axes.Can either be a single bool, in which case the
+                    x and y scales will both be log (or not), or a two element
+                    array, where the first is whether the x axis is log, and the
+                    second is y. If this is used, the bin_size and smoothing
+                    parameters will be interpreted as dex, rather than raw values.
+        :type log: bool, list
         :param labels: Whether or not to label the individual contour lines
                        with their percentage level.
         :type labels: bool
@@ -1072,11 +1076,14 @@ class Axes_bpl(Axes):
                         are not passed, all data points will be weighted
                         equally.
         :type weights: list, np.ndarray
-        :param log: Whether or not to do the smoothing and contour creation in log
-                    space. This should be used if the plot will be done on log-scaled
-                    axes. If this is used, the bin_size and smoothing parameters will
-                    be interpreted as dex, rather than raw values.
-        :type log: bool
+        :param log: Whether or not to do the smoothing and bin creation in log
+                    space. This should be used if the plot will be done on
+                    log-scaled axes.Can either be a single bool, in which case the
+                    x and y scales will both be log (or not), or a two element
+                    array, where the first is whether the x axis is log, and the
+                    second is y. If this is used, the bin_size and smoothing
+                    parameters will be interpreted as dex, rather than raw values.
+        :type log: bool, list
         :param labels: Whether or not to label the individual contour lines
                        with their percentage level.
         :type labels: bool
@@ -1187,11 +1194,14 @@ class Axes_bpl(Axes):
                         are not passed, all data points will be weighted
                         equally.
         :type weights: list, np.ndarray
-        :param log: Whether or not to do the smoothing and contour creation in log
-                    space. This should be used if the plot will be done on log-scaled
-                    axes. If this is used, the bin_size and smoothing parameters will
-                    be interpreted as dex, rather than raw values.
-        :type log: bool
+        :param log: Whether or not to do the smoothing and bin creation in log
+                    space. This should be used if the plot will be done on
+                    log-scaled axes.Can either be a single bool, in which case the
+                    x and y scales will both be log (or not), or a two element
+                    array, where the first is whether the x axis is log, and the
+                    second is y. If this is used, the bin_size and smoothing
+                    parameters will be interpreted as dex, rather than raw values.
+        :type log: bool, list
         :param kwargs: Additional keyword arguments to pass on to the original
                        matplotlib contour function.
         :return: output of the matplotlib.contourf function.
@@ -1886,12 +1896,17 @@ class Axes_bpl(Axes):
 
         :param axis: Where the new scaled axis will be placed. Must
                      either be "x" or "y".
+        :type axis: str
         :param lower_lim: Value to be put on the left/bottom of the newly
                           created axis.
+        :type lower_lim: float
         :param upper_lim: Value to be put on the right/top of the newly
                           created axis.
+        :type upper_lim: float
         :param label: The label to put on this new axis.
+        :type label: str
         :param log: Whether or not to log scale this axis.
+        :type log: bool
         :returns: the new axes
 
         .. plot::
@@ -2193,12 +2208,23 @@ class Axes_bpl(Axes):
                           Has the same format as padding and bin_size, so different
                           smoothing kernels are possible in the x and y directions.
         :type smoothing: int, float, list
-        :param log: Whether or not to do the smoothing and histogram creation in log
-                    space. This should be used if the plot will be done on log-scaled
-                    axes. If this is used, the bin_size and smoothing parameters will
-                    be interpreted as dex, rather than raw values.
+        :param cmap: The colormap to use for the shading
+        :type cmap: str
+        :param weights: A list containing weights for each data point. If these
+                        are not passed, all data points will be weighted
+                        equally.
+        :type weights: list, np.ndarray
+        :param log_xy: Whether or not to do the smoothing and bin creation in log
+                       space. This should be used if the plot will be done on
+                       log-scaled axes.Can either be a single bool, in which case the
+                       x and y scales will both be log (or not), or a two element
+                       array, where the first is whether the x axis is log, and the
+                       second is y. If this is used, the bin_size and smoothing
+                       parameters will be interpreted as dex, rather than raw values.
         :type log: bool, list
-        :param cmap: colormap used for the density.
+        :param log_hist: Whether or not to use the log of the histogram values to
+                         compute the shading, or just the values of the histogram.
+        :type log_hist: bool
         :return: output of the pcolormesh function call.
         """
         padding = tools._padding_from_smoothing(smoothing)
