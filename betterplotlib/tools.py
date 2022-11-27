@@ -57,6 +57,11 @@ def _freedman_diaconis(data):
 
     where IQR is the interquartile range, n is the number of data points, and
     h is the bin size.
+
+    :param data: The list of data to calculate the bin size for
+    :type data: list, ndarray
+    :returns: the proper bin size
+    :rtype: float
     """
     return _freedman_diaconis_core(stats.iqr(data), len(data))
 
@@ -70,6 +75,13 @@ def _freedman_diaconis_core(iqr, n):
 
     where IQR is the interquartile range, n is the number of data points, and
     h is the bin size.
+
+    :param iqr: the interquartile range of the data
+    :type iqr: float
+    :param n: the size of the dataset
+    :type n: float:
+    :return: the proper bin size
+    :rtype: float
     """
     n = type_checking.numeric_scalar(n, "n must be a numeric scalar.")
     iqr = type_checking.numeric_scalar(iqr, "iqr must be a numeric scalar.")
@@ -555,10 +567,13 @@ def percentile_level(densities, percentages):
                       histogram (most typically) or each bin in a 1D histogram.
                       This needs to be flattened, though, so it's just one
                       dimension.
+    :type densities: list, ndarray
     :param percentages: The percentiles to calculate levels for. If 0.5 is used,
                        one of the values returned will be the level that
                        encloses 50% of the data.
+    :type percentages: list, ndarray
     :return: The level that encloses `percentage` of the data.
+    :rtype: float
     """
     msg = "{} in percentile_level must be array like."
     densities = type_checking.numeric_list_1d(densities, msg.format("densities"))
