@@ -8,13 +8,16 @@
 betterplotlib
 ===========================================
 
-betterplotlib is a Python library that is designed to make plotting with matplotlib easier, and results in prettier plots. It isn't a replacement for either matplotlib itself or other packages like Seaborn. betterplotlib adds some sugar behind the scenes to make the default matplotlib plots look much nicer, and adds some convenience functions to make some tricky things much easier. You can use the exact same syntax with betterplotlib as you can with matplotlib, making it a very easy package to use if you're familiar with matplotlib. 
-
-Here are some examples of some plots you can easily make with betterplotlib. 
+betterplotlib is a Python library that is designed to make plotting with matplotlib
+easier, and results in prettier plots. It isn't a replacement for either matplotlib
+itself or other packages like Seaborn. betterplotlib adds some sugar behind the scenes
+to make the default matplotlib plots look much nicer, and adds some convenience functions
+to make some tricky things much easier. You can use the exact same syntax with
+betterplotlib as you can with matplotlib, making it a very easy package to use if
+you're familiar with matplotlib.
 
 .. image:: images/bpl_demo.png
 
-Hopefully this convinces you that betterplotlib is a useful package to install. If not, the convenience functions enumerated in the example sections below might. Take a look at them before diving in to the API.
 
 Installation
 ------------
@@ -22,26 +25,16 @@ Installation
 The package is available in PyPI, so you can install with `pip install betterplotlib`.
 
 
-Examples
---------
-
-.. toctree::
-   :maxdepth: 1
-
-   examples.ipynb
-
 Documentation
 -------------
 
+The full documentation of the API is available through these two pages.
+
 .. toctree::
    :maxdepth: 1
-   
-   style
+
    api_overview
-
-
-   
-
+   style
 
 
 .. Indices and tables
