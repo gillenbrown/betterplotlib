@@ -689,6 +689,12 @@ def test_density_log_is_right_type():
         ax._density_contour_core(xs_uniform_10, ys_uniform_10, log=["yes", "no"])
 
 
+def test_density_contour_can_specify_smoothing_but_not_bin_size():
+    # just test that this avoids an error
+    fig, ax = bpl.subplots()
+    ax._density_contour_core(xs_uniform_10, ys_uniform_10, smoothing=0.1)
+
+
 # ------------------------------------------------------------------------------
 #
 # Testing density contour
@@ -1019,6 +1025,16 @@ def test_shaded_density_log_hist():
         ax.equal_scale()
         ax.set_limits(-2, 2, -2, 2)
     assert image_similarity_full(fig, "shaded_density_log.png")
+
+
+@pass_local_fail_remote
+def test_shaded_density_different_xy():
+    # just test that this avoids an error
+    fig, ax = bpl.subplots()
+    ax.shaded_density(xs_normal_500, xs_normal_500, bin_size=[0.5, 1], smoothing=[5, 1])
+    ax.set_limits(-6, 6, -6, 6)
+    ax.equal_scale()
+    assert image_similarity_full(fig, "shaded_density_different_xy.png")
 
 
 # ------------------------------------------------------------------------------

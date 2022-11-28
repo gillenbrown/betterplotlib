@@ -448,6 +448,10 @@ def smart_hist_2d(
         make_bins(ys, bin_size_y, padding_y),
     ]
 
+    # get the actual bin size used
+    bin_size_x = bin_edges[0][1] - bin_edges[0][0]
+    bin_size_y = bin_edges[1][1] - bin_edges[1][0]
+
     # We can then use the bins to create the histogram
     hist, x_edges, y_edges = np.histogram2d(xs, ys, bin_edges, weights=weights)
 
