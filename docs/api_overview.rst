@@ -12,17 +12,9 @@ Top Level Functions
 
 Betterplotlib has some top level functions, involving either styles or object handling.
 
-Object Handling
-^^^^^^^^^^^^^^^^^
 .. autosummary::
     subplots
-
-Styles
-^^^^^^^^^^^
-.. autosummary::
-    default_style
-    presentation_style
-    white_style
+    set_style
 
 
 Axes
@@ -38,40 +30,37 @@ These methods replace or supplement the default matplotlib commands for the main
     Axes_bpl.scatter
     Axes_bpl.errorbar
     Axes_bpl.hist
+    Axes_bpl.density_contour
+    Axes_bpl.density_contourf
     Axes_bpl.contour_scatter
+    Axes_bpl.shaded_density
 
-Plot Annotations
-^^^^^^^^^^^^^^^^^^
+Plot Annotations and Format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 These methods control various annotations, like the legend, tick marks, and axes labels.
 
 .. autosummary::
     Axes_bpl.legend
-    Axes_bpl.set_limits
     Axes_bpl.data_ticks
     Axes_bpl.axhline
     Axes_bpl.axvline
     Axes_bpl.add_text
     Axes_bpl.easy_add_text
+    Axes_bpl.set_limits
     Axes_bpl.add_labels
     Axes_bpl.remove_labels
     Axes_bpl.remove_ticks
     Axes_bpl.remove_spines
-
-Plot Format
-^^^^^^^^^^^^
-These methods control the format of the axes itself.
-
-.. autosummary::
-    Axes_bpl.make_ax_dark
     Axes_bpl.equal_scale
     Axes_bpl.twin_axis_simple
     Axes_bpl.twin_axis
+    Axes_bpl.make_ax_dark
 
 
 Non Object-Oriented Interface
 -----------------------------
 
-In addition to the interface described above, all the Axes objects are accessible without directly creating them. This works just like the `plt.whatever()` syntax in default matplotlib. See the examples page for some examples. Note that I designed everything with the object oriented syntax in mind, and haven't tested the non-OO interface as much, so it might not always work as intended. Let me know if you find any bugs.
+In addition to the interface described above, all the Axes objects are accessible without directly creating them. This works just like the `plt.whatever()` syntax in default matplotlib, just with `bpl.whatever()`.
 
     
 

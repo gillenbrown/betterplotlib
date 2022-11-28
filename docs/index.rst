@@ -20,10 +20,6 @@ Installation
 ------------
 
 The package is available in PyPI, so you can install with `pip install betterplotlib`.
-This is the easiest way. You can also download from 
-Github_.
-
-.. _Github: https://github.com/gillenbrown/betterplotlib
 
 
 Examples
