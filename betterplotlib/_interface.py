@@ -19,8 +19,6 @@ def make_ax_dark(grid=True, minor_ticks=False):
     :type minor_ticks: bool
     :return: None
 
-    Example:
-
     .. plot::
         :include-source:
 
@@ -1533,7 +1531,7 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
     we wanted the top x axis to be x^2 rather than 10x, the limits would
     still be the same, but since the new axis will always be a linear or log
     scale the new axis won't represent the true relationship between the
-    variables on the twin axes. See the other function for that.
+    variables on the twin axes. See `twin_axis` for that.
 
 
     """
@@ -1552,7 +1550,30 @@ def twin_axis(axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
     `twin_axis_simple` function. This one will create a new axis that is
     an arbitrary scale.
 
-    Here is a way this can be used.
+    :param axis: Whether the new axis labels will be on the "x" or "y" axis.
+             If "x" is chosen this will place the markers on the top
+             botder of the plot, while "y" will place the values on the
+             left border of the plot. "x" and "y" are the only
+             allowed values.
+    :type axis: str
+    :param new_ticks: List of of locations (in the new data values) to place
+              ticks. Any values outside the range of the plot
+              will be ignored.
+    :type new_ticks: list, np.ndarray
+    :param label: The label given to the newly created axis.
+    :type label: str
+    :param old_to_new_func: Function that takes values on the original axis
+                and transforms them to corresponding values
+                on the soon-to-be created axis. Either this
+                parameter or `new_to_old_func` can be used, but
+                not both.
+    :param new_to_old_func: Function that takes values on the
+                soon-to-be-created axis and transforms them to
+                corresponding values on the original axis.
+                Either this parameter or `old_to_new_func` can
+                be used, but not both.
+    :return: New axis object that was created, containing the newly
+         created labels.
 
     .. plot::
         :include-source:
@@ -1631,30 +1652,6 @@ def twin_axis(axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
         ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
         ax.twin_axis("y", [-1, 0, 1, 2, 3, 4, 5], "log(y)", np.log10)
 
-    :param axis: Whether the new axis labels will be on the "x" or "y" axis.
-             If "x" is chosen this will place the markers on the top
-             botder of the plot, while "y" will place the values on the
-             left border of the plot. "x" and "y" are the only
-             allowed values.
-    :type axis: str
-    :param new_ticks: List of of locations (in the new data values) to place
-              ticks. Any values outside the range of the plot
-              will be ignored.
-    :type new_ticks: list, np.ndarray
-    :param label: The label given to the newly created axis.
-    :type label: str
-    :param old_to_new_func: Function that takes values on the original axis
-                and transforms them to corresponding values
-                on the soon-to-be created axis. Either this
-                parameter or `new_to_old_func` can be used, but
-                not both.
-    :param new_to_old_func: Function that takes values on the
-                soon-to-be-created axis and transforms them to
-                corresponding values on the original axis.
-                Either this parameter or `old_to_new_func` can
-                be used, but not both.
-    :return: New axis object that was created, containing the newly
-         created labels.
     """
     ax = get_axis()
     return ax.twin_axis(axis, new_ticks, label, old_to_new_func, new_to_old_func)
@@ -1675,6 +1672,44 @@ def shaded_density(
 
     Is essentially a 2D histogram, but supports smoothing. Under the hood,
     this uses the  pcolormesh function in matplotlib.
+
+    :param xs: list of x values
+    :type xs: list, ndarray
+    :param ys: list of y values
+    :type ys: list, ndarray
+    :param bin_size: Bin size to use for the underlying 2D histogram. This
+             can either be a scalar, in which case the bin size will
+             be the same in both the x dimensions, or else a two
+             element list, where the first element will be the
+             bin size in the x dimension, and the second will be
+             the bin size in the y dimension.
+    :type bin_size: int, float, list
+    :param smoothing: Optional parameter that will smooth the shaded density.
+              Pass in a nonzero value, which will be the
+              standard deviation of the Gaussian kernel use to smooth
+              the histogram. When using this, often choosing smaller
+              bin sizes is advantageous to make a less grainy plot.
+              Has the same format as padding and bin_size, so different
+              smoothing kernels are possible in the x and y directions.
+    :type smoothing: int, float, list
+    :param cmap: The colormap to use for the shading
+    :type cmap: str
+    :param weights: A list containing weights for each data point. If these
+            are not passed, all data points will be weighted
+            equally.
+    :type weights: list, np.ndarray
+    :param log_xy: Whether or not to do the smoothing and bin creation in log
+               space. This should be used if the plot will be done on
+               log-scaled axes.Can either be a single bool, in which case the
+               x and y scales will both be log (or not), or a two element
+               array, where the first is whether the x axis is log, and the
+               second is y. If this is used, the bin_size and smoothing
+               parameters will be interpreted as dex, rather than raw values.
+    :type log: bool, list
+    :param log_hist: Whether or not to use the log of the histogram values to
+             compute the shading, or just the values of the histogram.
+    :type log_hist: bool
+    :return: output of the pcolormesh function call.
 
     .. plot::
         :include-source:
@@ -1718,43 +1753,6 @@ def shaded_density(
         bpl.set_limits(1, 1e10, 1, 1e10)
         bpl.equal_scale()
 
-    :param xs: list of x values
-    :type xs: list, ndarray
-    :param ys: list of y values
-    :type ys: list, ndarray
-    :param bin_size: Bin size to use for the underlying 2D histogram. This
-             can either be a scalar, in which case the bin size will
-             be the same in both the x dimensions, or else a two
-             element list, where the first element will be the
-             bin size in the x dimension, and the second will be
-             the bin size in the y dimension.
-    :type bin_size: int, float, list
-    :param smoothing: Optional parameter that will smooth the shaded density.
-              Pass in a nonzero value, which will be the
-              standard deviation of the Gaussian kernel use to smooth
-              the histogram. When using this, often choosing smaller
-              bin sizes is advantageous to make a less grainy plot.
-              Has the same format as padding and bin_size, so different
-              smoothing kernels are possible in the x and y directions.
-    :type smoothing: int, float, list
-    :param cmap: The colormap to use for the shading
-    :type cmap: str
-    :param weights: A list containing weights for each data point. If these
-            are not passed, all data points will be weighted
-            equally.
-    :type weights: list, np.ndarray
-    :param log_xy: Whether or not to do the smoothing and bin creation in log
-               space. This should be used if the plot will be done on
-               log-scaled axes.Can either be a single bool, in which case the
-               x and y scales will both be log (or not), or a two element
-               array, where the first is whether the x axis is log, and the
-               second is y. If this is used, the bin_size and smoothing
-               parameters will be interpreted as dex, rather than raw values.
-    :type log: bool, list
-    :param log_hist: Whether or not to use the log of the histogram values to
-             compute the shading, or just the values of the histogram.
-    :type log_hist: bool
-    :return: output of the pcolormesh function call.
     """
     ax = get_axis()
     return ax.shaded_density(
