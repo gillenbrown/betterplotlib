@@ -12,8 +12,9 @@ Top Level Functions
 The main function here is the :py:func:`subplots` function, but there is also a style
 function available (see the :ref:`styles` page).
 
-.. automodule:: betterplotlib
-    :members:
+. autosummary::
+    subplots
+    set_style
 
 
 Axes
@@ -25,7 +26,7 @@ way to create them is by using the :py:func:`subplots` function, which creates b
 `matplotlib Axes` object, so it has all the same methods. It additionally has
 some new ones, and some of the old ones are redefined to make plotting nicer and
 easier. The functionality of the :py:class:`Axes_bpl` is broken down into some common
-themes below.
+themes below. Each of these has at least one example of the function in use.
 
 Plotting
 ^^^^^^^^^^^^^^^^^^^
