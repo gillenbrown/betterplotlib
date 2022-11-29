@@ -48,7 +48,7 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.set_style(font="Lobster") # default
+        bpl.set_style(font="Arial")
 
         fig, ax = bpl.subplots()
         for i in range(3):

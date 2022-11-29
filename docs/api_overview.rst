@@ -5,25 +5,32 @@
 API Overview
 ===========================
 
-Here are all the functions in the module, hopefully organized in a way that makes them easy to understand.
 
 Top Level Functions
 --------------------
 
-Betterplotlib has some top level functions, involving either styles or object handling.
+The main function here is the :py:func:`subplots` function, but there is also a style
+function available (see the :ref:`styles` page).
 
-.. autosummary::
-    subplots
-    set_style
+.. automodule:: betterplotlib
+    :members:
 
 
 Axes
 ------------------
-The :py:class:`Axes_bpl` objects are where the main functionality lies. The easiest way to create them is by using the :py:func:`subplots` function, which creates both a `matplotlib Figure` and :py:class:`Axes_bpl` object. The :py:class:`Axes_bpl` inherits from the `matplotlib Axes` object, so it has all the same methods. It additionally has some new ones, and some of the old ones are redefined to make plotting nicer and easier. The functionality of the :py:class:`Axes_bpl` is broken down into some common themes below.
+The :py:class:`Axes_bpl` objects are where the main functionality lies. The easiest
+way to create them is by using the :py:func:`subplots` function, which creates both a
+`matplotlib Figure` and :py:class:`Axes_bpl` object (typically used as
+`fig, ax = bpl.subplots()`). The :py:class:`Axes_bpl` inherits from the
+`matplotlib Axes` object, so it has all the same methods. It additionally has
+some new ones, and some of the old ones are redefined to make plotting nicer and
+easier. The functionality of the :py:class:`Axes_bpl` is broken down into some common
+themes below.
 
 Plotting
 ^^^^^^^^^^^^^^^^^^^
-These methods replace or supplement the default matplotlib commands for the main plotting functionality.
+These methods replace or supplement the default matplotlib commands for the main
+plotting functionality.
 
 .. autosummary::
     Axes_bpl.plot
@@ -60,7 +67,9 @@ These methods control various annotations, like the legend, tick marks, and axes
 Non Object-Oriented Interface
 -----------------------------
 
-In addition to the interface described above, all the Axes objects are accessible without directly creating them. This works just like the `plt.whatever()` syntax in default matplotlib, just with `bpl.whatever()`.
+In addition to the interface described above, all the Axes objects are accessible
+without directly creating them. This works just like the `plt.whatever()` syntax in
+default matplotlib, just with `bpl.whatever()`.
 
     
 

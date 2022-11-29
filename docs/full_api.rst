@@ -1,5 +1,11 @@
 .. currentmodule:: betterplotlib
 
+Subplots
+============
+
+.. automodule:: betterplotlib
+    :members:
+
 Axes_bpl
 ============
 
