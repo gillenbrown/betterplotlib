@@ -12,7 +12,7 @@ Top Level Functions
 The main function here is the :py:func:`subplots` function, but there is also a style
 function available (see the :ref:`styles` page).
 
-. autosummary::
+.. autosummary::
     subplots
     set_style
 
