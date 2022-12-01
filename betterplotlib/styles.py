@@ -48,7 +48,7 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
         :include-source:
 
         import betterplotlib as bpl
-        bpl.set_style(font="Arial")
+        bpl.set_style(font="DejaVu Sans")
 
         fig, ax = bpl.subplots()
         for i in range(3):
@@ -65,6 +65,9 @@ def set_style(style="default", font="Lato", fontweight="semibold"):
         for i in range(3):
             ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
         ax.add_labels("X Label", "Y Label", "Title")
+
+    If you download this previous image you can see that the background is transparent
+    and the axes are white.
 
     .. plot::
         :include-source:
@@ -182,7 +185,9 @@ def _set_font_settings(font, fontweight):
     default_font = fm.defaultFont["ttf"]
     found_font = fm.findfont(font, rebuild_if_missing=True)
 
-    if default_font == found_font:
+    # download the font if we need to. We need to if we got the default font instead of
+    # what we wanted (although we check if the default font is in fact what we wanted)
+    if default_font == found_font and not font.lower().startswith("dejavu"):
         print("- Downloading font: {}".format(font))
         print("- You may need to rerun this script or restart this jupyter")
         print("  notebook for these changes to take effect.")
