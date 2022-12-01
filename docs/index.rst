@@ -28,13 +28,13 @@ The package is available in PyPI, so you can install with `pip install betterplo
 Documentation
 -------------
 
-The full documentation of the API is available through these two pages.
+The full documentation of the API is available through these pages:
 
 .. toctree::
    :maxdepth: 1
 
-   api_overview
    style
+   api_overview
    full_api
 
 
