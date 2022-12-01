@@ -1,6 +1,6 @@
 .. currentmodule:: betterplotlib
 
-Axes_bpl
+Full API
 ============
 
 .. autoclass:: Axes_bpl

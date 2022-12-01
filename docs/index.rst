@@ -35,6 +35,7 @@ The full documentation of the API is available through these two pages.
 
    api_overview
    style
+   full_api
 
 
 .. Indices and tables
