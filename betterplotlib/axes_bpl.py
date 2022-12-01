@@ -1142,7 +1142,7 @@ class Axes_bpl(Axes):
 
             bpl.set_style()
 
-            xs = 10 ** np.concatenate(
+            xs = np.concatenate(
                 [
                     np.random.normal(3, 2, 1000),
                     np.random.normal(7, 2, 1000),
@@ -1157,11 +1157,11 @@ class Axes_bpl(Axes):
 
             fig, ax = bpl.subplots()
             ax.density_contour(
-                xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+                xs, ys, bin_size=0.01, smoothing=0.5, log=[False, True], cmap="inferno"
             )
-            ax.set_xscale("log")
             ax.set_yscale("log")
-            ax.set_limits(1, 1e10, 1, 1e10)
+            ax.set_limits(0, 10, 1, 1e10)
+            bpl.equal_scale()
         """
         return self._density_contour_core(
             xs,
@@ -1281,7 +1281,7 @@ class Axes_bpl(Axes):
                     np.random.normal(7, 2, 1000),
                 ]
             )
-            ys = 10 ** np.concatenate(
+            ys = np.concatenate(
                 [
                     np.random.normal(7, 2, 1000),
                     np.random.normal(3, 2, 1000),
@@ -1290,11 +1290,11 @@ class Axes_bpl(Axes):
 
             fig, ax = bpl.subplots()
             ax.density_contourf(
-                xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+                xs, ys, bin_size=0.01, smoothing=0.5, log=[True, False], cmap="inferno"
             )
             ax.set_xscale("log")
-            ax.set_yscale("log")
-            ax.set_limits(1, 1e10, 1, 1e10)
+            ax.set_limits(1, 1e10, 0, 10)
+            bpl.equal_scale()
         """
         # don't let user use the labels param here like they can in contour
         if "labels" in kwargs:
@@ -2340,7 +2340,7 @@ class Axes_bpl(Axes):
 
             bpl.set_style()
 
-            xs = 10 ** np.concatenate(
+            xs = np.concatenate(
                 [np.random.normal(3, 2, 1000), np.random.normal(7, 2, 1000)]
             )
             ys = 10 ** np.concatenate(
@@ -2349,11 +2349,15 @@ class Axes_bpl(Axes):
 
             fig, ax = bpl.subplots()
             bpl.shaded_density(
-                xs, ys, bin_size=0.01, smoothing=0.5, cmap="inferno", log_xy=True
+                xs,
+                ys,
+                bin_size=0.01,
+                smoothing=0.5,
+                cmap="inferno",
+                log_xy=[False, True],
             )
-            ax.set_xscale("log")
             ax.set_yscale("log")
-            bpl.set_limits(1, 1e10, 1, 1e10)
+            bpl.set_limits(0, 10, 1, 1e10)
             bpl.equal_scale()
 
         """

@@ -755,7 +755,7 @@ def density_contour(
 
         bpl.set_style()
 
-        xs = 10 ** np.concatenate(
+        xs = np.concatenate(
         [
             np.random.normal(3, 2, 1000),
             np.random.normal(7, 2, 1000),
@@ -770,11 +770,11 @@ def density_contour(
 
         fig, ax = bpl.subplots()
         ax.density_contour(
-        xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+        xs, ys, bin_size=0.01, smoothing=0.5, log=[False, True], cmap="inferno"
         )
-        ax.set_xscale("log")
         ax.set_yscale("log")
-        ax.set_limits(1, 1e10, 1, 1e10)
+        ax.set_limits(0, 10, 1, 1e10)
+        bpl.equal_scale()
     """
     ax = get_axis()
     return ax.density_contour(
@@ -886,7 +886,7 @@ def density_contourf(
             np.random.normal(7, 2, 1000),
         ]
         )
-        ys = 10 ** np.concatenate(
+        ys = np.concatenate(
         [
             np.random.normal(7, 2, 1000),
             np.random.normal(3, 2, 1000),
@@ -895,11 +895,11 @@ def density_contourf(
 
         fig, ax = bpl.subplots()
         ax.density_contourf(
-        xs, ys, bin_size=0.01, smoothing=0.5, log=[True, True], cmap="inferno"
+        xs, ys, bin_size=0.01, smoothing=0.5, log=[True, False], cmap="inferno"
         )
         ax.set_xscale("log")
-        ax.set_yscale("log")
-        ax.set_limits(1, 1e10, 1, 1e10)
+        ax.set_limits(1, 1e10, 0, 10)
+        bpl.equal_scale()
     """
     ax = get_axis()
     return ax.density_contourf(
@@ -1491,10 +1491,6 @@ def twin_axis_simple(axis, lower_lim, upper_lim, label="", log=False):
     """
     Creates a differently scaled axis on either the top or the left.
 
-    This can be used to put multiple scales on one plot for easier
-    comparison. Some examples might be distance/time, redshift/age, or
-    any two related quantities.
-
     Note that this only does simple scalings of the new axes, which will
     still only be linear or log scaled axes. If you want a function that
     smartly places labels based on a function that takes one set of axes
@@ -1737,7 +1733,7 @@ def shaded_density(
 
         bpl.set_style()
 
-        xs = 10 ** np.concatenate(
+        xs = np.concatenate(
         [np.random.normal(3, 2, 1000), np.random.normal(7, 2, 1000)]
         )
         ys = 10 ** np.concatenate(
@@ -1746,11 +1742,15 @@ def shaded_density(
 
         fig, ax = bpl.subplots()
         bpl.shaded_density(
-        xs, ys, bin_size=0.01, smoothing=0.5, cmap="inferno", log_xy=True
+        xs,
+        ys,
+        bin_size=0.01,
+        smoothing=0.5,
+        cmap="inferno",
+        log_xy=[False, True],
         )
-        ax.set_xscale("log")
         ax.set_yscale("log")
-        bpl.set_limits(1, 1e10, 1, 1e10)
+        bpl.set_limits(0, 10, 1, 1e10)
         bpl.equal_scale()
 
     """
