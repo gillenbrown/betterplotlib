@@ -31,6 +31,17 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage.lcov
+
+      # if tests have passed, trigger a rebuild of ReadTheDocs. I could simply do this
+      # with a GitHub webhook, but I only want the docs to build if the tests pass
+      - name: Trigger RTDs build
+        if: matrix.python-version == 3.10
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}
+
 #      - name: upload failures
 #        if: ${{ failure() }}
 #        uses: actions/upload-artifact@v3
