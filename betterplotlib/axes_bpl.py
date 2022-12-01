@@ -1991,10 +1991,6 @@ class Axes_bpl(Axes):
         """
         Creates a differently scaled axis on either the top or the left.
 
-        This can be used to put multiple scales on one plot for easier
-        comparison. Some examples might be distance/time, redshift/age, or
-        any two related quantities.
-
         Note that this only does simple scalings of the new axes, which will
         still only be linear or log scaled axes. If you want a function that
         smartly places labels based on a function that takes one set of axes
