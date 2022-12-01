@@ -254,7 +254,7 @@ def test_get_examples_single():
 
 def test_get_examples_multiple():
     code = get_examples("axes_bpl", "equal_scale")
-    assert len(code) == 2
+    assert len(code) == 3
     assert code[0] == (
         "bpl.set_style()\n"
         "xs = np.random.normal(0, 1, 1000)\n"
@@ -277,6 +277,16 @@ def test_get_examples_multiple():
         "ax2.equal_scale()\n"
         "ax1.set_limits(-10, 10, -4, 4)\n"
         "ax2.set_limits(-5, 5, -10, 10)\n"
+    )
+    assert code[2] == (
+        "bpl.set_style()\n"
+        "xs = np.random.normal(0, 1, 1000)\n"
+        "ys = 10 ** np.random.normal(0, 0.5, 1000)\n"
+        "fig, ax = bpl.subplots()\n"
+        "ax.scatter(xs, ys)\n"
+        'ax.set_yscale("log")\n'
+        "ax.set_limits(-3, 3, 10**-3, 10**3)\n"
+        "ax.equal_scale()\n"
     )
 
 

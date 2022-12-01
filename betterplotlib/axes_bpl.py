@@ -690,7 +690,9 @@ class Axes_bpl(Axes):
         Makes the x and y axes have the same scale.
 
         Useful for plotting things like ra and dec, something with the same
-        quantity on both axes, or anytime the x and y axis have the same scale.
+        quantity on both axes, or anytime the x and y axis have the same scale. It also
+        works when both axes are in log (making one dex the same on both axes) or when
+        only one axis is in log (one dex = one unit in linear space).
 
         It's really one one command, but it's one I have a hard time
         remembering.
@@ -751,6 +753,26 @@ class Axes_bpl(Axes):
 
             ax1.set_limits(-10, 10, -4, 4)
             ax2.set_limits(-5, 5, -10, 10)
+
+        And here's a demonstration of using this with log scaled axes
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+
+            bpl.set_style()
+
+            xs = np.random.normal(0, 1, 1000)
+            ys = 10 ** np.random.normal(0, 0.5, 1000)
+
+            fig, ax = bpl.subplots()
+
+            ax.scatter(xs, ys)
+            ax.set_yscale("log")
+            ax.set_limits(-3, 3, 10**-3, 10**3)
+            ax.equal_scale()
 
         """
         self.set_aspect("equal", adjustable="box")
