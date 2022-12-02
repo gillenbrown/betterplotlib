@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["betterplotlib", "betterplotlib.colormaps"]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt"]
+
+[project]
+name = "betterplotlib"
+version = "1.5.0"
+description = "Some wrappers for matplotlib to make plotting easier and nicer."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Gillen Brown", email="gillenbrown@gmail.com"},
+]
+keywords = ["plotting", "matplotlib"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.7"
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "palettable",
+    "imageio",
+    "scipy",
+    "numpy>=1.16.0",
+    "cycler",
+    "astropy",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=3.3",
+    "coverage"
+]
+
+[project.urls]
+homepage = "https://betterplotlib.readthedocs.io/"
+documentation = "https://betterplotlib.readthedocs.io/"
