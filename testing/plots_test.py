@@ -381,6 +381,49 @@ def test_invalid_style():
         bpl.set_style("bad_style_name")
 
 
+@pass_local_fail_remote
+def test_colormaps_image():
+    cmap_list = [
+        "devon",
+        "lajolla",
+        "bamako",
+        "davos",
+        "bilbao",
+        "nuuk",
+        "oslo",
+        "grayC",
+        "hawaii",
+        "lapaz",
+        "tokyo",
+        "buda",
+        "acton",
+        "turku",
+        "imola",
+        "batlow",
+        "roma",
+        "oleron",
+        "broc",
+        "cork",
+        "vik",
+        "lisbon",
+        "tofino",
+        "berlin",
+    ]
+    gradient = np.linspace(0, 1, 256)
+    gradient = np.vstack((gradient, gradient))
+
+    fig, axs = bpl.subplots(nrows=len(cmap_list), figsize=[7, 0.3 * len(cmap_list)])
+    axs[0].set_title("Colormaps")
+
+    for ax, name in zip(axs, cmap_list):
+        ax.imshow(gradient, aspect="auto", cmap=name)
+        ax.add_text(-3, 1, name, ha="right", fontsize=12)
+        ax.remove_spines("all")
+        ax.remove_labels("both")
+
+    assert image_similarity_full(fig, "cmaps_demo.png")
+
+
 # ------------------------------------------------------------------------------
 #
 # Testing make ax dark
