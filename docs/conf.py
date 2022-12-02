@@ -37,8 +37,6 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "plot_directive",
-    "nbsphinx",
-    "IPython.sphinxext.ipython_console_highlighting",
 ]
 
 nbsphinx_timeout = -1  # Time in seconds; use -1 for no timeout
