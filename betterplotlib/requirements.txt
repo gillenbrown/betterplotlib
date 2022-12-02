@@ -1,8 +1,0 @@
-matplotlib
-numpy
-palettable
-imageio
-scipy
-numpy>=1.16.0
-cycler
-astropy

@@ -24,10 +24,16 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 requires-python = ">=3.7"
-dynamic = ["dependencies"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "palettable",
+    "imageio",
+    "scipy",
+    "numpy>=1.16.0",
+    "cycler",
+    "astropy",
+]
 
 [project.optional-dependencies]
 test = [
