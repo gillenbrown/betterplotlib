@@ -5,6 +5,5 @@ from .colors import *
 from .styles import *
 from .manage_axes import *
 from ._interface import *
-from . import cm
 
 register_projection(Axes_bpl)
