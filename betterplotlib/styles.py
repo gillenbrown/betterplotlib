@@ -1,152 +1,324 @@
-import matplotlib as mpl
-from cycler import cycler
-import warnings
+import urllib
 import os
+from pathlib import Path
+
+import matplotlib
+from matplotlib import rcParams
+from matplotlib import font_manager
+from cycler import cycler
 
 from . import colors
+
+
+def set_style(style="default", font="Lato", fontweight="semibold"):
+    """
+    Set style settings that will apply to all plots after this function call.
+
+    :param style: I have three predefined styles: "default", "white"", and "latex".
+                  On the whole, they're all pretty similar. The default style is
+                  appropriate for presentations and paper figures. "white" takes the
+                  default style and turns the axes white, so that it can be used in
+                  a presentation with a dark slide background. When using the "white"
+                  style, you'll probably want to save the figure with the
+                  "transparent=True" keyword so that the slide background shows through.
+                  Finally, the "latex" style uses LaTeX to render all text. Note that
+                  all styles can fully render LaTeX equations in axis labels and other
+                  text, but the "latex"theme uses the Computer Modern LaTeX font.
+    :type style: str
+    :param font: For the default and white styles, the font to use. Must be the name
+                 of a font available through Google fonts. The font will be
+                 automatically downloaded if not currently present on your system.
+    :type font: str
+    :param fontweight: The weight of the font
+    :type fontweight: str
+    :return: None
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style() # default
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style(font="DejaVu Sans")
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style("white")
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+
+    If you download this previous image you can see that the background is transparent
+    and the axes are white.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        bpl.set_style("latex")
+
+        fig, ax = bpl.subplots()
+        for i in range(3):
+            ax.scatter(np.random.normal(i, 1, 100), np.random.normal(i, 1, 100))
+        ax.add_labels("X Label", "Y Label", "Title")
+    """
+    _common_style()
+
+    if style == "default":
+        _set_font_settings(font, fontweight)
+    elif style == "white":
+        _set_font_settings(font, fontweight)
+        # override some of the colors
+        rcParams["savefig.transparent"] = True
+        rcParams["patch.edgecolor"] = "w"
+        rcParams["text.color"] = "w"
+        rcParams["axes.edgecolor"] = "w"
+        rcParams["axes.labelcolor"] = "w"
+        rcParams["xtick.color"] = "w"
+        rcParams["ytick.color"] = "w"
+        rcParams["grid.color"] = "w"
+        # I like my own color cycle based on one of the Tableu sets, but with
+        # added colors in front that look better on dark backgrounds
+        rcParams["axes.prop_cycle"] = cycler("color", ["w", "y"] + colors.color_cycle)
+    elif style == "latex":
+        # here font is ignored
+        # change everything to LaTeX
+        rcParams["font.family"] = "serif"
+        rcParams["font.sans-serif"] = "Computer Modern Roman"
+        rcParams["font.serif"] = "Computer Modern Roman"
+        rcParams["text.usetex"] = True
+    else:
+        raise ValueError("style not recognized")
+
 
 def _common_style():
     """
     Set some of the style options used by all styles.
     """
-
-
-    mpl.rcParams['legend.scatterpoints'] = 1
-    mpl.rcParams['legend.numpoints'] = 1
+    rcParams["legend.scatterpoints"] = 1
+    rcParams["legend.numpoints"] = 1
     # ^ these two needed for matplotlib 1.x
-    mpl.rcParams['savefig.format'] = 'pdf'
-    mpl.rcParams['axes.formatter.useoffset'] = False
-    mpl.rcParams['figure.dpi'] = 100
-    mpl.rcParams['savefig.dpi'] = 300
-    mpl.rcParams['figure.figsize'] = [10, 7]
+    rcParams["savefig.format"] = "pdf"
+    rcParams["savefig.transparent"] = False
+    rcParams["savefig.dpi"] = 300
+    rcParams["savefig.facecolor"] = "w"
+    rcParams["axes.formatter.useoffset"] = False
+    rcParams["figure.dpi"] = 100
+    rcParams["figure.figsize"] = [10, 7]
 
-    # Font options
-    mpl.rcParams['font.family'] = 'sans-serif'
+    rcParams["xtick.major.size"] = 5.0
+    rcParams["xtick.minor.size"] = 2.5
+    rcParams["ytick.major.size"] = 5.0
+    rcParams["ytick.minor.size"] = 2.5
 
-    # We have to be more suble when setting the font. We want to check that the
-    # use has the font we want.
-    # If you want to change the font, change the line below!
-    font = 'Helvetica Neue'
-    backup_font = "Arial"
+    rcParams["axes.titlesize"] = 22
+    rcParams["font.size"] = 20
+    rcParams["axes.labelsize"] = 20
+    rcParams["xtick.labelsize"] = 16
+    rcParams["ytick.labelsize"] = 16
+    rcParams["legend.fontsize"] = 18
 
-    # Matplotlib will issue a warning if it can't find the font, so we will
-    # try to find the font, and see if the warning was issued
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
+    rcParams["patch.edgecolor"] = colors.almost_black
+    rcParams["text.color"] = colors.almost_black
+    rcParams["axes.edgecolor"] = colors.almost_black
+    rcParams["axes.labelcolor"] = colors.almost_black
+    rcParams["xtick.color"] = colors.almost_black
+    rcParams["ytick.color"] = colors.almost_black
+    rcParams["grid.color"] = colors.almost_black
 
-        # line that will throw a warning
-        mpl.font_manager.fontManager.findfont(font)
+    # I like my own color cycle
+    rcParams["axes.prop_cycle"] = cycler("color", colors.color_cycle)
+    # change the colormap while I'm at it.
+    rcParams["image.cmap"] = "viridis"
 
-        if len(w) == 0:  # if no warnings
-            mpl.rcParams['font.sans-serif'] = font
-        else:  # there were warnings, so the font wasn't found
-            mpl.rcParams['font.sans-serif'] = backup_font
-            url = "http://blog.olgabotvinnik.com/blog/2012/11/15/2012-11-15-how-to-set-helvetica-as-the-default-sans-serif-font-in/"
-            this_file = os.path.abspath(__file__)
-            print("Betterplotlib could not find it's default font {}.\n"
-                  "For directions on how to install it, check {}\n"
-                  "You don't need to do step 4 on that page.\n\n"
-                  "You can also change the font to something you'd prefer. To "
-                  "do this, change line 25 of {}".format(font, url, this_file))
+
+def _set_font_settings(font, fontweight):
+    """
+    Sets the font settings, used by most styles.
+
+    :return: None
+    """
+    # Some good sans-serif font options: Lato, Nunito, Nunito Sans, Open Sans,
+    # Jost, Cabin, Tajawal, Muli, Rubik, Assistant, Alata
+    # serif: PT Serif
+    # fun: Lobster
+
+    # The font doesn't actually have to be sans-serif, we're just setting that
+    # as a default since we currently don't know what family the requested
+    # font is. And for our purposes it doesn't matter, since it works fine if
+    # we tell matplotlib it's a sans-serif font, even if it's not.
+
+    rcParams["font.family"] = "sans-serif"
+    rcParams["font.sans-serif"] = font
+    rcParams["text.usetex"] = False
 
     # change math font too
-    mpl.rcParams['mathtext.fontset'] = 'custom'
-    mpl.rcParams['mathtext.default'] = 'regular'
+    rcParams["mathtext.fontset"] = "custom"
+    rcParams["mathtext.default"] = "regular"
 
     # set the rest of the default parameters
-    mpl.rcParams['font.weight'] = 'bold'
-    mpl.rcParams['axes.labelweight'] = 'bold'
-    mpl.rcParams['axes.titleweight'] = 'bold'
+    rcParams["font.weight"] = fontweight
+    rcParams["axes.labelweight"] = fontweight
+    rcParams["axes.titleweight"] = fontweight
 
-    # the matplotlib 2.0 colors are fine, but the old ones aren't.
-    if mpl.__version__[0] == "1":
-        # I like my own color cycle based on one of the Tableu sets.
-        mpl.rcParams['axes.prop_cycle'] = cycler("color", colors.color_cycle)
-        # change the colormap while I'm at it.
-        mpl.rcParams['image.cmap'] = 'viridis'
+    # The user might request a font that's not downloaded. To check this, we'll
+    # see if the found font is the default. If so, we'll download the font
+    fm = font_manager.FontManager()
+    default_font = fm.defaultFont["ttf"]
+    found_font = fm.findfont(font, rebuild_if_missing=True)
 
-def default_style():
-    """
-    Sets matplotlib parameters to make default plots prettier without effort.
+    # download the font if we need to. We need to if we got the default font instead of
+    # what we wanted (although we check if the default font is in fact what we wanted)
+    if default_font == found_font and not font.lower().startswith("dejavu"):
+        print("- Downloading font: {}".format(font))
+        print("- You may need to rerun this script or restart this jupyter")
+        print("  notebook for these changes to take effect.")
+        print("- This only needs to be done once.")
+        font_dir = Path(matplotlib.get_data_path()) / "fonts/ttf/"
+        download_font(font, font_dir)
 
-    :return: None
-    """
-    _common_style()
-    
-    # Font options
-    mpl.rcParams['axes.titlesize'] = 16
-    mpl.rcParams['font.size'] = 14
-    mpl.rcParams['axes.labelsize'] = 14
-    mpl.rcParams['xtick.labelsize'] = 12
-    mpl.rcParams['ytick.labelsize'] = 12
-    mpl.rcParams['legend.fontsize'] = 13
+        # remove the font cache
+        cache_dir = Path(matplotlib.get_cachedir())
+        for item in cache_dir.iterdir():
+            if item.name.startswith("font"):
+                item.unlink()
 
-    # colors
-    mpl.rcParams['patch.edgecolor'] = colors.almost_black
-    mpl.rcParams['text.color'] = colors.almost_black
-    mpl.rcParams['axes.edgecolor'] = colors.almost_black
-    mpl.rcParams['axes.labelcolor'] = colors.almost_black
-    mpl.rcParams['xtick.color'] = colors.almost_black
-    mpl.rcParams['ytick.color'] = colors.almost_black
-    mpl.rcParams['grid.color'] = colors.almost_black
-    
-
-def presentation_style():
-    """
-    Same as default_style, but with larger text.
-
-    Useful for powerpoint presentations where large font is nice.
-
-    :return: None
-    """
-
-    _common_style()
-
-    mpl.rcParams['axes.titlesize'] = 22
-    mpl.rcParams['font.size'] = 20
-    mpl.rcParams['axes.labelsize'] = 20
-    mpl.rcParams['xtick.labelsize'] = 16
-    mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 18
-
-    # colors
-    mpl.rcParams['patch.edgecolor'] = colors.almost_black
-    mpl.rcParams['text.color'] = colors.almost_black
-    mpl.rcParams['axes.edgecolor'] = colors.almost_black
-    mpl.rcParams['axes.labelcolor'] = colors.almost_black
-    mpl.rcParams['xtick.color'] = colors.almost_black
-    mpl.rcParams['ytick.color'] = colors.almost_black
-    mpl.rcParams['grid.color'] = colors.almost_black
+        # make sure it worked
+        fm = font_manager.FontManager()
+        assert fm.findfont(font, rebuild_if_missing=True) != fm.defaultFont["ttf"]
 
 
-def white_style():
-    """
-    Sets a style good for presenting on dark backgrounds.
+def _download_file(url, local_dir):
+    filename = url.split("/")[-1]
+    local_filename = local_dir / filename
+    try:
+        urllib.request.urlretrieve(url, filename=local_filename)
+    except urllib.error.HTTPError:
+        raise ValueError("File was not found (404): {}".format(url))
 
-    This was designed to use for creating plots that will be used in
-    PowerPoint slides with a dark background. The text is larger to make
-    more viewable plots, as well.
 
-    :return: None
-    """
-    _common_style()
+def download_font(fontname, dir):
+    # https://github.com/google/fonts
+    # format the font as it is in the github repo
+    fontname = fontname.lower().replace(" ", "")
 
-    mpl.rcParams['axes.titlesize'] = 22
-    mpl.rcParams['font.size'] = 20
-    mpl.rcParams['axes.labelsize'] = 20
-    mpl.rcParams['xtick.labelsize'] = 16
-    mpl.rcParams['ytick.labelsize'] = 16
-    mpl.rcParams['legend.fontsize'] = 20
+    base_url = "https://raw.githubusercontent.com/google/fonts/master/"
+    # we don't know what license the font uses, so we need to search for it
+    licenses = ["apache", "ofl", "ufl"]
+    found = False
+    for l in licenses:
+        font_dir_url = os.path.join(base_url, l, fontname)
 
-    # colors
-    mpl.rcParams['patch.edgecolor'] = "w"
-    mpl.rcParams['text.color'] = "w"
-    mpl.rcParams['axes.edgecolor'] = "w"
-    mpl.rcParams['axes.labelcolor'] = "w"
-    mpl.rcParams['xtick.color'] = "w"
-    mpl.rcParams['ytick.color'] = "w"
-    mpl.rcParams['grid.color'] = "w"
-    # I like my own color cycle based on one of the Tableu sets, but with
-    # added colors in front that look better on dark backgrounds
-    mpl.rcParams['axes.prop_cycle'] = cycler("color", ["w", "y"] +
-                                             colors.color_cycle)
+        # try to get the metadata file
+        metadata_url = os.path.join(font_dir_url, "METADATA.pb")
+        # the download will throw an error if it's not found
+        try:
+            _download_file(metadata_url, dir)
+            found = True
+            break  # needed so we keep the right license and therefore URL
+        except ValueError:
+            continue
+
+    if not found:
+        raise ValueError("Font not found!")
+
+    # then get the filenames from the metadata file. We do need to watch out
+    # for variable fonts.
+    metadata_path = dir / "METADATA.pb"
+    with open(metadata_path, "r") as metadata_file:
+        metadata = [line.strip() for line in metadata_file]
+
+    # remove the metadata file
+    metadata_path.unlink()
+
+    # see if we have a variable font. This particular line will note one of the
+    # variable font axes
+    variable = "axes {" in metadata
+
+    if not variable:
+        # In non-variable fonts, the filenames are all listed in the metadata
+        for line in metadata:
+            if line.startswith("filename:"):
+                filename = line.split()[-1]
+                # this will have quotes, remove them
+                filename = filename.replace('"', "")
+                # then we can just download it
+                ttf_url = os.path.join(font_dir_url, filename)
+                _download_file(ttf_url, dir)
+                print("  - Downloading {}".format(filename))
+
+    else:  # we do have a variable font
+        # the metadata file does not list all the files, as they may be in the
+        # "static" subdirectory. We have to manually find those files. But not every
+        # font has the static subdirectory. So we'll look for static, but if we don't
+        # find it just download the variable font files.
+        # first get the name of the font as it will appear in the file
+        for md in metadata:
+            if md.startswith("filename:"):
+                full_name = md.split()[-1]
+                # only get the part before the bracket
+                idx = full_name.find("[")
+                # there is a " at the beginning we ignore
+                file_base_name = full_name[1:idx]
+                break
+
+        # we then iterate through all possible font names. Thankfully the names
+        # follow a regular pattern: FontName-WeightItalics.ttf. We'll iterate
+        # through all options and grab the ones that exist
+        weights = [
+            "Thin",
+            "ExtraLight",
+            "Light",
+            "Regular",
+            "Medium",
+            "SemiBold",
+            "Bold",
+            "ExtraBold",
+            "Black",
+            "",
+        ]
+        found_any = False
+        for weight in weights:
+            for italic in ["Italic", ""]:
+                ttf_name = "{}-{}{}.ttf".format(file_base_name, weight, italic)
+
+                ttf_url = os.path.join(font_dir_url, "static", ttf_name)
+
+                # some of these will not exist, which is fine. Grab what exists
+                try:
+                    _download_file(ttf_url, dir)
+                    print("  - Downloading {}".format(ttf_name))
+                    found_any = True
+                except ValueError:
+                    pass
+
+        # if we couldn't find any static files, just download the variable files
+        if not found_any:
+            # get all the filenames
+            for md in metadata:
+                if md.startswith("filename:"):
+                    filename = md.split()[-1]
+                    # this will have quotes, remove them
+                    filename = filename.replace('"', "")
+                    # then we can just download it
+                    ttf_url = os.path.join(font_dir_url, filename)
+                    _download_file(ttf_url, dir)
+                    print("  - Downloading {}".format(filename))

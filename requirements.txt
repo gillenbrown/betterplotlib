@@ -1,5 +1,0 @@
-palettable
-matplotlib
-nbsphinx
-ipykernel
-scipy

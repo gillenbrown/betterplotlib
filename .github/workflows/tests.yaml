@@ -1,0 +1,51 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  tests:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install bpl
+        run: pip install -e .[test]
+      - name: download fonts
+        run: python -c "import betterplotlib as bpl; bpl.set_style()"
+      - name: run pytest with coverage
+        run: coverage run -m pytest
+
+      # handle coverage, only for one version (chose most recent python version, but
+      # this shouldn't matter
+      - name: make lcov file for Coveralls upload
+        if: matrix.python-version == 3.10
+        run: coverage lcov -i
+      - name: upload to Coveralls
+        if: matrix.python-version == 3.10
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
+
+      # if tests have passed, trigger a rebuild of ReadTheDocs. I could simply do this
+      # with a GitHub webhook, but I only want the docs to build if the tests pass
+      - name: Trigger RTDs build
+        if: matrix.python-version == 3.10
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}
+
+#      - name: upload failures
+#        if: ${{ failure() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: failed_tests
+#          path: testing/temporary_images
+
