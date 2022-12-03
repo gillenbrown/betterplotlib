@@ -1,7 +1,7 @@
-name: Tests
+name: Test and Deploy
 on: [push, pull_request]
 jobs:
-  tests:
+  test:
     strategy:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
@@ -42,10 +42,20 @@ jobs:
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
 
-#      - name: upload failures
-#        if: ${{ failure() }}
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: failed_tests
-#          path: testing/temporary_images
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    # only do this for master branch
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: pip install
+        run: pip install build
+      - name: build
+        run: python -m build
+      - name: upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
 
