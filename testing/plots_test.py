@@ -532,6 +532,12 @@ def test_remove_labels_imperative():
 # Testing legend
 #
 # ------------------------------------------------------------------------------
+@pass_local_fail_remote
+def test_legend_title_fontsize():
+    fig, ax = bpl.subplots()
+    ax.scatter([], [], label="test")
+    ax.legend(title="Test Title", fontsize=25)
+    assert image_similarity_full(fig, "legend_fontsize.png")
 
 
 # ------------------------------------------------------------------------------

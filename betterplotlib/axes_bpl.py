@@ -1,10 +1,8 @@
 from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
-from matplotlib import path
+from matplotlib import path, rcParams
 from scipy import optimize
-from astropy import convolution
 import numpy as np
-import sys
 
 from . import colors
 from . import tools
@@ -668,6 +666,7 @@ class Axes_bpl(Axes):
 
         # push the legend a little farther away from the edge.
         kwargs.setdefault("borderaxespad", 0.75)
+        kwargs.setdefault("fontsize", rcParams["legend.fontsize"])
 
         leg = super(Axes_bpl, self).legend(*args, **kwargs)
 
@@ -675,8 +674,9 @@ class Axes_bpl(Axes):
         # probably to get the font from one of the other text objects, then
         # increment that slightly, then set the title's fontsize to be that.
         # the fontsize param doesn't change the title, so do that manually
-        # title = legend.get_title()
-        # title.set_fontsize(kwargs['fontsize'])
+        if "title" in kwargs:
+            title = leg.get_title()
+            title.set_fontsize(kwargs["fontsize"] * 1.2)
 
         if leg is not None:
             # turn the background into whatever color it needs to be

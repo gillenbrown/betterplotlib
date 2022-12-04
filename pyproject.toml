@@ -10,7 +10,7 @@ packages = ["betterplotlib"]
 
 [project]
 name = "betterplotlib"
-version = "1.6.1"
+version = "1.6.2"
 description = "Some wrappers for matplotlib to make plotting easier and nicer."
 readme = "README.md"
 license = {file = "LICENSE"}
