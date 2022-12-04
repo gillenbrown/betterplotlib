@@ -670,13 +670,18 @@ class Axes_bpl(Axes):
 
         leg = super(Axes_bpl, self).legend(*args, **kwargs)
 
-        # TODO: set the fontsize of the title properly. The best way to do it is
-        # probably to get the font from one of the other text objects, then
-        # increment that slightly, then set the title's fontsize to be that.
-        # the fontsize param doesn't change the title, so do that manually
+        # set title fontsize properly
         if "title" in kwargs:
             title = leg.get_title()
             title.set_fontsize(kwargs["fontsize"] * 1.2)
+
+        # adjust the size of points within the legend
+        for handle in leg.legendHandles:
+            # if it's not a handle for a scatter plot, setting the sizes will fail
+            try:
+                handle.set_sizes([100])
+            except:
+                continue
 
         if leg is not None:
             # turn the background into whatever color it needs to be
