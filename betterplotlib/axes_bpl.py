@@ -211,10 +211,8 @@ class Axes_bpl(Axes):
         # put x and y in args if they're not already there
         if len(args) == 0:
             args = kwargs.pop("x"), kwargs.pop("y")
-        # get the color, if it hasn't already been set. I don't need to do this
-        # in mpl 2.0 technically, but I do it anyway so I can use this color
-        # for the invisible label below.
-        if "color" not in kwargs and "c" not in kwargs:
+        # get the color, if it hasn't already been set
+        if "color" not in kwargs and "c" not in kwargs and "facecolor" not in kwargs:
             # get the default color cycle, and get the next color.
             kwargs["c"] = next(self._get_lines.prop_cycler)["color"]
 

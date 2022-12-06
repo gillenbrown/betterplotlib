@@ -457,6 +457,33 @@ def test_scatter_legend_alpha():
     assert image_similarity_full(fig, "scatter_legend_alpha.png")
 
 
+@pass_local_fail_remote
+def test_scatter_facecolor():
+    fig, ax = bpl.subplots()
+    ax.scatter(xs_uniform_10, ys_uniform_10, facecolor=bpl.color_cycle[1])
+    ax.scatter(xs_uniform_10 + 1, ys_uniform_10 + 1, c=bpl.color_cycle[2])
+    ax.scatter(xs_uniform_10 + 2, ys_uniform_10 + 2, color=bpl.color_cycle[3])
+    ax.scatter(
+        xs_uniform_10 + 3,
+        ys_uniform_10 + 3,
+        facecolor=bpl.color_cycle[1],
+        edgecolor=bpl.almost_black,
+    )
+    ax.scatter(
+        xs_uniform_10 + 4,
+        ys_uniform_10 + 4,
+        c=bpl.color_cycle[2],
+        edgecolor=bpl.almost_black,
+    )
+    ax.scatter(
+        xs_uniform_10 + 5,
+        ys_uniform_10 + 5,
+        color=bpl.color_cycle[3],
+        edgecolor=bpl.almost_black,
+    )
+    assert image_similarity_full(fig, "scatter_facecolor.png")
+
+
 # ------------------------------------------------------------------------------
 #
 # Testing hist
