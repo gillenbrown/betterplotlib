@@ -355,6 +355,7 @@ functions = [
     ("axes_bpl", "shaded_density"),
     ("axes_bpl", "log"),
     ("axes_bpl", "set_ticks"),
+    ("axes_bpl", "create_mappable"),
 ]
 
 # then create the list of tests to run

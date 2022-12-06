@@ -42,6 +42,7 @@ plotting functionality.
     Axes_bpl.density_contourf
     Axes_bpl.contour_scatter
     Axes_bpl.shaded_density
+    Axes_bpl.create_mappable
 
 Plot Annotations and Format
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
