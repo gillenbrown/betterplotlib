@@ -45,11 +45,13 @@ jobs:
   build_docs:
     runs-on: ubuntu-latest
     needs: test
-    uses: dfm/rtds-action@v1
-    with:
-      webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
-      webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-      commit_ref: ${{ github.ref }}
+    steps:
+      - name: trigger build
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}
 
   deploy:
     runs-on: ubuntu-latest
