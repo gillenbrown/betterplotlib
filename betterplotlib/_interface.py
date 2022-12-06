@@ -591,7 +591,7 @@ def equal_scale():
         fig, ax = bpl.subplots()
 
         ax.scatter(xs, ys)
-        ax.set_yscale("log")
+        ax.log("y")
         ax.set_limits(-3, 3, 10**-3, 10**3)
         ax.equal_scale()
 
@@ -684,7 +684,7 @@ def density_contour(
     weights=None,
     log=False,
     labels=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Creates contours over a 2D histogram of data density.
@@ -794,13 +794,21 @@ def density_contour(
         ax.density_contour(
         xs, ys, bin_size=0.01, smoothing=0.5, log=[False, True], cmap="inferno"
         )
-        ax.set_yscale("log")
+        ax.log("y")
         ax.set_limits(0, 10, 1, 1e10)
         bpl.equal_scale()
     """
     ax = get_axis()
     return ax.density_contour(
-        xs, ys, bin_size, percent_levels, smoothing, weights, log, labels, **kwargs
+        xs,
+        ys,
+        bin_size,
+        percent_levels,
+        smoothing,
+        weights,
+        log,
+        labels,
+        **kwargs,
     )
 
 
@@ -812,7 +820,7 @@ def density_contourf(
     smoothing=0,
     weights=None,
     log=False,
-    **kwargs
+    **kwargs,
 ):
     """
     Creates filled contours over a 2D histogram of data density.
@@ -919,13 +927,20 @@ def density_contourf(
         ax.density_contourf(
         xs, ys, bin_size=0.01, smoothing=0.5, log=[True, False], cmap="inferno"
         )
-        ax.set_xscale("log")
+        ax.log("x")
         ax.set_limits(1, 1e10, 0, 10)
         bpl.equal_scale()
     """
     ax = get_axis()
     return ax.density_contourf(
-        xs, ys, bin_size, percent_levels, smoothing, weights, log, **kwargs
+        xs,
+        ys,
+        bin_size,
+        percent_levels,
+        smoothing,
+        weights,
+        log,
+        **kwargs,
     )
 
 
@@ -1663,8 +1678,7 @@ def twin_axis(axis, new_ticks, label, old_to_new_func=None, new_to_old_func=None
 
         fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
         ax.plot(xs, xs)
-        ax.set_xscale("log")
-        ax.set_yscale("log")
+        ax.log("both")
         ax.add_labels("x", "y")
         # extraneous values are ignored.
         ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
@@ -1771,7 +1785,7 @@ def shaded_density(
         cmap="inferno",
         log_xy=[False, True],
         )
-        ax.set_yscale("log")
+        ax.log("y")
         bpl.set_limits(0, 10, 1, 1e10)
         bpl.equal_scale()
 
@@ -1787,3 +1801,38 @@ def shaded_density(
         log_xy,
         log_hist,
     )
+
+
+def log(axes, nice_format=True):
+    """
+    Set the x and/or y axis to be log-scaled
+
+    :param axes: which axes to log scale. Pass "x" for the x axis, "y" for the y
+             axis, or "both".
+    :type axees: str
+    :param nice_format: whether to format numbers near 1 as regular numbers,
+                instead of exponential notation. For example, passing True
+                will show 1 as 1, while False will show 1 as 10^0. Defaults
+                to True.
+    :type nice_format: bool
+    :returns: None
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        fig, axs = bpl.subplots(ncols=2, figsize=[12, 6])
+
+        for ax, nice_format in zip(axs, [True, False]):
+        ax.log("both", nice_format)
+        ax.set_limits(1e-3, 1e3, 1e-3, 1e3)
+        ax.equal_scale()
+        ax.add_labels(title=f"nice_format = {str(nice_format)}")
+
+    """
+    ax = get_axis()
+    return ax.log(axes, nice_format)

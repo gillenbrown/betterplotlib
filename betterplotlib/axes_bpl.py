@@ -1,6 +1,6 @@
 from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
-from matplotlib import path, rcParams
+from matplotlib import path, rcParams, ticker
 from scipy import optimize
 import numpy as np
 
@@ -775,7 +775,7 @@ class Axes_bpl(Axes):
             fig, ax = bpl.subplots()
 
             ax.scatter(xs, ys)
-            ax.set_yscale("log")
+            ax.log("y")
             ax.set_limits(-3, 3, 10**-3, 10**3)
             ax.equal_scale()
 
@@ -925,7 +925,7 @@ class Axes_bpl(Axes):
         log=False,
         labels=False,
         filled=False,
-        **kwargs
+        **kwargs,
     ):
         """
         The underlying function to do both filled and unfilled contours. Call
@@ -1076,7 +1076,7 @@ class Axes_bpl(Axes):
         weights=None,
         log=False,
         labels=False,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates contours over a 2D histogram of data density.
@@ -1186,7 +1186,7 @@ class Axes_bpl(Axes):
             ax.density_contour(
                 xs, ys, bin_size=0.01, smoothing=0.5, log=[False, True], cmap="inferno"
             )
-            ax.set_yscale("log")
+            ax.log("y")
             ax.set_limits(0, 10, 1, 1e10)
             bpl.equal_scale()
         """
@@ -1200,7 +1200,7 @@ class Axes_bpl(Axes):
             log=log,
             labels=labels,
             filled=False,
-            **kwargs
+            **kwargs,
         )
 
     def density_contourf(
@@ -1212,7 +1212,7 @@ class Axes_bpl(Axes):
         smoothing=0,
         weights=None,
         log=False,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates filled contours over a 2D histogram of data density.
@@ -1319,7 +1319,7 @@ class Axes_bpl(Axes):
             ax.density_contourf(
                 xs, ys, bin_size=0.01, smoothing=0.5, log=[True, False], cmap="inferno"
             )
-            ax.set_xscale("log")
+            ax.log("x")
             ax.set_limits(1, 1e10, 0, 10)
             bpl.equal_scale()
         """
@@ -1336,7 +1336,7 @@ class Axes_bpl(Axes):
             log=log,
             labels=False,
             filled=True,
-            **kwargs
+            **kwargs,
         )
 
     def contour_scatter(
@@ -1737,7 +1737,7 @@ class Axes_bpl(Axes):
                 smoothing=smoothing,
                 weights=weights,
                 cmap=fill_cmap,
-                **contourf_kwargs
+                **contourf_kwargs,
             )
         contours = self.density_contour(
             xs,
@@ -1747,7 +1747,7 @@ class Axes_bpl(Axes):
             smoothing=smoothing,
             weights=weights,
             labels=labels,
-            **contour_kwargs
+            **contour_kwargs,
         )
 
         # we saved the output from the contour, since it has information about the
@@ -2063,13 +2063,13 @@ class Axes_bpl(Axes):
             new_ax = super(Axes_bpl, self).twiny()
             new_ax.set_xlim(lower_lim, upper_lim)
             if log:
-                new_ax.set_xscale("log")
+                new_ax.set_xscale("log")  # not a bpl subplot, so we can't use log()
             new_ax.set_xlabel(label)
         elif axis == "y":
             new_ax = super(Axes_bpl, self).twinx()
             new_ax.set_ylim(lower_lim, upper_lim)
             if log:
-                new_ax.set_yscale("log")
+                new_ax.set_yscale("log")  # not a bpl subplot, so we can't use log()
             new_ax.set_ylabel(label)
         else:
             raise ValueError("Axis must be either 'x' or 'y'. ")
@@ -2184,8 +2184,7 @@ class Axes_bpl(Axes):
 
             fig, ax = bpl.subplots(figsize=[5, 5], tight_layout=True)
             ax.plot(xs, xs)
-            ax.set_xscale("log")
-            ax.set_yscale("log")
+            ax.log("both")
             ax.add_labels("x", "y")
             # extraneous values are ignored.
             ax.twin_axis("x", [-1, 0, 1, 2, 3, 4, 5], "log(x)", np.log10)
@@ -2227,7 +2226,7 @@ class Axes_bpl(Axes):
             new_ax.set_ylabel(label)
             # the new axis needs to share the same scaling as the old
             if self.get_yscale() == "log":
-                new_ax.set_yscale("log")
+                new_ax.set_yscale("log")  # not a bpl axis, so we can't use log()
                 # if we have log in old, we don't want minor ticks on the new
                 new_axis.set_tick_params(which="minor", length=0)
             new_ax.set_ylabel(label)
@@ -2239,7 +2238,7 @@ class Axes_bpl(Axes):
             new_ax.set_xlabel(label)
             # the new axis needs to share the same scaling as the old
             if self.get_xscale() == "log":
-                new_ax.set_xscale("log")
+                new_ax.set_xscale("log")  # not a bpl axis, so we can't use log()
                 # if we have log in old, we don't want minor ticks on the new
                 new_axis.set_tick_params(which="minor", length=0)
         else:
@@ -2383,7 +2382,7 @@ class Axes_bpl(Axes):
                 cmap="inferno",
                 log_xy=[False, True],
             )
-            ax.set_yscale("log")
+            ax.log("y")
             bpl.set_limits(0, 10, 1, 1e10)
             bpl.equal_scale()
 
@@ -2412,3 +2411,81 @@ class Axes_bpl(Axes):
         return super(Axes_bpl, self).pcolormesh(
             x_edges, y_edges, hist, cmap=cmap, vmax=vmax, vmin=vmin
         )
+
+    # Function to use to set the ticks
+    @staticmethod
+    @ticker.FuncFormatter
+    def _nice_log_formatter(x, pos):
+        """
+        Format numbers to be places on a log axis. Numbers near 1 will not be exponents
+
+        For example, we'll have 10^-3, 0.001, 0.1, 1, 10, 100, 10^3...
+
+        :param x: number to format:
+        :type x: float
+        :return: string with formatted number
+        :rtype: str
+        """
+        exp = np.log10(x)
+        # this only works for labels that are factors of 10. For non-factor of 10
+        # ticks (e.g. minor ticks) don't label them. The user can add their own labels
+        # if they want
+        try:
+            assert np.isclose(exp, int(exp))
+        except AssertionError:
+            return ""
+
+        # for values between 0.01 and 100, just use that value.
+        # Otherwise use the log.
+        if abs(exp) <= 2:
+            return f"{x:g}"
+        else:
+            return "$10^{" + f"{exp:.0f}" + "}$"
+
+    def log(self, axes, nice_format=True):
+        """
+        Set the x and/or y axis to be log-scaled
+
+        :param axes: which axes to log scale. Pass "x" for the x axis, "y" for the y
+                     axis, or "both".
+        :type axees: str
+        :param nice_format: whether to format numbers near 1 as regular numbers,
+                            instead of exponential notation. For example, passing True
+                            will show 1 as 1, while False will show 1 as 10^0. Defaults
+                            to True.
+        :type nice_format: bool
+        :returns: None
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+
+            bpl.set_style()
+
+            fig, axs = bpl.subplots(ncols=2, figsize=[12, 6])
+
+            for ax, nice_format in zip(axs, [True, False]):
+                ax.log("both", nice_format)
+                ax.set_limits(1e-3, 1e3, 1e-3, 1e3)
+                ax.equal_scale()
+                ax.add_labels(title=f"nice_format = {str(nice_format)}")
+
+        """
+        axes = axes.lower()
+        if axes not in ["x", "y", "both"]:
+            raise ValueError('`axes` must be either "x", "y", or "both".')
+        if axes == "both":
+            axes = "xy"
+
+        if "x" in axes:
+            self.set_xscale("log")
+            if nice_format:
+                self.xaxis.set_major_formatter(self._nice_log_formatter)
+                self.xaxis.set_minor_formatter(self._nice_log_formatter)
+        if "y" in axes:
+            self.set_yscale("log")
+            if nice_format:
+                self.yaxis.set_major_formatter(self._nice_log_formatter)
+                self.yaxis.set_minor_formatter(self._nice_log_formatter)

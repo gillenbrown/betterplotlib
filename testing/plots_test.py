@@ -284,7 +284,7 @@ def test_get_examples_multiple():
         "ys = 10 ** np.random.normal(0, 0.5, 1000)\n"
         "fig, ax = bpl.subplots()\n"
         "ax.scatter(xs, ys)\n"
-        'ax.set_yscale("log")\n'
+        'ax.log("y")\n'
         "ax.set_limits(-3, 3, 10**-3, 10**3)\n"
         "ax.equal_scale()\n"
     )
@@ -353,6 +353,7 @@ functions = [
     ("axes_bpl", "twin_axis_simple"),
     ("axes_bpl", "twin_axis"),
     ("axes_bpl", "shaded_density"),
+    ("axes_bpl", "log"),
 ]
 
 # then create the list of tests to run
@@ -1051,6 +1052,23 @@ def test_shaded_density_different_xy():
     ax.set_limits(-6, 6, -6, 6)
     ax.equal_scale()
     assert image_similarity_full(fig, "shaded_density_different_xy.png")
+
+
+# ------------------------------------------------------------------------------
+#
+# Testing log axis
+#
+# ------------------------------------------------------------------------------
+def test_log_axis_error_checking():
+    with pytest.raises(ValueError):
+        bpl.log("lkjlkj")
+
+
+def test_log_axis_minor_ticks():
+    bpl.log("both")
+    bpl.set_limits(0.1, 1, 0.1, 1)
+    bpl.equal_scale()
+    assert image_similarity_full(plt.gcf(), "log_axis_minor_ticks.png")
 
 
 # ------------------------------------------------------------------------------
