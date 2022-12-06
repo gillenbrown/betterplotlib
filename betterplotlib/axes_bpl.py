@@ -2494,7 +2494,7 @@ class Axes_bpl(Axes):
         """
         Set tick marks on an axis, with optional label names
 
-        This is just a wrapper around ax.xaxis.set_ticks(), but I always forget
+        This is just a wrapper around `ax.xaxis.set_ticks()`, but I always forget
         that syntax.
 
         :param axis: to put these ticks on either the "x" or "y" axis

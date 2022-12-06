@@ -55,6 +55,8 @@ These methods control various annotations, like the legend, tick marks, and axes
     Axes_bpl.add_text
     Axes_bpl.easy_add_text
     Axes_bpl.set_limits
+    Axes_bpl.set_ticks
+    Axes_bpl.log
     Axes_bpl.add_labels
     Axes_bpl.remove_labels
     Axes_bpl.remove_ticks
