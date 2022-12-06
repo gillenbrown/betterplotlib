@@ -16,9 +16,10 @@ if "pyproject.toml" not in changed_files:
     # go through the file, and modify the version number. Keep all other lines the same
     for line in pyproject_in_file:
         if line.startswith("version = "):
-            version = line.split("=")[-1].strip()
+            version = line.split("=")[-1].strip().replace('"', "")
             major, minor, patch = version.split(".")
-            line = f"version = {major}.{int(minor) + 1}.{patch}\n"
+            # keep major the same, increment minor, and reset patch to 0
+            line = f'version = "{major}.{int(minor) + 1}.0"\n'
         pyproject_out_file.write(line)
 
     pyproject_in_file.close()
