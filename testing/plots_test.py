@@ -354,6 +354,7 @@ functions = [
     ("axes_bpl", "twin_axis"),
     ("axes_bpl", "shaded_density"),
     ("axes_bpl", "log"),
+    ("axes_bpl", "set_ticks"),
 ]
 
 # then create the list of tests to run
@@ -1069,6 +1070,16 @@ def test_log_axis_minor_ticks():
     bpl.set_limits(0.1, 1, 0.1, 1)
     bpl.equal_scale()
     assert image_similarity_full(plt.gcf(), "log_axis_minor_ticks.png")
+
+
+# ------------------------------------------------------------------------------
+#
+# Testing set_ticks
+#
+# ------------------------------------------------------------------------------
+def test_set_ticks_axis_name_check():
+    with pytest.raises(ValueError):
+        bpl.set_ticks("z", [1, 2])
 
 
 # ------------------------------------------------------------------------------

@@ -2489,3 +2489,63 @@ class Axes_bpl(Axes):
             if nice_format:
                 self.yaxis.set_major_formatter(self._nice_log_formatter)
                 self.yaxis.set_minor_formatter(self._nice_log_formatter)
+
+    def set_ticks(self, axis, ticks, labels=None, minor=False):
+        """
+        Set tick marks on an axis, with optional label names
+
+        This is just a wrapper around ax.xaxis.set_ticks(), but I always forget
+        that syntax.
+
+        :param axis: to put these ticks on either the "x" or "y" axis
+        :type axis: str
+        :param ticks: The list of locations to put ticks
+        :type ticks: list
+        :param labels: The labels to put for each of the ticks passed in
+        :type labels: list
+        :param minor: Whether these ticks should be major or minor ticks
+        :type minor: bool
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+
+            bpl.set_style()
+
+            bpl.set_limits(1, 2, 1, 2)
+            bpl.equal_scale()
+            bpl.set_ticks("x", [1, 1.5, 1.7, 2.0])
+            bpl.set_ticks("y", [1, 1.2, 1.5, 2.0], ["A", "B", "C", "D"])
+
+        .. plot::
+            :include-source:
+
+            import betterplotlib as bpl
+            import numpy as np
+
+            bpl.set_style()
+
+            bpl.log("both")
+            bpl.set_limits(1, 10, 1, 10)
+            bpl.equal_scale()
+            bpl.set_ticks("x", [1, 10], ["A", "D"])
+            bpl.set_ticks("x", [3, 5], ["b", "c"], minor=True)
+            bpl.set_ticks("y", [1, 10])
+            bpl.set_ticks(
+                "y",
+                [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                ["", "2", "3", "", "5", "", "7", "", ""],
+                minor=True,
+            )
+
+        """
+        if axis == "x":
+            ax = self.xaxis
+        elif axis == "y":
+            ax = self.yaxis
+        else:
+            raise ValueError('`axis` must be either "x" or "y"')
+
+        ax.set_ticks(ticks, labels=labels, minor=minor)
