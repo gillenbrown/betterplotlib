@@ -5,12 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["betterplotlib"]
 
-[tool.setuptools.package-data]
-"*" = ["*.txt"]
-
 [project]
 name = "betterplotlib"
-version = "1.8.0"
+version = "1.8.1"
 description = "Some wrappers for matplotlib to make plotting easier and nicer."
 readme = "README.md"
 license = {file = "LICENSE"}
