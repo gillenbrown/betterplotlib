@@ -1,6 +1,7 @@
 from matplotlib.axes import Axes
 from matplotlib import colors as mpl_colors
 from matplotlib import path, rcParams, ticker
+import matplotlib.patheffects as PathEffects
 from scipy import optimize
 import numpy as np
 
@@ -477,7 +478,9 @@ class Axes_bpl(Axes):
         self.set_xlim([x_min, x_max], **kwargs)
         self.set_ylim([y_min, y_max], **kwargs)
 
-    def add_text(self, x, y, text, coords="data", **kwargs):
+    def add_text(
+        self, x, y, text, coords="data", border_color=None, border_linewidth=3, **kwargs
+    ):
         """
         Adds text to the specified location. Allows for easy specification of
         the type of coordinates you are specifying.
@@ -506,6 +509,12 @@ class Axes_bpl(Axes):
         or 'axes'. 'data' puts the text at that data point. 'axes' puts the
         text in that location relative the axes. See above.
         :type coords: str
+        :param border_color: An optional color to add a border around the text added.
+                             This is useful for making text more easily visible against
+                             a colorful background
+        :type border_color: str
+        :param border_linewidth: the width of the border added around the text
+        :type border_linewidth: int
         :param kwargs: any additional keyword arguments to pass on the text
                        function. Pass things you would pass to plt.text()
         :return: Same as output of plt.text().
@@ -519,12 +528,23 @@ class Axes_bpl(Axes):
             import numpy as np
             bpl.set_style()
 
-            xs = np.arange(0, 7, 0.1)
-            ys = xs**2
+            xs = np.random.normal(0, 1, 1000)
+            ys = np.random.normal(0, 1, 1000)
 
-            bpl.plot(xs, ys)
-            bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
-            bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
+            bpl.density_contourf(xs, ys, bin_size=0.1, smoothing=0.5)
+            bpl.set_limits(-4, 4, -4, 4)
+            bpl.equal_scale()
+            bpl.add_text(-3, 3, "(-3, 3) data")
+            bpl.add_text(0.7, 0.1, "70% across, 10% up", "axes")
+            bpl.add_text(
+                0,
+                0,
+                "(0, 0) data, black border",
+                color="white",
+                border_color=bpl.almost_black,
+                border_linewidth=3,
+            )
+
         """
 
         # this function takes care of the transform keyword already, so don't
@@ -546,8 +566,27 @@ class Axes_bpl(Axes):
         # putting it in kwargs makes it easier to pass on.
         kwargs["transform"] = transform
 
+        # automatically center text on added location. I can't use setdefault for this
+        # since there are two names for the same thing
+        if "ha" not in kwargs and "horizontalalignment" not in kwargs:
+            kwargs["ha"] = "center"
+        if "va" not in kwargs and "verticalalignment" not in kwargs:
+            kwargs["va"] = "center"
+
         # add the text
-        return self.text(x, y, text, **kwargs)
+        text = self.text(x, y, text, **kwargs)
+
+        # then add the highlighting
+        if border_color is not None:
+            text.set_path_effects(
+                [
+                    PathEffects.withStroke(
+                        linewidth=border_linewidth, foreground=border_color
+                    )
+                ]
+            )
+
+        return text
 
     def remove_labels(self, labels_to_remove):
         """
@@ -790,6 +829,9 @@ class Axes_bpl(Axes):
         which allows for easy placement of legends. This does a similar thing,
         but just for text.
 
+        This can take any additional keyword aguments that can be passed to `add_text`,
+        other than `coords`.
+
         VERY IMPORTANT NOTE: Although this works similar to plt.legend()'s loc
         parameter, the numbering is NOT the same. My numbering is based on the
         keypad. 1 is in the bottom left, 5 in the center, and 9 in the top
@@ -859,6 +901,7 @@ class Axes_bpl(Axes):
             or "va" in kwargs
             or "horizontalalignment" in kwargs
             or "verticalalignment" in kwargs
+            or "coords" in kwargs
         ):
             raise ValueError("This function controls the alignment. Do not pass it in.")
 

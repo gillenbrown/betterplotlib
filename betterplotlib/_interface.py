@@ -348,7 +348,9 @@ def set_limits(x_min=None, x_max=None, y_min=None, y_max=None, **kwargs):
     return ax.set_limits(x_min, x_max, y_min, y_max, **kwargs)
 
 
-def add_text(x, y, text, coords="data", **kwargs):
+def add_text(
+    x, y, text, coords="data", border_color=None, border_linewidth=3, **kwargs
+):
     """
     Adds text to the specified location. Allows for easy specification of
     the type of coordinates you are specifying.
@@ -377,6 +379,12 @@ def add_text(x, y, text, coords="data", **kwargs):
     or 'axes'. 'data' puts the text at that data point. 'axes' puts the
     text in that location relative the axes. See above.
     :type coords: str
+    :param border_color: An optional color to add a border around the text added.
+                 This is useful for making text more easily visible against
+                 a colorful background
+    :type border_color: str
+    :param border_linewidth: the width of the border added around the text
+    :type border_linewidth: int
     :param kwargs: any additional keyword arguments to pass on the text
                function. Pass things you would pass to plt.text()
     :return: Same as output of plt.text().
@@ -390,15 +398,26 @@ def add_text(x, y, text, coords="data", **kwargs):
         import numpy as np
         bpl.set_style()
 
-        xs = np.arange(0, 7, 0.1)
-        ys = xs**2
+        xs = np.random.normal(0, 1, 1000)
+        ys = np.random.normal(0, 1, 1000)
 
-        bpl.plot(xs, ys)
-        bpl.add_text(2, 30, "(2, 30) data", ha="center", va="center")
-        bpl.add_text(0.6, 0.2, "60% across, 20% up", "axes")
+        bpl.density_contourf(xs, ys, bin_size=0.1, smoothing=0.5)
+        bpl.set_limits(-4, 4, -4, 4)
+        bpl.equal_scale()
+        bpl.add_text(-3, 3, "(-3, 3) data")
+        bpl.add_text(0.7, 0.1, "70% across, 10% up", "axes")
+        bpl.add_text(
+        0,
+        0,
+        "(0, 0) data, black border",
+        color="white",
+        border_color=bpl.almost_black,
+        border_linewidth=3,
+        )
+
     """
     ax = get_axis()
-    return ax.add_text(x, y, text, coords, **kwargs)
+    return ax.add_text(x, y, text, coords, border_color, border_linewidth, **kwargs)
 
 
 def remove_labels(labels_to_remove):
@@ -607,6 +626,9 @@ def easy_add_text(text, location, **kwargs):
     This was inspired by the plt.legend() function and its loc parameter,
     which allows for easy placement of legends. This does a similar thing,
     but just for text.
+
+    This can take any additional keyword aguments that can be passed to `add_text`,
+    other than `coords`.
 
     VERY IMPORTANT NOTE: Although this works similar to plt.legend()'s loc
     parameter, the numbering is NOT the same. My numbering is based on the
@@ -1842,7 +1864,7 @@ def set_ticks(axis, ticks, labels=None, minor=False):
     """
     Set tick marks on an axis, with optional label names
 
-    This is just a wrapper around ax.xaxis.set_ticks(), but I always forget
+    This is just a wrapper around `ax.xaxis.set_ticks()`, but I always forget
     that syntax.
 
     :param axis: to put these ticks on either the "x" or "y" axis
