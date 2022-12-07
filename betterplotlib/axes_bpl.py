@@ -2193,7 +2193,6 @@ class Axes_bpl(Axes):
         .. plot::
             :include-source:
 
-            import numpy as np
             import betterplotlib as bpl
 
             bpl.set_style()
@@ -2218,7 +2217,6 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            import numpy as np
             bpl.set_style()
 
             xs = np.logspace(0, 3, 100)
@@ -2501,7 +2499,6 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            import numpy as np
 
             bpl.set_style()
 
@@ -2551,7 +2548,6 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            import numpy as np
 
             bpl.set_style()
 
@@ -2564,7 +2560,6 @@ class Axes_bpl(Axes):
             :include-source:
 
             import betterplotlib as bpl
-            import numpy as np
 
             bpl.set_style()
 
