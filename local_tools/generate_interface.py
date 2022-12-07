@@ -5,9 +5,9 @@ from pathlib import Path
 from betterplotlib.axes_bpl import Axes_bpl
 
 # get the locations of the files
-this_dir = Path(__file__).parent
-interface_loc = this_dir / "_interface.py"
-axes_loc = this_dir / "axes_bpl.py"
+code_dir = Path(__file__).parent.parent / "betterplotlib"
+interface_loc = code_dir / "_interface.py"
+axes_loc = code_dir / "axes_bpl.py"
 # open the new file for writing.
 interface = open(interface_loc, "w")
 
