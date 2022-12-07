@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pytest
 from pytest import approx
 import numpy as np
+from scipy import integrate
 from matplotlib import path
 from betterplotlib import tools, get_axis, subplots
 
@@ -1802,3 +1803,46 @@ def test_outer_contour_few_offset():
     for circle in true_results:
         assert circle in test_results
     assert len(true_results) == len(test_results)
+
+
+# ------------------------------------------------------------------------------
+
+# Testing the Gaussian
+
+# ------------------------------------------------------------------------------
+def test_gaussian_peak_is_at_mean():
+    mean = 3
+    xs = np.arange(0, 10, 0.01)
+    values = tools.gaussian(xs, mean, 1)
+    max_x = xs[np.argmax(values)]
+    assert max_x == 3
+
+
+def test_gaussian_proper_peak_normalization():
+    sigma = 1.5
+    value = tools.gaussian(0, 0, sigma)
+    assert np.isclose(value, (1.0 / (sigma * np.sqrt(2 * np.pi))), rtol=0, atol=0.0001)
+
+
+def test_gaussian_integration_over_infinity():
+    def integrand(x):
+        return tools.gaussian(x, -3, 2)
+
+    result = integrate.quad(integrand, -23, 17)[0]
+    assert np.isclose(result, 1, rtol=0, atol=0.00001)
+
+
+def test_gaussian_integration_over_one_sigma():
+    def integrand(x):
+        return tools.gaussian(x, 5, 3)
+
+    result = integrate.quad(integrand, 2, 8)[0]
+    assert np.isclose(result, 0.68268, rtol=0, atol=0.00001)
+
+
+def test_gaussian_integration_over_three_sigma():
+    def integrand(x):
+        return tools.gaussian(x, 1, 1)
+
+    result = integrate.quad(integrand, -2, 4)[0]
+    assert np.isclose(result, 0.9973, rtol=0, atol=0.00001)

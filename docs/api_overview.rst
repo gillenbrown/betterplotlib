@@ -38,6 +38,7 @@ plotting functionality.
     Axes_bpl.scatter
     Axes_bpl.errorbar
     Axes_bpl.hist
+    Axes_bpl.kde
     Axes_bpl.density_contour
     Axes_bpl.density_contourf
     Axes_bpl.contour_scatter

@@ -356,6 +356,7 @@ functions = [
     ("axes_bpl", "shaded_density"),
     ("axes_bpl", "log"),
     ("axes_bpl", "set_ticks"),
+    ("axes_bpl", "kde"),
 ]
 
 # then create the list of tests to run
@@ -1108,6 +1109,16 @@ def test_log_axis_minor_ticks():
 def test_set_ticks_axis_name_check():
     with pytest.raises(ValueError):
         bpl.set_ticks("z", [1, 2])
+
+
+# ------------------------------------------------------------------------------
+#
+# Testing kde
+#
+# ------------------------------------------------------------------------------
+def test_kde_error_checking_smoothing():
+    with pytest.raises(ValueError):
+        bpl.kde([1, 2, 3], [1, 2])
 
 
 # ------------------------------------------------------------------------------

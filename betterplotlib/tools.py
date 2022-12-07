@@ -721,3 +721,20 @@ def _outer_contours(paths):
         if not ever_contained:
             outer_polygons.append(potential_outer)
     return outer_polygons
+
+
+def gaussian(x, mean, standard_deviation):
+    """
+    Return the value of a Gaussian at a given point
+
+    :param x: value to evaluate the Gaussian at
+    :type x: float, list, np.ndarray
+    :param mean: the mean value of the Gaussian
+    :type mean; float
+    :param standard_deviation: the standard deviation of the gaussian
+    :type standard_deviation: floar
+    """
+    s = standard_deviation
+    norm = 1.0 / (s * np.sqrt(2 * np.pi))
+    exponent = -0.5 * ((x - mean) / s) ** 2
+    return norm * np.exp(exponent)

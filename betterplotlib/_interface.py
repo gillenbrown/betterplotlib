@@ -1913,3 +1913,92 @@ def set_ticks(axis, ticks, labels=None, minor=False):
     """
     ax = get_axis()
     return ax.set_ticks(axis, ticks, labels, minor)
+
+
+def kde(xs, smoothing, norm=False, log=False, **kwargs):
+    """
+    Visualize a distribution in 1D with kernel density estimation
+
+    :param xs: The data to visualiza
+    :type xs: list, ndarray
+    :param smoothing: The smoothing to apply to each data point. If a single value
+              is supplied, that will be applied to all data points. You
+              can also supply a list with length equal to `xs` to use
+              different smoothing for each data point.
+    :type smoothing: float, list, ndarray
+    :param norm: Whether to normalize the distribution so that integrates to 1.
+    :type norm: bool
+    :param log: Whether to do the KDE creation in log space. If this is used,
+            the value for `smoothing` will be interpreted as dex. If `norm` is
+            also used, the integration will be done in log space, meaning we
+            integrate dlogx rather than dx.
+    :type log: bool
+    :param kwargs: additional keyword arguments to pass to the `plot` function
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        data = np.random.normal(0, 1, 100)
+        bpl.kde(data, 0.5)
+        bpl.set_limits(-3, 3, 0)
+
+    You can also use different smoothing for each data point. Note that the area
+    contributed by each point is equal, so points with smaller smoothing give
+    higher points.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+
+        bpl.set_style()
+
+        bpl.kde([1, 2, 3], [0.1, 0.2, 0.3])
+        bpl.set_limits(0, 4, 0)
+
+    Finally, the normalization parameter allows comparison of datasets of
+    different size. Here I also demonstrate that any additional keyword arguments
+    get passed along to `plot`.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        d1 = np.random.normal(0, 1, 10000)
+        d2 = np.random.normal(0.5, 1.5, 50)
+        bpl.kde(d1, 0.5, norm=True, lw=3, c=bpl.color_cycle[1], label="N=10,000")
+        bpl.kde(d2, 0.5, norm=True, lw=10, c=bpl.almost_black, label="N=50")
+        bpl.set_limits(-3, 3, 0)
+        bpl.legend()
+
+    When normalization is used with log, the integration will be done in log space
+    as well. Also, when log is used, smoothing
+    will be interpreted in dex.
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        d1 = 10**np.random.normal(0, 1, 10000)
+        d2 = 10**np.random.normal(0.5, 1.5, 50)
+        bpl.kde(d1, 0.5, norm=True, log=True)
+        bpl.kde(d2, 0.5, norm=True, log=True)
+        bpl.log("x")
+        bpl.set_limits(1e-3, 1e3, 0)
+
+    """
+    ax = get_axis()
+    return ax.kde(xs, smoothing, norm, log, **kwargs)
