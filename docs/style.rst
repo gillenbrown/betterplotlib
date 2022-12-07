@@ -2,7 +2,7 @@
 
 .. _styles_api:
 
-Styles
+Style and Colors
 ==================================
 
 Betterplotlib has multiple style options that make plots look better in 
@@ -29,3 +29,9 @@ just what it sounds like, and is used as the default black throughout the plots 
 make them slightly easier on the eyes. Here are all those defined colors.
 
 .. image:: images/colors.png
+
+There are also some functions to help out with managing colors and colorbars.
+
+.. autofunction:: create_mappable
+.. autofunction:: fade_color
+.. autofunction:: unfade_color

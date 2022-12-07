@@ -1,4 +1,5 @@
 from matplotlib import colors as mpl_colors
+from matplotlib import cm
 
 almost_black = "#262626"
 light_gray = "#E5E5E5"
@@ -113,3 +114,59 @@ def unfade_color(color):
     v = hsv[2] - (3 * (1.0 - hsv[2]))
 
     return mpl_colors.rgb2hex(mpl_colors.hsv_to_rgb([h, s, v]))
+
+
+def create_mappable(vmin, vmax, cmap, log=False):
+    """
+    Create a ScalarMappable, which is used to get colors from a colorbar
+
+    This is also often used to seed a colorbar.
+
+    :param vmin: Value corresponding to the minimum value of the colormap
+    :type vmin: float
+    :param vmax: Value corresponding to the maximum value of the colormap
+    :type vmax: float
+    :param cmap: The colormap to use. Can be a string with the colormap name
+                 or a colormap object
+    :param log: Whether or not to use log scaling on the normalization between
+                vmin and vmax
+    :type log: bool
+    :returns: The ScalarMappable object
+    :rtype: matplotlib.cm.ScalarMappable
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        mappable = bpl.create_mappable(0, 1, "Blues")
+        fig, ax = bpl.subplots()
+        for i in np.arange(0, 1.01, 0.1):
+            ax.plot([0, 1], [i, i], c=mappable.to_rgba(i))
+        ax.set_limits(0, 1, -0.05, 1.05)
+        fig.colorbar(mappable)
+
+    .. plot::
+        :include-source:
+
+        import betterplotlib as bpl
+        import numpy as np
+
+        bpl.set_style()
+
+        mappable = bpl.create_mappable(1, 100, "Blues", log=True)
+        fig, ax = bpl.subplots()
+        for i in np.logspace(0, 2, 10):
+            ax.plot([0, 1], [i, i], c=mappable.to_rgba(i))
+        ax.log("y")
+        ax.set_limits(0, 1, 0.9, 110)
+        fig.colorbar(mappable)
+    """
+    if log:
+        norm = mpl_colors.LogNorm(vmin=vmin, vmax=vmax)
+    else:
+        norm = mpl_colors.Normalize(vmin=vmin, vmax=vmax)
+    return cm.ScalarMappable(norm=norm, cmap=cmap)

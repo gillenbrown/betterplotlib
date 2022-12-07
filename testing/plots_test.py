@@ -330,6 +330,7 @@ functions = [
     ("styles", "set_style"),
     ("colors", "fade_color"),
     ("colors", "unfade_color"),
+    ("colors", "create_mappable"),
     ("axes_bpl", "make_ax_dark"),
     ("axes_bpl", "remove_ticks"),
     ("axes_bpl", "remove_spines"),
@@ -355,7 +356,6 @@ functions = [
     ("axes_bpl", "shaded_density"),
     ("axes_bpl", "log"),
     ("axes_bpl", "set_ticks"),
-    ("axes_bpl", "create_mappable"),
 ]
 
 # then create the list of tests to run
