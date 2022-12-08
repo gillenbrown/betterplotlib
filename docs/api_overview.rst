@@ -30,8 +30,7 @@ themes below. Each of these has at least one example of the function in use.
 Plotting
 ^^^^^^^^^^^^^^^^^^^
 These methods replace or supplement the default matplotlib commands for the main
-plotting functionality. In addition to the methods explicitly mentioned here, all
-matplotlib axis methods are available without modificiation.
+plotting functionality.
 
 .. autosummary::
     Axes_bpl.plot
@@ -83,5 +82,5 @@ page. There are also few functions that can be used to handle colors and colorma
 
 .. autosummary::
     create_mappable
-    unfade_color
     fade_color
+    unfade_color
