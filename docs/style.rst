@@ -12,9 +12,12 @@ are visible against a dark background in a presentation, and `bpl.set_style("lat
 uses LateX for font rendering.
 
 The general best practice is to call the style once at the beginning of the
-file or notebook, right after the imports. 
+file or notebook, right after the imports.
 
-.. autofunction:: set_style
+See the full documentation linked below for some examples.
+
+.. autosummary::
+    set_style
 
 
 Colors
@@ -30,8 +33,3 @@ make them slightly easier on the eyes. Here are all those defined colors.
 
 .. image:: images/colors.png
 
-There are also some functions to help out with managing colors and colorbars.
-
-.. autofunction:: create_mappable
-.. autofunction:: fade_color
-.. autofunction:: unfade_color

@@ -8,7 +8,6 @@ API Overview
 
 Top Level Functions
 --------------------
-
 The main function here is the :py:func:`subplots` function, but there is also a style
 function available (see the :ref:`styles` page).
 
@@ -50,7 +49,6 @@ These methods control various annotations, like the legend, tick marks, and axes
 
 .. autosummary::
     Axes_bpl.legend
-    Axes_bpl.data_ticks
     Axes_bpl.axhline
     Axes_bpl.axvline
     Axes_bpl.add_text
@@ -66,6 +64,7 @@ These methods control various annotations, like the legend, tick marks, and axes
     Axes_bpl.twin_axis_simple
     Axes_bpl.twin_axis
     Axes_bpl.make_ax_dark
+    Axes_bpl.data_ticks
 
 
 Non Object-Oriented Interface
@@ -75,6 +74,13 @@ In addition to the interface described above, all the Axes objects are accessibl
 without directly creating them. This works just like the `plt.whatever()` syntax in
 default matplotlib, just with `bpl.whatever()`.
 
-    
+Colors
+------
+The `bpl.color_cycle` attribute is a list of colors that I set as the default color
+cycle for plots. There are also a few other colors mentioned in the :ref:`styles`
+page. There are also few functions that can be used to handle colors and colormaps.
 
-
+.. autosummary::
+    create_mappable
+    fade_color
+    unfade_color
