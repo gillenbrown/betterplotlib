@@ -28,14 +28,17 @@ The package is available in PyPI, so you can install with `pip install betterplo
 Documentation
 -------------
 
-The full documentation of the API is available through these pages:
+Full documentation of all the available functions, as well as example plots
+for each function, are available in the following pages. The Overview page has a
+summary list of all the available functions, while the examples and full documentation
+are in the Full API page.
 
 .. toctree::
    :maxdepth: 1
 
-   style
    api_overview
    full_api
+   style
 
 
 .. Indices and tables
