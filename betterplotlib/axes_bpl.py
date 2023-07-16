@@ -11,7 +11,6 @@ from . import type_checking
 
 
 class Axes_bpl(Axes):
-
     name = "bpl"
 
     def make_ax_dark(self, grid=True, minor_ticks=False):

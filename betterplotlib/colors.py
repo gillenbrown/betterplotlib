@@ -27,6 +27,7 @@ color_cycle = [
     "#8b77a5",
 ]
 
+
 # Some functions to fade and unfade colors, which can be helpful when plotting
 # two lines with similar meaning
 def fade_color(color):
