@@ -599,7 +599,6 @@ def render_figures(
     close_figs = not context or close_figs
 
     for i, code_piece in enumerate(code_pieces):
-
         if not context or config.plot_apply_rcparams:
             clear_state(config.plot_rcparams, close_figs)
         elif close_figs:
