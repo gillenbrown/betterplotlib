@@ -9,6 +9,7 @@ from betterplotlib import tools, get_axis, subplots
 np.random.seed(19680801)
 random_x = np.random.normal(0, 1, 1000)
 
+
 # ------------------------------------------------------------------------------
 #
 # test get axis
@@ -592,6 +593,7 @@ def test_centers_length():
 
 # Testing the parsing of the bin size. This doesn't have a lot.
 
+
 # ------------------------------------------------------------------------------
 def test_two_element_list_more_elt_array():
     with pytest.raises(ValueError) as err_msg:
@@ -649,6 +651,7 @@ def test_two_element_list_strings_list_numeric_single():
 
 # Testing the parsing of the bin options. This relies heavily on the _binning
 # function, so a lot of the more detailed testing is taken care of there.
+
 
 # ------------------------------------------------------------------------------
 def test_make_bins_error_checking_data_type():
@@ -900,6 +903,7 @@ def test_make_bins_all_same_size(bin_size):
 
 # Testing the unique_total
 
+
 # ------------------------------------------------------------------------------
 def test_unique_total_error_checking_types_string():
     with pytest.raises(TypeError) as err_msg:
@@ -948,6 +952,7 @@ def test_unique_total_is_finally_sorted():
 # ------------------------------------------------------------------------------
 
 # Testing the level that contains certain percentages
+
 
 # ------------------------------------------------------------------------------
 def test_percentile_level_error_checking_positive_density():
@@ -1253,6 +1258,7 @@ def test_percentile_level_duplicate_warning_with_imprecise_multiples(recwarn):
 # ------------------------------------------------------------------------------
 
 # Testing the density contours function
+
 
 # ------------------------------------------------------------------------------
 def test_hist_2d_error_checking_types_no_strings():
@@ -1706,6 +1712,7 @@ def test_hist_2d_smoothing_different_scale_different_results():
 # Testing the padding from smoothing. Full error checking won't be done, since
 # that will be done in the 2D hist function.
 
+
 # ------------------------------------------------------------------------------
 def test_padding_from_smoothing_error_empty_list():
     with pytest.raises(ValueError) as err_msg:
@@ -1768,6 +1775,7 @@ def test_padding_from_smoothing_error_string_array_correct():
 
 # Testing the outer contour level function.
 
+
 # ------------------------------------------------------------------------------
 def test_outer_contour_single_value():
     circle = path.Path.circle((0, 0), 1)
@@ -1808,6 +1816,7 @@ def test_outer_contour_few_offset():
 # ------------------------------------------------------------------------------
 
 # Testing the Gaussian
+
 
 # ------------------------------------------------------------------------------
 def test_gaussian_peak_is_at_mean():
