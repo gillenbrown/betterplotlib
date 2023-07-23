@@ -244,7 +244,7 @@ def download_font(fontname, dir):
     # then get the filenames from the metadata file. We do need to watch out
     # for variable fonts.
     metadata_path = dir / "METADATA.pb"
-    with open(metadata_path, "r") as metadata_file:
+    with open(metadata_path, "r", encoding="utf-8") as metadata_file:
         metadata = [line.strip() for line in metadata_file]
 
     # remove the metadata file
