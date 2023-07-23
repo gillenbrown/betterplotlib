@@ -1,5 +1,4 @@
 import urllib.request
-import os
 from pathlib import Path
 
 import matplotlib
@@ -220,7 +219,7 @@ def download_font(fontname, dir):
     # format the font as it is in the github repo
     fontname = fontname.lower().replace(" ", "")
 
-    base_url = "https://raw.githubusercontent.com/google/fonts/master/"
+    base_url = "https://raw.githubusercontent.com/google/fonts/master"
     # we don't know what license the font uses, so we need to search for it.
     # Note that we do not use os.path.join to attach components to URLs when trying
     # to find a font. That is system dependent, while URLs will always use slashes here
