@@ -221,14 +221,16 @@ def download_font(fontname, dir):
     fontname = fontname.lower().replace(" ", "")
 
     base_url = "https://raw.githubusercontent.com/google/fonts/master/"
-    # we don't know what license the font uses, so we need to search for it
+    # we don't know what license the font uses, so we need to search for it.
+    # Note that we do not use os.path.join to attach components to URLs when trying
+    # to find a font. That is system dependent, while URLs will always use slashes here
     licenses = ["apache", "ofl", "ufl"]
     found = False
     for l in licenses:
-        font_dir_url = os.path.join(base_url, l, fontname)
+        font_dir_url = "/".join([base_url, l, fontname])
 
         # try to get the metadata file
-        metadata_url = os.path.join(font_dir_url, "METADATA.pb")
+        metadata_url = "/".join([font_dir_url, "METADATA.pb"])
         # the download will throw an error if it's not found
         try:
             _download_file(metadata_url, dir)
@@ -261,7 +263,7 @@ def download_font(fontname, dir):
                 # this will have quotes, remove them
                 filename = filename.replace('"', "")
                 # then we can just download it
-                ttf_url = os.path.join(font_dir_url, filename)
+                ttf_url = "/".join([font_dir_url, filename])
                 _download_file(ttf_url, dir)
                 print("  - Downloading {}".format(filename))
 
@@ -300,7 +302,7 @@ def download_font(fontname, dir):
             for italic in ["Italic", ""]:
                 ttf_name = "{}-{}{}.ttf".format(file_base_name, weight, italic)
 
-                ttf_url = os.path.join(font_dir_url, "static", ttf_name)
+                ttf_url = "/".join([font_dir_url, "static", ttf_name])
 
                 # some of these will not exist, which is fine. Grab what exists
                 try:
@@ -319,6 +321,6 @@ def download_font(fontname, dir):
                     # this will have quotes, remove them
                     filename = filename.replace('"', "")
                     # then we can just download it
-                    ttf_url = os.path.join(font_dir_url, filename)
+                    ttf_url = "/".join([font_dir_url, filename])
                     _download_file(ttf_url, dir)
                     print("  - Downloading {}".format(filename))
