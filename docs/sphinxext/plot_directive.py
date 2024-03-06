@@ -860,9 +860,11 @@ def run(arguments, content, options, state_machine, state, lineno):
     # copy script (if necessary)
     if config.plot_html_show_source_link:
         Path(dest_dir, output_base + source_ext).write_text(
-            doctest.script_from_examples(code)
-            if source_file_name == rst_file and is_doctest
-            else code,
+            (
+                doctest.script_from_examples(code)
+                if source_file_name == rst_file and is_doctest
+                else code
+            ),
             encoding="utf-8",
         )
 
