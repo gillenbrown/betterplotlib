@@ -41,19 +41,15 @@ opensans_files = [
     "OpenSans-Italic[wdth,wght].ttf",
 ]
 
-roboto_files = [
-    "Roboto-Light.ttf",
-    "Roboto-Regular.ttf",
-    "Roboto-Medium.ttf",
-    "Roboto-MediumItalic.ttf",
-    "Roboto-ThinItalic.ttf",
-    "Roboto-BoldItalic.ttf",
-    "Roboto-LightItalic.ttf",
-    "Roboto-Italic.ttf",
-    "Roboto-BlackItalic.ttf",
-    "Roboto-Bold.ttf",
-    "Roboto-Thin.ttf",
-    "Roboto-Black.ttf",
+inconsolata_files = [
+    "Inconsolata-Black.ttf",
+    "Inconsolata-Bold.ttf",
+    "Inconsolata-ExtraBold.ttf",
+    "Inconsolata-ExtraLight.ttf",
+    "Inconsolata-Light.ttf",
+    "Inconsolata-Medium.ttf",
+    "Inconsolata-Regular.ttf",
+    "Inconsolata-SemiBold.ttf",
 ]
 
 
@@ -68,8 +64,8 @@ def test_download_variable_font_into_directory(make_temp_dir):
 
 
 def test_download_variable_font_static_into_directory(make_temp_dir):
-    bpl.download_font("Roboto", temp_dir)
-    assert sorted(roboto_files) == sorted([i.name for i in temp_dir.iterdir()])
+    bpl.download_font("Inconsolata", temp_dir)
+    assert sorted(inconsolata_files) == sorted([i.name for i in temp_dir.iterdir()])
 
 
 def test_set_style_downloads_fonts():
