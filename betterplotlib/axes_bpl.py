@@ -722,7 +722,7 @@ class Axes_bpl(Axes):
             title.set_fontsize(kwargs["fontsize"] * 1.2)
 
         # adjust the size of points within the legend
-        for handle in leg.legendHandles:
+        for handle in leg.legend_handles:
             # if it's not a handle for a scatter plot, setting the sizes will fail
             try:
                 handle.set_sizes([100])
