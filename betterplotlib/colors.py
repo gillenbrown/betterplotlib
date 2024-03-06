@@ -148,7 +148,7 @@ def create_mappable(vmin, vmax, cmap, log=False):
         for i in np.arange(0, 1.01, 0.1):
             ax.plot([0, 1], [i, i], c=mappable.to_rgba(i))
         ax.set_limits(0, 1, -0.05, 1.05)
-        fig.colorbar(mappable)
+        fig.colorbar(mappable, ax=ax)
 
     .. plot::
         :include-source:
@@ -164,7 +164,7 @@ def create_mappable(vmin, vmax, cmap, log=False):
             ax.plot([0, 1], [i, i], c=mappable.to_rgba(i))
         ax.log("y")
         ax.set_limits(0, 1, 0.9, 110)
-        fig.colorbar(mappable)
+        fig.colorbar(mappable, ax=ax)
     """
     if log:
         norm = mpl_colors.LogNorm(vmin=vmin, vmax=vmax)
