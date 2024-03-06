@@ -13,6 +13,12 @@ from . import type_checking
 class Axes_bpl(Axes):
     name = "bpl"
 
+    def __init__(self, *args, **kwargs):
+        # The only reason to call __init__ is to store the index of the
+        # color cycle. Then we'll call the parent __init__
+        self.scatter_color_idx = 0
+        super(Axes_bpl, self).__init__(*args, **kwargs)
+
     def make_ax_dark(self, grid=True, minor_ticks=False):
         """
         Turns an axis into one with a dark background with white gridlines.
@@ -213,7 +219,10 @@ class Axes_bpl(Axes):
         # get the color, if it hasn't already been set
         if "color" not in kwargs and "c" not in kwargs and "facecolor" not in kwargs:
             # get the default color cycle, and get the next color.
-            kwargs["c"] = next(self._get_lines.prop_cycler)["color"]
+            color_cycle = rcParams["axes.prop_cycle"].by_key()["color"]
+            kwargs["c"] = color_cycle[self.scatter_color_idx]
+            # move to the next
+            self.scatter_color_idx = (self.scatter_color_idx + 1) % len(color_cycle)
 
         # set other parameters, if they haven't been set already
         # I use setdefault to do that, which puts the values in if they don't
@@ -712,7 +721,7 @@ class Axes_bpl(Axes):
             title.set_fontsize(kwargs["fontsize"] * 1.2)
 
         # adjust the size of points within the legend
-        for handle in leg.legendHandles:
+        for handle in leg.legend_handles:
             # if it's not a handle for a scatter plot, setting the sizes will fail
             try:
                 handle.set_sizes([100])

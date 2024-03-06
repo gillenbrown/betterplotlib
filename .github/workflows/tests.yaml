@@ -13,12 +13,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         include:
           - os: macos-latest
-            python-version: "3.10"
+            python-version: "3.12"
           - os: windows-latest
-            python-version: "3.10"
+            python-version: "3.12"
     runs-on: ${{ matrix.os }}
     steps:
       - name: checkout
@@ -37,10 +37,10 @@ jobs:
       # handle coverage, only for one version (chose most recent python version, but
       # this shouldn't matter
       - name: make lcov file for Coveralls upload
-        if: matrix.python-version == 3.10
+        if: matrix.python-version == 3.12 && matrix.os == 'ubuntu-latest'
         run: coverage lcov -i
       - name: upload to Coveralls
-        if: matrix.python-version == 3.10
+        if: matrix.python-version == 3.12 && matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
