@@ -15,7 +15,9 @@ def subplots(*args, **kwargs):
     # that we can access
     subplot_kwargs = kwargs.setdefault("subplot_kw", dict())
     subplot_kwargs.setdefault("projection", "bpl")
-    kwargs.setdefault("tight_layout", True)
+    # apply tight_layout if not using gridspec - can't do both
+    if "gridspec_kw" not in kwargs:
+        kwargs.setdefault("tight_layout", True)
 
     return plt.subplots(*args, **kwargs)
 
