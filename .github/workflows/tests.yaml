@@ -37,10 +37,10 @@ jobs:
       # handle coverage, only for one version (chose most recent python version, but
       # this shouldn't matter
       - name: make lcov file for Coveralls upload
-        if: (matrix.python-version == 3.12) && (matrix.os == ubuntu-latest)
+        if: (matrix.python-version == 3.12) && (matrix.os == "ubuntu-latest")
         run: coverage lcov -i
       - name: upload to Coveralls
-        if: (matrix.python-version == 3.12) && (matrix.os == ubuntu-latest)
+        if: (matrix.python-version == 3.12) && (matrix.os == "ubuntu-latest")
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
