@@ -36,6 +36,13 @@ lato_files = [
     "Lato-ThinItalic.ttf",
 ]
 
+tinos_files = [
+    "Tinos-Bold.ttf",
+    "Tinos-BoldItalic.ttf",
+    "Tinos-Italic.ttf",
+    "Tinos-Regular.ttf",
+]
+
 opensans_files = [
     "OpenSans[wdth,wght].ttf",
     "OpenSans-Italic[wdth,wght].ttf",
@@ -53,9 +60,14 @@ inconsolata_files = [
 ]
 
 
-def test_download_font_into_directory(make_temp_dir):
+def test_download_lato_into_directory(make_temp_dir):
     bpl.download_font("Lato", temp_dir)
     assert sorted(lato_files) == sorted([i.name for i in temp_dir.iterdir()])
+
+
+def test_download_font_into_directory(make_temp_dir):
+    bpl.download_font("Tinos", temp_dir)
+    assert sorted(tinos_files) == sorted([i.name for i in temp_dir.iterdir()])
 
 
 def test_download_variable_font_into_directory(make_temp_dir):
