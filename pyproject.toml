@@ -10,8 +10,7 @@ name = "betterplotlib"
 version = "1.12.10"
 description = "Some wrappers for matplotlib to make plotting easier and nicer."
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
+license = {text = "MIT"}
 authors = [
     {name = "Gillen Brown", email="gillenbrown@gmail.com"},
 ]
