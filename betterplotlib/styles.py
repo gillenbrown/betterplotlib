@@ -1,5 +1,6 @@
 import urllib.request
 from pathlib import Path
+import shutil
 
 import matplotlib
 from matplotlib import rcParams
@@ -215,6 +216,11 @@ def _download_file(url, local_dir):
 
 
 def download_font(fontname, dir):
+    # do something special for Lato, since we don't actually need to download it
+    if fontname.lower() == "lato":
+        copy_lato(dir)
+        return
+
     # https://github.com/google/fonts
     # format the font as it is in the github repo
     fontname = fontname.lower().replace(" ", "")
@@ -323,3 +329,14 @@ def download_font(fontname, dir):
                     ttf_url = "/".join([font_dir_url, filename])
                     _download_file(ttf_url, dir)
                     print("  - Downloading {}".format(filename))
+
+
+def copy_lato(dir):
+    # we don't actually need to download Lato, since we've loaded it into this repo.
+    # We do this just in case there are any issues downloading files, for whatever
+    # reason. I have run into those issues before, so it's good to have a backup.
+    # We'll just copy it to the right directory
+    for file in (Path(__file__).parent / "resources").iterdir():
+        if file.suffix == ".ttf":
+            # copy, don't move
+            shutil.copy2(file, dir / file.name)

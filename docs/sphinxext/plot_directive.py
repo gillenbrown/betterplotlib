@@ -465,9 +465,10 @@ def _run_code(code, code_path, ns=None, function_name=None):
         dirname = os.path.abspath(os.path.dirname(code_path))
         os.chdir(dirname)
 
-    with cbook._setattr_cm(
-        sys, argv=[code_path], path=[os.getcwd(), *sys.path]
-    ), contextlib.redirect_stdout(StringIO()):
+    with (
+        cbook._setattr_cm(sys, argv=[code_path], path=[os.getcwd(), *sys.path]),
+        contextlib.redirect_stdout(StringIO()),
+    ):
         try:
             if ns is None:
                 ns = {}

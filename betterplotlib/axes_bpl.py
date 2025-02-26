@@ -2712,7 +2712,7 @@ class Axes_bpl(Axes):
 
         # apply normalization
         if norm:
-            integral = integrate.trapz(x=points, y=result)
+            integral = integrate.trapezoid(x=points, y=result)
             result = result / integral
 
         # undo the log to data before plotting
