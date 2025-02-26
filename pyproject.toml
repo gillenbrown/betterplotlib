@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["betterplotlib"]
-license-files = ["LICENSE"]
 
 [project]
 name = "betterplotlib"
 version = "1.12.10"
 description = "Some wrappers for matplotlib to make plotting easier and nicer."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Gillen Brown", email="gillenbrown@gmail.com"},
 ]
