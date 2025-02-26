@@ -20,13 +20,13 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "matplotlib",
     "numpy",
     "palettable",
     "imageio",
-    "scipy",
+    "scipy>=1.15.0",
     "numpy>=1.16.0",
     "cycler",
     "astropy",
