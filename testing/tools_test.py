@@ -585,7 +585,7 @@ def test_centers_not_equal_spacing():
 
 
 def test_centers_length():
-    xs = np.arange(np.random.randint(10, 100, 1))
+    xs = np.arange(np.random.randint(10, 100, 1)[0])
     assert len(xs) == len(tools.bin_centers(xs)) + 1
 
 
