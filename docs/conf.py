@@ -14,7 +14,7 @@
 
 import sys
 import os
-from pkg_resources import get_distribution
+from importlib.metadata import version
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -76,7 +76,7 @@ author = "Gillen Brown"
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-__full_version = get_distribution("betterplotlib").version
+__full_version = version("betterplotlib")
 # The short X.Y version.
 version = ".".join(__full_version.split(".")[:-1])
 # The full version, including alpha/beta/rc tags.
